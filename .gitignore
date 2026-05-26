@@ -1,0 +1,31 @@
+# Entornos virtuales
+venv/
+venvCagents/
+.venv/
+env/
+ENV/
+
+# Python cache y compilados
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDEs y editores
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Archivos del sistema y temporales
+.DS_Store
+Thumbs.db
+~$*
+*.tmp
+mismatches_50.csv

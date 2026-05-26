@@ -1,0 +1,61 @@
+Quiero que analices mi archivo de fraudes/seguridad (te lo adjunto como un Excel llamado “criticidad fraudes.xlsx”) y construyas el Top 5 general de sitios críticos MOSTRANDO el resultado por el campo de UBICACIÓN (no por la llave).
+
+***Objetivo:***
+- Crear una llave única “SiteID = codigo_clean + '-' + tipo_normalizado” SOLO para cálculo (por si el mismo código existe en sucursales y ATM), pero en todas las salidas usar el campo UBICACIÓN más reciente como etiqueta.
+- Calcular un PUNTAJE DE CRITICIDAD (0–1) combinando Frecuencia histórica, Actividad reciente (últimos 30 días), Recencia del último evento, Pérdida económica y severidad de hurto (Sí/No).
+- Entregar:
+  1) Tabla Top 5 general por UBICACIÓN (con región, totales, últimos 30 días, última fecha, días desde última, pérdida acumulada, % hurto y puntaje).
+  2) Gráfica de barras horizontal del Top 5 (etiqueta: “UBICACIÓN | TIPO | CÓDIGO”).
+  3) Un Excel con 3 hojas: Ranking_Completo, Top5_Global_Ubicacion y (OPCIONAL) Top5_por_Region_Ubicacion.
+
+***Mapeo de columnas esperado (flexible):***
+- Fecha del evento: “FECHA EVENTO” (o similar).
+- Código: “CODIGO” (o “CÓDIGO”).
+- Tipo de sitio: “TIPO” (normalizar a: ATM / SUCURSAL).
+- Nombre/Ubicación: “NOMBRE” (o “UBICACION/UBICACIÓN”).
+- Regional: “REGIONAL”.
+- Hurto: “HURTO” (valores Sí/No).
+- Valor pérdida: “VALOR PERDIDA” (o “VALOR PÉRDIDA”).
+- (Si algún nombre difiere, detecta el correcto automáticamente).
+
+***Normalizaciones y reglas:***
+- `codigo_clean`: extrae solo dígitos del código y rellena con ceros a la izquierda hasta 4 cifras cuando aplique (ej. “83” → “0083”).
+- `tipo_normalizado`: {ATM, SUCURSAL}. Acepta equivalentes como CAJERO/ATN/ATMS → ATM; “SUCURSALES” → SUCURSAL.
+- `SiteID = codigo_clean + '-' + tipo_normalizado`.
+- Etiqueta mostrada: tomar la **UBICACIÓN/NOMBRE** más reciente por `SiteID`.
+- Fechas: parseo robusto; si no se define, asume mm/dd/yyyy; corrige automáticamente si el patrón es dd/mm/yyyy.
+- “Actividad reciente (30d)”: contar eventos en [fecha_corte − 30 días, fecha_corte].
+- Si alguna métrica queda constante (sin varianza), su normalización Min‑Max debe retornar 0 para todos (evitar NaN/inf).
+
+***Puntaje de Criticidad (0–1):***
+- Normaliza con Min‑Max: Frecuencia total, Incidentes 30d, Días desde última (invertir a Recency = 1 − MinMax(Días)), Pérdida.
+- Señal de severidad: proporción de eventos con HURTO=Sí por SiteID.
+- Fórmula (ajustable):
+  Score = 0.35*Frecuencia + 0.25*Últimos30d + 0.20*Recency + 0.15*Pérdida + 0.05*Hurto
+  (Si no hay “Valor pérdida”, pon ese término en 0).
+
+***Salidas requeridas:***
+1) **Top 5 global** (por UBICACIÓN), ordenado por Score desc, luego totales desc y luego última ocurrencia más reciente:
+   - Campos: UBICACIÓN, REGION, SiteID, total_incidentes, inc_ult_30d, ultima_ocurrencia, dias_desde_ultima, valor_perdida_total, hurto_ratio, criticality_score.
+   - Redondea el score a 3 decimales.
+2) **Gráfica** (png) “Top 5 global — UBICACIÓN | TIPO | CÓDIGO”:
+   - Etiqueta eje Y: “{UBICACIÓN | TIPO | CODIGO}\n({totales} inc., pérdida: ${perdida})”
+   - Eje X: “Puntaje de criticidad (0–1)”
+   - Barras horizontales, orden ascendente en el gráfico para lectura.
+3) **Excel** “fraudes_ranking_ubicacion.xlsx” con:
+   - Hoja 1: `Ranking_Completo` (todos los sitios con métricas y score).
+   - Hoja 2: `Top5_Global_Ubicacion`.
+   - Hoja 3 (opcional): `Top5_por_Region_Ubicacion` (top 5 por cada región).
+
+***Entrega y explicación:***
+- Explica brevemente los criterios y pesos usados.
+- Si detectas columnas faltantes o nombres distintos, adáptate y explícame qué mapeo usaste.
+- Incluye la fecha de corte (máxima fecha detectada en el archivo).
+- Exporta la gráfica a PNG y el Excel; adjúntalos en la respuesta.
+
+***Parámetros ajustables (si te pido cambios rápidos):***
+- Ventana de actividad reciente: 30 / 60 / 90 días.
+- Pesos del puntaje (por ejemplo, subir Pérdida a 0.25).
+- Etiqueta de la barra: mostrar también la última fecha o región si se requiere.
+
+Listo, te adjunto el archivo “criticidad fraudes.xlsx”. Genera por favor el Top 5 y la gráfica.
