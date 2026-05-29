@@ -116,7 +116,7 @@ Do NOT use when:
   "preserve_formatting": true
 }
 ```
-```
+
 
 ---
 
@@ -201,7 +201,7 @@ Do NOT use when:
   }
 }
 ```
-```
+
 
 ---
 
@@ -443,7 +443,7 @@ Result: Validation report with specific errors/warnings
 - Maintains memory efficiency with iterative parsing
 - Can handle JSONL (JSON Lines) format
 - Supports JSON5 extensions when specified
-```
+
 
 ---
 
