@@ -1,0 +1,26 @@
+1. partieremos de un archivo de incidentes el cual es un excel que comienza con el nombre "incidentes"
+2. este excel cuenta con varias columnas que utilizaremos para calcular que cantidad de incidentes oportunos y no oportunos tiene cada operador
+3. ademas se calcula el porcentajde cumplimiento que va dador por la relacion entre incidentes totales atendidos por cada operador y incidentes no oportunos
+4. los datos importante para este analisis esta dado por las columnas 
+ReconocidoPorNombre, prioridad y Cumplimiento_ANS
+vas a tomar de ejemplo el archivo "AgenteANS\ANS ENERO.xlsx"en el encontraras una hoja llamada alarmas
+con todos los incidentes, en el tendras la columna "operador reconocimiento" y la columna "Oportunidad"
+en la hoja "indicador alarmas" se crean diferentes tablas con periodos de aproximadamente
+8 dias  donde se indican los siguientes campos 
+
+Operador
+No oport.	
+Alta 	
+Efect.	
+No oport.3
+Baja	
+Efect.4	
+No oport.5
+Media	
+Efect.5	
+Total Incidentes gestionados
+
+la idea es que puedas hacer el mismo reporte con el archivo en la ruta
+AgenteANS\Incidentes_sin_procesar\Incidentes mayo 01-27-2026.xlsx
+
+Var a crear el agente y los skills en formato md y los pondrar dentro la carpeta AgenteANS en sus respectivas carpetas Agent y Skills
