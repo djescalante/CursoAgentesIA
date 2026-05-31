@@ -2731,112 +2731,404 @@ does this summary look correct? [summary]"
         },
         {
           id: "4-2",
-          title: "Cadenas de Agentes",
-          time: "30 min",
+          title: "Cadenas de Agentes (Chaining)",
+          time: "45 min",
           difficulty: "⭐⭐⭐ Avanzado",
-          content: `# 4.2 — Cadenas de Agentes
+          content: `# 4.2 — Cadenas de Agentes (Chaining)
 
-## 🔗 Multi-Agent Systems
+## 🎯 Objetivo
 
-Las cadenas de agentes permiten crear sistemas donde múltiples agentes especializados colaboran para resolver problemas complejos.
-
----
-
-## 🏗️ Arquitecturas de Agentes en Cadena
-
-### Arquitectura 1: Pipeline Lineal
-
-\`\`\`
-Usuario
-  ↓
-Agente Coordinador (analiza y distribuye)
-  ↓
-Agente Especialista A (análisis)
-  ↓
-Agente Especialista B (procesamiento)
-  ↓
-Agente Output (presentación)
-  ↓
-Usuario
-\`\`\`
-
-### Arquitectura 2: Hub and Spoke
-
-\`\`\`
-              ┌─ Agente Análisis
-              │
-Usuario → Coordinador ─── Agente Escritura
-              │
-              └─ Agente Revisión
-\`\`\`
-
-### Arquitectura 3: Agente Supervisor
-
-\`\`\`markdown
-# AGENT: Supervisor
-
-## Role
-Meta-agent that monitors and coordinates other agents.
-Does NOT perform tasks directly — only delegates and validates.
-
-## Responsibilities
-1. Analyze incoming queries
-2. Route to appropriate specialist agents
-3. Monitor quality of responses
-4. Combine outputs coherently
-5. Handle escalations
-
-## Routing Logic
-Query Type → Agent Assignment:
-- Data analysis → Data Analyst Agent
-- Report writing → Report Writer Agent
-- Strategic advice → Business Advisor Agent
-- Complex queries → Multiple agents in sequence
-\`\`\`
+Aprender a conectar múltiples Agentes Inteligentes de forma secuencial, donde el resultado de uno se convierte en el insumo del siguiente, para resolver tareas altamente complejas que ningún agente individual podría manejar solo.
 
 ---
 
-## 📋 Protocolo de Comunicación Entre Agentes
+## 🔗 ¿Qué es una Cadena de Agentes?
 
-Para que los agentes se comuniquen efectivamente:
+Una **cadena (chain)** es un patrón de diseño donde varios agentes colaboran pasando información de uno a otro. Cada agente es un **especialista** que realiza una tarea concreta y luego transfiere su resultado al siguiente eslabón.
 
-\`\`\`markdown
-## Agent Communication Protocol
+Imagina una línea de ensamblaje en una fábrica: el soldador no pinta el auto ni instala el motor. Simplemente termina su parte y pasa el trabajo al siguiente especialista.
 
-### Input Format (from previous agent):
+---
+
+## 📊 Comparativa: Un Agente vs Cadena de Agentes
+
+<div class="chart-wrapper">
+  <h4 class="chart-title">¿Por qué encadenar agentes en lugar de usar uno solo?</h4>
+  <div class="comparison-grid">
+    <div class="comparison-card card-bad">
+      <div class="comp-icon">🤖</div>
+      <h5>Un Solo Agente</h5>
+      <ul class="comp-list">
+        <li class="bad">❌ Distracción cognitiva: intenta hacer todo</li>
+        <li class="bad">❌ Sesgos: revisa su propio trabajo</li>
+        <li class="bad">❌ Contexto contaminado con pasos intermedios</li>
+        <li class="bad">❌ Difícil de depurar si algo falla</li>
+        <li class="bad">❌ No escalable: hay que reescribir todo</li>
+      </ul>
+    </div>
+    <div class="comparison-card card-good">
+      <div class="comp-icon">🔗</div>
+      <h5>Cadena de Agentes</h5>
+      <ul class="comp-list">
+        <li class="good">✅ Especialización profunda por agente</li>
+        <li class="good">✅ Revisión objetiva por agentes separados</li>
+        <li class="good">✅ Contexto limpio en cada etapa</li>
+        <li class="good">✅ Fácil identificar dónde falla el sistema</li>
+        <li class="good">✅ Reemplaza agentes individuales sin romper todo</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🏗️ Tipos de Flujo en una Cadena
+
+<div class="chain-diagram-section">
+  <h4 class="chart-title">Patrones de Arquitectura de Cadenas</h4>
+
+  <div class="flow-tabs">
+    <button class="flow-tab active" onclick="showFlow('linear')">📏 Lineal</button>
+    <button class="flow-tab" onclick="showFlow('loop')">🔄 Con Bucle QA</button>
+    <button class="flow-tab" onclick="showFlow('branch')">🌿 Con Ramificación</button>
+  </div>
+
+  <div class="flow-panel active" id="flow-linear">
+    <p class="flow-desc">El patrón más común: cada agente procesa y pasa al siguiente.</p>
+    <svg viewBox="0 0 700 100" class="flow-svg">
+      <defs>
+        <marker id="arrow1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#6366f1"/>
+        </marker>
+      </defs>
+      <rect x="10" y="25" width="120" height="50" rx="10" fill="#1e1b4b" stroke="#6366f1" stroke-width="2"/>
+      <text x="70" y="47" text-anchor="middle" fill="#a5b4fc" font-size="11" font-weight="bold">Agente</text>
+      <text x="70" y="62" text-anchor="middle" fill="#c7d2fe" font-size="10">Investigador</text>
+      <line x1="130" y1="50" x2="165" y2="50" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow1)"/>
+      <text x="147" y="42" text-anchor="middle" fill="#818cf8" font-size="9">datos</text>
+      <rect x="165" y="25" width="120" height="50" rx="10" fill="#1e1b4b" stroke="#6366f1" stroke-width="2"/>
+      <text x="225" y="47" text-anchor="middle" fill="#a5b4fc" font-size="11" font-weight="bold">Agente</text>
+      <text x="225" y="62" text-anchor="middle" fill="#c7d2fe" font-size="10">Redactor</text>
+      <line x1="285" y1="50" x2="320" y2="50" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow1)"/>
+      <text x="302" y="42" text-anchor="middle" fill="#818cf8" font-size="9">borrador</text>
+      <rect x="320" y="25" width="120" height="50" rx="10" fill="#1e1b4b" stroke="#6366f1" stroke-width="2"/>
+      <text x="380" y="47" text-anchor="middle" fill="#a5b4fc" font-size="11" font-weight="bold">Agente</text>
+      <text x="380" y="62" text-anchor="middle" fill="#c7d2fe" font-size="10">Editor SEO</text>
+      <line x1="440" y1="50" x2="475" y2="50" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow1)"/>
+      <text x="457" y="42" text-anchor="middle" fill="#818cf8" font-size="9">pulido</text>
+      <rect x="475" y="25" width="120" height="50" rx="10" fill="#064e3b" stroke="#10b981" stroke-width="2"/>
+      <text x="535" y="47" text-anchor="middle" fill="#6ee7b7" font-size="11" font-weight="bold">✅ Output</text>
+      <text x="535" y="62" text-anchor="middle" fill="#a7f3d0" font-size="10">Final</text>
+    </svg>
+  </div>
+
+  <div class="flow-panel" id="flow-loop">
+    <p class="flow-desc">Un Agente Validador revisa la calidad. Si no pasa, regresa al Generador (máx. 3 veces).</p>
+    <svg viewBox="0 0 680 160" class="flow-svg">
+      <defs>
+        <marker id="arrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#6366f1"/>
+        </marker>
+        <marker id="arrow2r" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#ef4444"/>
+        </marker>
+        <marker id="arrow2g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#10b981"/>
+        </marker>
+      </defs>
+      <rect x="20" y="55" width="130" height="50" rx="10" fill="#1e1b4b" stroke="#6366f1" stroke-width="2"/>
+      <text x="85" y="77" text-anchor="middle" fill="#a5b4fc" font-size="11" font-weight="bold">Agente</text>
+      <text x="85" y="92" text-anchor="middle" fill="#c7d2fe" font-size="10">Generador</text>
+      <line x1="150" y1="80" x2="235" y2="80" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow2)"/>
+      <text x="192" y="72" text-anchor="middle" fill="#818cf8" font-size="9">output</text>
+      <rect x="235" y="55" width="130" height="50" rx="10" fill="#312e81" stroke="#818cf8" stroke-width="2"/>
+      <text x="300" y="77" text-anchor="middle" fill="#c7d2fe" font-size="11" font-weight="bold">Agente</text>
+      <text x="300" y="92" text-anchor="middle" fill="#c7d2fe" font-size="10">Validador QA</text>
+      <line x1="300" y1="105" x2="300" y2="140" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow2r)"/>
+      <line x1="300" y1="140" x2="85" y2="140" stroke="#ef4444" stroke-width="2"/>
+      <line x1="85" y1="140" x2="85" y2="105" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow2r)"/>
+      <text x="192" y="155" text-anchor="middle" fill="#fca5a5" font-size="9">❌ No pasa — con feedback (máx 3 veces)</text>
+      <line x1="365" y1="80" x2="455" y2="80" stroke="#10b981" stroke-width="2" marker-end="url(#arrow2g)"/>
+      <text x="410" y="70" text-anchor="middle" fill="#6ee7b7" font-size="9">✅ Aprobado</text>
+      <rect x="455" y="55" width="130" height="50" rx="10" fill="#064e3b" stroke="#10b981" stroke-width="2"/>
+      <text x="520" y="77" text-anchor="middle" fill="#6ee7b7" font-size="11" font-weight="bold">Agente</text>
+      <text x="520" y="92" text-anchor="middle" fill="#a7f3d0" font-size="10">Publicador</text>
+    </svg>
+  </div>
+
+  <div class="flow-panel" id="flow-branch">
+    <p class="flow-desc">Un Agente Router analiza el tipo de tarea y delega al especialista correcto.</p>
+    <svg viewBox="0 0 680 200" class="flow-svg">
+      <defs>
+        <marker id="arrow3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#6366f1"/>
+        </marker>
+      </defs>
+      <rect x="20" y="75" width="130" height="50" rx="10" fill="#1e1b4b" stroke="#6366f1" stroke-width="2"/>
+      <text x="85" y="97" text-anchor="middle" fill="#a5b4fc" font-size="11" font-weight="bold">Agente</text>
+      <text x="85" y="112" text-anchor="middle" fill="#c7d2fe" font-size="10">Router</text>
+      <line x1="150" y1="100" x2="200" y2="40" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow3)"/>
+      <line x1="150" y1="100" x2="200" y2="100" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow3)"/>
+      <line x1="150" y1="100" x2="200" y2="160" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow3)"/>
+      <rect x="200" y="15" width="140" height="50" rx="10" fill="#1e1b4b" stroke="#f59e0b" stroke-width="2"/>
+      <text x="270" y="37" text-anchor="middle" fill="#fcd34d" font-size="11" font-weight="bold">Agente</text>
+      <text x="270" y="52" text-anchor="middle" fill="#fde68a" font-size="10">Análisis de Datos</text>
+      <rect x="200" y="75" width="140" height="50" rx="10" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="2"/>
+      <text x="270" y="97" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="bold">Agente</text>
+      <text x="270" y="112" text-anchor="middle" fill="#ddd6fe" font-size="10">Redacción</text>
+      <rect x="200" y="135" width="140" height="50" rx="10" fill="#1e1b4b" stroke="#06b6d4" stroke-width="2"/>
+      <text x="270" y="157" text-anchor="middle" fill="#67e8f9" font-size="11" font-weight="bold">Agente</text>
+      <text x="270" y="172" text-anchor="middle" fill="#a5f3fc" font-size="10">Soporte Técnico</text>
+      <line x1="340" y1="40" x2="400" y2="90" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow3)"/>
+      <line x1="340" y1="100" x2="400" y2="100" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow3)"/>
+      <line x1="340" y1="160" x2="400" y2="110" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow3)"/>
+      <rect x="400" y="65" width="130" height="50" rx="10" fill="#064e3b" stroke="#10b981" stroke-width="2"/>
+      <text x="465" y="87" text-anchor="middle" fill="#6ee7b7" font-size="11" font-weight="bold">✅ Resultado</text>
+      <text x="465" y="102" text-anchor="middle" fill="#a7f3d0" font-size="10">Combinado</text>
+    </svg>
+  </div>
+</div>
+
+---
+
+## 📝 Implementando Cadenas con Archivos Markdown
+
+Los archivos \`.md\` de cada agente deben indicar claramente qué formato esperan recibir y qué formato deben entregar.
+
+### Agente 1 (El que envía)
+
+\`\`\`\`markdown
+## Salida Obligatoria (Output Format)
+Retornar ÚNICAMENTE un bloque JSON con los datos extraídos.
+
+Ejemplo de salida correcta:
 \`\`\`json
 {
-  "task_id": "task_001",
-  "from_agent": "data-analyst",
-  "to_agent": "report-writer",
+  "producto": "Laptop Pro X",
+  "precio": 1299.99,
+  "disponibilidad": true,
+  "categoria": "electronica"
+}
+\`\`\`
+\`\`\`\`
+
+### Agente 2 (El que recibe)
+
+\`\`\`\`markdown
+## Entrada Esperada (Input Format)
+Recibirás un JSON con datos estructurados de ventas.
+
+Ejemplo de entrada:
+\`\`\`json
+{
+  "producto": "Laptop Pro X",
+  "precio": 1299.99,
+  "disponibilidad": true,
+  "categoria": "electronica"
+}
+\`\`\`
+A partir de este JSON, genera un párrafo descriptivo profesional.
+\`\`\`\`
+
+---
+
+## 🧪 Ejemplos Completos de Cadenas Reales
+
+### Ejemplo 1: Cadena de Reporte de Ventas
+
+<div class="example-chain-viz">
+  <h4 class="chart-title">Flujo: Reporte Automatizado de Ventas</h4>
+  <div class="chain-steps">
+    <div class="chain-step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <div class="step-icon">📥</div>
+        <div class="step-name">Extractor</div>
+        <div class="step-desc">Lee el archivo crudo y produce JSON limpio</div>
+        <div class="step-output">→ JSON de datos</div>
+      </div>
+    </div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <div class="step-icon">📊</div>
+        <div class="step-name">Analítico</div>
+        <div class="step-desc">Detecta tendencias, alertas y KPIs</div>
+        <div class="step-output">→ JSON de insights</div>
+      </div>
+    </div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <div class="step-icon">✍️</div>
+        <div class="step-name">Redactor</div>
+        <div class="step-desc">Convierte insights en narrativa legible</div>
+        <div class="step-output">→ Texto del reporte</div>
+      </div>
+    </div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-step step-final">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <div class="step-icon">📄</div>
+        <div class="step-name">Formateador</div>
+        <div class="step-desc">Genera PDF/Markdown con diseño profesional</div>
+        <div class="step-output">✅ Reporte Final</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+\`\`\`\`markdown
+# AGENT: Extractor de Datos de Ventas
+
+## Rol
+Eres un especialista en extracción de datos. Tu única tarea es leer el archivo
+de ventas crudo y convertirlo en un JSON estructurado y limpio.
+
+## Output Obligatorio (sin texto adicional)
+\`\`\`json
+{
+  "semana": "2026-W22",
+  "total_ventas": 48350.00,
+  "num_transacciones": 312,
+  "producto_top": "Laptop Pro X",
+  "regiones": [
+    {"nombre": "Norte", "ventas": 18200.00},
+    {"nombre": "Sur", "ventas": 30150.00}
+  ]
+}
+\`\`\`
+\`\`\`\`
+
+---
+
+### Ejemplo 2: Cadena de Generación de Contenido Blog
+
+\`\`\`
+Input: "Beneficios del trabajo remoto"
+
+[Investigador] → [Redactor] → [SEO] → [Editor Final]
+     ↓               ↓           ↓           ↓
+Datos + fuentes  Borrador 800w  Título+meta  Artículo pulido
+\`\`\`
+
+**Por qué funciona:** cada agente hace UNA sola cosa. El Investigador no escribe. El Redactor no investiga. El SEO no redacta. El Editor no inventa.
+
+---
+
+### Ejemplo 3: Cadena con Bucle de Calidad (QA Loop)
+
+\`\`\`\`markdown
+# AGENT: Validador de Calidad
+
+## Entrada
+Recibirás el output del Agente Generador.
+
+## Proceso
+1. Verifica que el output cumple TODOS los criterios de calidad
+2. Puntúa de 0 a 100
+3. Si puntuación < 85: devuelve al Generador con feedback específico
+4. Si puntuación >= 85: aprueba y pasa al Publicador
+
+## Output
+\`\`\`json
+{
+  "puntuacion": 78,
+  "aprobado": false,
+  "feedback": "Falta sección de conclusiones. El tono es demasiado informal.",
+  "iteracion_actual": 2,
+  "max_iteraciones": 3
+}
+\`\`\`
+
+## IMPORTANTE
+- Nunca superar 3 iteraciones (max_iterations: 3)
+- Si se llega al límite, pasar con la mejor versión + nota de advertencia
+\`\`\`\`
+
+---
+
+## ⚙️ Protocolo de Comunicación Estándar
+
+\`\`\`json
+{
+  "task_id": "tarea_001",
+  "version": "1.0",
+  "from_agent": "agente-redactor",
+  "to_agent": "agente-editor",
+  "timestamp": "2026-05-31T10:00:00Z",
   "context": {
-    "original_query": "Analyze Q1 sales",
-    "data_analyzed": {...},
-    "key_findings": [...]
+    "query_original": "Escribe un artículo sobre IA",
+    "instrucciones": "Tono formal, máximo 800 palabras"
   },
-  "request": "Create executive report from these findings",
-  "priority": "standard"
+  "payload": {
+    "contenido": "El texto generado va aquí...",
+    "metadata": { "palabras": 750, "idioma": "es" }
+  },
+  "estado": "completado",
+  "notas_para_siguiente": "Revisar título para SEO"
 }
 \`\`\`
 
-### Output Format (to next agent):
-\`\`\`json
-{
-  "task_id": "task_001",
-  "from_agent": "report-writer",
-  "status": "completed",
-  "output": {
-    "report_markdown": "...",
-    "key_sections": [...],
-    "recommendations": [...]
-  },
-  "metadata": {
-    "processing_time": "4.2s",
-    "confidence": 0.92
-  }
-}
-\`\`\`
-\`\`\`
+---
+
+## ⚠️ Retos Comunes y Soluciones
+
+<div class="risks-grid">
+  <div class="risk-card">
+    <div class="risk-icon">📞</div>
+    <h5>Teléfono Roto</h5>
+    <p class="risk-desc">Un agente omite un dato crucial y los siguientes fallan silenciosamente.</p>
+    <p class="risk-solution">✅ <strong>Solución:</strong> Incluye siempre el <code>query_original</code> del usuario en el JSON entre agentes.</p>
+  </div>
+  <div class="risk-card">
+    <div class="risk-icon">🔁</div>
+    <h5>Ciclo Infinito</h5>
+    <p class="risk-desc">Dos agentes en retroalimentación pueden debatir eternamente.</p>
+    <p class="risk-solution">✅ <strong>Solución:</strong> Establece <code>max_iterations: 3</code> en el archivo de configuración.</p>
+  </div>
+  <div class="risk-card">
+    <div class="risk-icon">🔌</div>
+    <h5>Formato Incompatible</h5>
+    <p class="risk-desc">El Agente 1 entrega un formato que el Agente 2 no espera.</p>
+    <p class="risk-solution">✅ <strong>Solución:</strong> Define un "contrato de interfaz" explícito en ambos archivos .md.</p>
+  </div>
+  <div class="risk-card">
+    <div class="risk-icon">🐌</div>
+    <h5>Cadena Lenta</h5>
+    <p class="risk-desc">Cadenas con 5+ agentes se vuelven lentas y costosas.</p>
+    <p class="risk-solution">✅ <strong>Solución:</strong> Usa agentes en paralelo para tareas independientes. Cachea resultados de agentes lentos.</p>
+  </div>
+</div>
+
+---
+
+## 📈 Métricas de una Cadena Saludable
+
+<div class="metrics-visual">
+  <h4 class="chart-title">Indicadores Clave de Rendimiento (KPIs)</h4>
+  <div class="kpi-bars">
+    <div class="kpi-item">
+      <div class="kpi-label">Tasa de Éxito de la Cadena</div>
+      <div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:92%;background:linear-gradient(90deg,#6366f1,#8b5cf6)">92%</div></div>
+    </div>
+    <div class="kpi-item">
+      <div class="kpi-label">Reducción de Errores vs Agente Único</div>
+      <div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:78%;background:linear-gradient(90deg,#10b981,#059669)">78%</div></div>
+    </div>
+    <div class="kpi-item">
+      <div class="kpi-label">Mejora en Calidad de Output</div>
+      <div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:85%;background:linear-gradient(90deg,#f59e0b,#d97706)">85%</div></div>
+    </div>
+    <div class="kpi-item">
+      <div class="kpi-label">Loops de QA que terminan en 1 iteración</div>
+      <div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:67%;background:linear-gradient(90deg,#06b6d4,#0891b2)">67%</div></div>
+    </div>
+  </div>
+</div>
 
 ---
 
@@ -2870,21 +3162,22 @@ Para que los agentes se comuniquen efectivamente:
 ## Flujos de Trabajo
 
 ### Flujo Simple (1 agente):
-"What's our revenue this month?"
+"¿Cuánto vendimos este mes?"
 → Data Analyst → Respuesta directa
 
 ### Flujo Medio (2 agentes):
-"Analyze Q1 and write a report"
+"Analiza el Q1 y escribe un reporte"
 → Data Analyst → Report Writer → Reporte final
 
 ### Flujo Completo (3+ agentes):
-"What should we focus on next quarter?"
-→ Data Analyst (analiza datos)
-→ Business Advisor (genera recomendaciones)
-→ Report Writer (presenta resultado)
-→ Reporte estratégico completo
+"¿En qué debemos enfocarnos el próximo trimestre?"
+→ Data Analyst → Business Advisor → Report Writer → Reporte estratégico
 \`\`\``,
-          exercise: null
+          exercise: {
+            title: "Diseña tu Propia Cadena de Agentes",
+            prompt: "Piensa en un proceso tedioso de tu empresa o vida diaria (ej. planear un viaje, analizar datos de ventas, crear contenido para redes sociales).\n\nDiseña una cadena de 3-4 agentes:\n\n**Plantilla:**\n```\nNOMBRE DE MI CADENA: ___\n\nAgente 1: [Nombre] - [Rol]\n  Input: (lo que recibe del usuario)\n  Output: (lo que entrega al siguiente)\n\nAgente 2: [Nombre] - [Rol]\n  Input: (lo que recibe del Agente 1)\n  Output: (lo que entrega al siguiente)\n\nAgente 3: [Nombre] - [Rol]\n  Input: (lo que recibe del Agente 2)\n  Output: (resultado final)\n\nPosibles fallos y soluciones:\n  - Riesgo 1: ___ → Solución: ___\n  - Riesgo 2: ___ → Solución: ___\n```\n\n¡Sé específico! Cuanto más detallada sea tu cadena, más fácil será implementarla.",
+            type: "text"
+          }
         },
         {
           id: "4-3",
@@ -3089,7 +3382,7 @@ Output: Complete, optimized, reviewed article
 
 ## 📝 Implementación
 
-\`\`\`markdown
+\`\`\`\`markdown
 # SYSTEM: Content Marketing Multi-Agent
 
 ## System Identity
@@ -3204,7 +3497,7 @@ Issues Found: [list]
 Required Changes: [critical]
 Suggested Changes: [optional]
 Final Verdict: APPROVE / REVISE / REJECT
-\`\`\``,
+\`\`\`\``,
           exercise: {
             title: "Diseña tu Sistema Multi-Agente",
             prompt: "Diseña un sistema multi-agente para uno de estos escenarios:\n\n1. Customer Support System — Soporte al cliente automatizado\n2. Code Review System — Revisión de código en pipeline\n3. Research Assistant System — Investigación y análisis\n\nTu diseño debe incluir:\n- Al menos 3 agentes especializados\n- Rol y responsabilidades de cada agente\n- Protocolo de comunicación entre ellos\n- Al menos 2 workflows de uso típico\n- Ejemplo de interacción completo",
@@ -3374,7 +3667,6 @@ def function_name(param: Type) -> ReturnType:
 🔍 **Root Cause**: [Why it happens]
 ✅ **Fix**: [Corrected code]
 🛡️ **Prevention**: [How to avoid next time]
-\`\`\`
 
 ---
 

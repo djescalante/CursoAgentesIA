@@ -1012,3 +1012,24 @@
   }
 
 })();
+
+/**
+ * Global helper — Interactive Flow Diagram Tabs (Lección 4.2)
+ * Called via inline onclick on the flow-tab buttons rendered inside lesson HTML.
+ */
+window.showFlow = function(type) {
+  // Hide all panels
+  document.querySelectorAll('.flow-panel').forEach(panel => panel.classList.remove('active'));
+  document.querySelectorAll('.flow-tab').forEach(tab => tab.classList.remove('active'));
+
+  // Show the selected panel
+  const panel = document.getElementById('flow-' + type);
+  if (panel) panel.classList.add('active');
+
+  // Activate the clicked tab
+  document.querySelectorAll('.flow-tab').forEach(tab => {
+    if (tab.getAttribute('onclick') && tab.getAttribute('onclick').includes("'" + type + "'")) {
+      tab.classList.add('active');
+    }
+  });
+};

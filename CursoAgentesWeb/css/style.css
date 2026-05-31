@@ -1620,3 +1620,331 @@ pre:hover .copy-btn { opacity: 1; }
 }
 
 .info-box.important::before { content: '🔥 '; }
+
+/* =============================================
+   LESSON 4.2 — CHAIN DIAGRAMS & CHARTS
+   ============================================= */
+
+/* Generic chart/diagram wrapper */
+.chart-wrapper,
+.chain-diagram-section,
+.example-chain-viz,
+.risks-grid,
+.metrics-visual {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin: 24px 0;
+}
+
+.chart-title {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.8px !important;
+  color: var(--text-muted) !important;
+  margin: 0 0 20px 0 !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* Comparison Grid (1 agent vs chain) */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .comparison-grid { grid-template-columns: 1fr; }
+}
+
+.comparison-card {
+  border-radius: var(--radius-md);
+  padding: 20px;
+  border: 1px solid;
+}
+
+.card-bad {
+  background: rgba(252, 92, 125, 0.05);
+  border-color: rgba(252, 92, 125, 0.25);
+}
+
+.card-good {
+  background: rgba(72, 207, 173, 0.05);
+  border-color: rgba(72, 207, 173, 0.25);
+}
+
+.comp-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.comparison-card h5 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 14px 0;
+}
+
+.comp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comp-list li {
+  font-size: 13px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.comp-list li.bad { color: #fca5a5; }
+.comp-list li.good { color: #6ee7b7; }
+
+/* Flow diagram tabs */
+.flow-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.flow-tab {
+  background: rgba(108, 99, 255, 0.08);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: var(--transition);
+}
+
+.flow-tab:hover {
+  border-color: var(--brand-from);
+  color: var(--brand-from);
+}
+
+.flow-tab.active {
+  background: rgba(108, 99, 255, 0.18);
+  border-color: var(--brand-from);
+  color: var(--brand-from);
+}
+
+/* Flow panels */
+.flow-panel {
+  display: none;
+  animation: fadeIn 0.25s ease;
+}
+
+.flow-panel.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.flow-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 16px 0;
+  font-style: italic;
+}
+
+/* SVG flow diagrams */
+.flow-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.15);
+  padding: 12px;
+}
+
+/* Chain Step Cards (Example 1 Ventas) */
+.chain-steps {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chain-step {
+  flex: 1;
+  min-width: 120px;
+  background: rgba(108, 99, 255, 0.08);
+  border: 1px solid rgba(108, 99, 255, 0.2);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.chain-step:hover {
+  border-color: var(--brand-from);
+  background: rgba(108, 99, 255, 0.14);
+  transform: translateY(-2px);
+}
+
+.chain-step.step-final {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.07);
+}
+
+.chain-step.step-final:hover {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.step-number {
+  width: 26px;
+  height: 26px;
+  background: var(--brand-from);
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+}
+
+.chain-step.step-final .step-number {
+  background: #10b981;
+}
+
+.step-icon { font-size: 1.5rem; margin-bottom: 6px; }
+
+.step-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.step-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.step-output {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--brand-from);
+}
+
+.chain-step.step-final .step-output {
+  color: #10b981;
+}
+
+.chain-arrow {
+  font-size: 1.4rem;
+  color: var(--brand-from);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Risks Grid */
+.risks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+  padding: 20px;
+}
+
+.risk-card {
+  background: rgba(108, 99, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  transition: var(--transition);
+}
+
+.risk-card:hover {
+  border-color: var(--border-hover);
+  background: rgba(108, 99, 255, 0.08);
+}
+
+.risk-icon {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.risk-card h5 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+}
+
+.risk-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0 0 10px 0;
+}
+
+.risk-solution {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+  padding: 8px;
+  background: rgba(72, 207, 173, 0.07);
+  border-radius: 6px;
+  border-left: 3px solid #10b981;
+}
+
+/* KPI Bar Chart */
+.kpi-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.kpi-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.kpi-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.kpi-bar-track {
+  height: 28px;
+  background: rgba(108, 99, 255, 0.08);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.kpi-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 44px;
+}
+
