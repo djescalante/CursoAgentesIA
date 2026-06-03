@@ -15,7 +15,13 @@ def parse_args():
         "--cajeros", 
         type=str, 
         default="D:/cursoagenteClaude/Agentes/Agente_Malos_Manejos/Ejemplo/Cajeros en Produccion/CAJEROS EN PRODUCCION ABRIL 30.xlsb",
-        help="Ruta a la base de datos de cajeros en producción (.xlsb)."
+        help="Ruta a la base de datos de cajeros en producción (.xlsb) de abril."
+    )
+    parser.add_argument(
+        "--cajeros_mayo", 
+        type=str, 
+        default="D:/cursoagenteClaude/Agentes/Agente_Malos_Manejos/Ejemplo/Cajeros en Produccion/CAJEROS EN PRODUCCION MAYO 30.xlsb",
+        help="Ruta a la base de datos de cajeros en producción (.xlsb) de mayo."
     )
     parser.add_argument(
         "--sucursales", 
@@ -111,15 +117,22 @@ def main():
         mismatches_path = Path(args.mismatches)
         
     cajeros_path = Path(args.cajeros)
+    cajeros_mayo_path = Path(args.cajeros_mayo) if args.cajeros_mayo else None
     sucursales_path = Path(args.sucursales)
     
     print(f"[INFO] Iniciando validación de reporte...")
     print(f"[INFO] Reporte de incidentes: {report_path.name}")
-    print(f"[INFO] BD Cajeros: {cajeros_path.name}")
+    print(f"[INFO] BD Cajeros (Abril): {cajeros_path.name}")
+    if cajeros_mayo_path:
+        print(f"[INFO] BD Cajeros (Mayo): {cajeros_mayo_path.name}")
     print(f"[INFO] BD Sucursales: {sucursales_path.name}")
     
     # Validar existencia de archivos
-    for path, desc in [(report_path, "Reporte"), (cajeros_path, "BD Cajeros"), (sucursales_path, "BD Sucursales")]:
+    files_to_check = [(report_path, "Reporte"), (cajeros_path, "BD Cajeros"), (sucursales_path, "BD Sucursales")]
+    if cajeros_mayo_path:
+        files_to_check.append((cajeros_mayo_path, "BD Cajeros Mayo"))
+        
+    for path, desc in files_to_check:
         if not path.exists():
             print(f"[ERROR] No se pudo encontrar el archivo {desc} en la ruta: {path}")
             return
@@ -127,9 +140,8 @@ def main():
     # 1. Cargar bases de datos en producción
     print("[INFO] Cargando bases de datos en producción...")
     
-    # Cargar Cajeros
+    # Cargar Cajeros Abril
     df_cajeros = pd.read_excel(cajeros_path, sheet_name='Listado cajeros', engine='pyxlsb')
-    # Buscar columna de administración flexiblemente
     admin_col = [c for c in df_cajeros.columns if "ADMINISTRA" in c.upper()][0]
     
     cajeros_db = df_cajeros[['CODIGO', admin_col, 'FLM', 'NOMBRE']].dropna(subset=['CODIGO']).copy()
@@ -139,6 +151,19 @@ def main():
         'FLM': 'FLM_PDN',
         'NOMBRE': 'Nombre_PDN'
     })
+    
+    # Cargar Cajeros Mayo
+    cajeros_mayo_db = None
+    if cajeros_mayo_path:
+        df_cajeros_mayo = pd.read_excel(cajeros_mayo_path, sheet_name='Listado cajeros', engine='pyxlsb')
+        admin_col_mayo = [c for c in df_cajeros_mayo.columns if "ADMINISTRA" in c.upper()][0]
+        cajeros_mayo_db = df_cajeros_mayo[['CODIGO', admin_col_mayo, 'FLM', 'NOMBRE']].dropna(subset=['CODIGO']).copy()
+        cajeros_mayo_db['CODIGO'] = cajeros_mayo_db['CODIGO'].astype(int)
+        cajeros_mayo_db = cajeros_mayo_db.rename(columns={
+            admin_col_mayo: 'Admin_PDN',
+            'FLM': 'FLM_PDN',
+            'NOMBRE': 'Nombre_PDN'
+        })
     
     # Cargar Sucursales
     df_sucursales = pd.read_excel(sucursales_path, sheet_name='SUCURSALES EN PRODUCCION ABRIL ')
@@ -172,6 +197,7 @@ def main():
     print("[INFO] Cruzando datos con bases de datos en producción...")
     
     cajeros_dict = cajeros_db.set_index('CODIGO').to_dict(orient='index')
+    cajeros_mayo_dict = cajeros_mayo_db.set_index('CODIGO').to_dict(orient='index') if cajeros_mayo_db is not None else {}
     sucursales_codes = set(sucursales_db['CODIGO_NUEVO'])
     
     cajeros_pdn_list = []
@@ -195,8 +221,14 @@ def main():
             
         code = int(code)
         
-        # Caso A: Código existe en cajeros
+        val_coincide = False
+        val_cajeros_pd = None
+        found_in_pass1 = False
+        
+        # Pasada 1: Validar contra Abril (cajeros_dict) y Sucursales (sucursales_codes)
+        # Caso A: Código existe en cajeros Abril
         if code in cajeros_dict:
+            found_in_pass1 = True
             admin_val = str(cajeros_dict[code]['Admin_PDN']).strip().upper()
             flm_val = str(cajeros_dict[code]['FLM_PDN']).strip().upper()
             
@@ -206,26 +238,42 @@ def main():
                 
             # Validar coincidencia
             if resp_cierre == admin_val or resp_cierre == flm_val:
-                coincide_list.append(True)
-                # Escribir el valor coincidente
-                cajeros_pdn_list.append(admin_val if resp_cierre == admin_val else flm_val)
+                val_coincide = True
+                val_cajeros_pd = admin_val if resp_cierre == admin_val else flm_val
             else:
-                coincide_list.append(False)
-                # Escribir la administración por defecto
-                cajeros_pdn_list.append(admin_val if admin_val != "NAN" else flm_val)
+                val_coincide = False
+                val_cajeros_pd = admin_val if admin_val != "NAN" else flm_val
                 
         # Caso B: Código existe en sucursales
         elif code in sucursales_codes:
-            cajeros_pdn_list.append("FUNCIONARIOS")
+            found_in_pass1 = True
+            val_cajeros_pd = "FUNCIONARIOS"
             if resp_cierre == "FUNCIONARIOS":
-                coincide_list.append(True)
+                val_coincide = True
             else:
-                coincide_list.append(False)
+                val_coincide = False
                 
-        # Caso C: Código no encontrado
-        else:
-            cajeros_pdn_list.append(None)
-            coincide_list.append(False)
+        # Pasada 2: Si no coincide o no se encontró en la pasada 1, validar contra Mayo
+        if (not val_coincide) and (cajeros_mayo_dict is not None) and (code in cajeros_mayo_dict):
+            admin_val_mayo = str(cajeros_mayo_dict[code]['Admin_PDN']).strip().upper()
+            flm_val_mayo = str(cajeros_mayo_dict[code]['FLM_PDN']).strip().upper()
+            
+            if admin_val_mayo == "SUC":
+                admin_val_mayo = "FUNCIONARIOS"
+                
+            if resp_cierre == admin_val_mayo or resp_cierre == flm_val_mayo:
+                val_coincide = True
+                val_cajeros_pd = admin_val_mayo if resp_cierre == admin_val_mayo else flm_val_mayo
+            else:
+                # Si no coincide pero existe en Mayo, asignamos el valor de administración de Mayo
+                val_cajeros_pd = admin_val_mayo if admin_val_mayo != "NAN" else flm_val_mayo
+                val_coincide = False
+        elif (not found_in_pass1) and (not val_coincide):
+            val_cajeros_pd = None
+            val_coincide = False
+            
+        cajeros_pdn_list.append(val_cajeros_pd)
+        coincide_list.append(val_coincide)
             
     # Detectar dinámicamente si existe la columna "Cajeros PD" o "Cajeros PDN" en las originales
     cajeros_pd_cols = [c for c in df_report.columns if "CAJEROS PD" in c.upper()]

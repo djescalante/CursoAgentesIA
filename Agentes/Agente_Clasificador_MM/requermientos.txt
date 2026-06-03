@@ -1,0 +1,7 @@
+un agente que en base a ejemplos de dos archivos de excel sea capaz de crear los procesos 
+de transfrormacion de los datos  para que queden como en el los ejemplos 
+una vez entendido el proceso de transformacion y extranccion de los datos crea el agente y
+las skills .md para implementar el proceso de forma automatizada 
+
+
+archivos de ejemplo
