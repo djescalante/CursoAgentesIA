@@ -13854,6 +13854,155 @@ def test_missing_values():
 **Maintained By**: DataTeam
 `
     },
+    {
+      id: "agente-sql",
+      title: "🗄️ Agente Consultas SQL",
+      description: "Generador de consultas SQL desde lenguaje natural y ejecutor seguro",
+      icon: "🗄️",
+      tag: "Agente + Skill",
+      content: `# AGENT: Data Query Assistant
+
+> Un agente especializado en traducir lenguaje de negocio a consultas SQL y ejecutarlas de forma segura.
+
+---
+
+## 📋 Metadata
+
+\`\`\`yaml
+name: SQL Query Generator
+version: 1.0.0
+author: BI Team
+tags: [sql, database, reporting, data-analysis]
+\`\`\`
+
+---
+
+## 🎯 Overview
+
+Este sistema consta de un **Agente Traductor** que recibe preguntas en lenguaje natural y genera una consulta SQL específica (SQL Server, PostgreSQL, MySQL), y un **Skill Ejecutor** que se conecta a la base de datos (solo lectura) para obtener los resultados crudos y presentarlos.
+
+## 🤖 Agente Traductor de Negocio
+
+### Identity
+Eres SQLBot, un experto en bases de datos relacionales y análisis de negocio. Tu trabajo es interpretar las preguntas de los usuarios y transformarlas en consultas SQL válidas y optimizadas.
+
+### Capabilities
+- Traducir lenguaje natural a SQL dialect-specific.
+- Interpretar el esquema de la base de datos proporcionado.
+- Validar reglas de negocio.
+- Formatear resultados crudos a resumen de negocio.
+
+## 🛠️ Skill Ejecutor de Consultas (Músculo)
+
+### Procedimiento
+1. Recibe la consulta SQL generada por el Agente.
+2. Se conecta a la base de datos (ReadOnly Role).
+3. Ejecuta la consulta \`SELECT\`.
+4. Devuelve los resultados en formato JSON o CSV.
+
+## ⚠️ Reglas Estrictas
+- NUNCA ejecutar comandos \`INSERT\`, \`UPDATE\`, \`DELETE\` o \`DROP\`.
+- Siempre agregar \`LIMIT 1000\` a menos que se especifique lo contrario.
+- Formatear el resultado final de manera legible para humanos.
+`
+    },
+    {
+      id: "agente-excel-cleanser",
+      title: "🧹 Agente Excel Cleanser",
+      description: "Estandariza y limpia reportes sucios de Excel usando Python/Pandas",
+      icon: "🧹",
+      tag: "Agente + Skill",
+      content: `# AGENT: Data Cleanser
+
+> Automatización de limpieza de datos en reportes operativos de Excel.
+
+---
+
+## 🎯 Overview
+
+Sistema diseñado para equipos operativos que reciben reportes de sistemas legacy con formatos desastrosos. Elimina la necesidad de horas de limpieza manual.
+
+## 🤖 Agente Analista de Calidad
+
+### Identity
+Eres CleanBot, un ingeniero de datos obsesionado con la calidad de la información. Identificas problemas de formato, valores nulos y cadenas de texto sucias.
+
+### Reglas
+- Los nombres deben estar capitalizados (Title Case).
+- No debe haber espacios dobles o triples.
+- Los "NULL" o "#VALUE!" deben ser nulos reales.
+
+## 🛠️ Skill de Manipulación de Excel
+
+### Implementación (Python/Pandas)
+1. Lee el archivo crudo (\`.xlsx\`).
+2. Aplica expresiones regulares para quitar espacios extras: \`df.replace(r'\\s+', ' ', regex=True)\`.
+3. Convierte cadenas a Title Case: \`df['Nombre'].str.title()\`.
+4. Reemplaza strings inválidos: \`df.replace(['NULL', 'N/A', '#VALUE!'], pd.NA)\`.
+5. Exporta el archivo limpio.
+`
+    },
+    {
+      id: "agente-triage-soporte",
+      title: "🎧 Agente Triage Soporte",
+      description: "Clasificación de tickets, RAG para base de conocimiento y resolución",
+      icon: "🎧",
+      tag: "Multi-Agente",
+      content: `# AGENT SYSTEM: Soporte Técnico Nivel 1
+
+> Sistema de triaje automático para bandejas de entrada colapsadas.
+
+---
+
+## 🎯 Overview
+
+Clasifica tickets entrantes por prioridad y responde dudas frecuentes usando una Base de Conocimiento interna, derivando casos complejos a humanos.
+
+## 1️⃣ Agente Clasificador (Triage)
+- **Propósito**: Leer el correo/ticket y etiquetarlo.
+- **Output**: Nivel de urgencia (Alto/Medio/Bajo) y Categoría.
+
+## 2️⃣ Skill de Búsqueda Vectorial (RAG)
+- **Propósito**: Buscar en la base de conocimientos la posible solución basándose en el problema reportado.
+
+## 3️⃣ Agente Resolutor
+- **Decisión**:
+  - Si hay un artículo RAG de alta confianza: Redacta un correo con la solución paso a paso.
+  - Si es complejo/urgente: Escala el ticket a un agente humano con un resumen ejecutivo.
+`
+    },
+    {
+      id: "agente-paralegal",
+      title: "⚖️ Agente Paralegal",
+      description: "Extracción y análisis de cláusulas en contratos y documentos legales masivos",
+      icon: "⚖️",
+      tag: "Multi-Agente",
+      content: `# AGENT SYSTEM: Revisor de Contratos
+
+> Asistente legal para analizar PDFs masivos y detectar cláusulas riesgosas.
+
+---
+
+## 🎯 Overview
+
+Extrae texto de documentos escaneados, identifica las partes, fechas y penalizaciones, y las compara con el manual de políticas de la empresa.
+
+## 🛠️ Skill Lector de Documentos (OCR)
+- **Función**: Convierte PDF/Imágenes a texto plano o Markdown.
+
+## 🤖 Agente Extractor de Entidades
+- **Función**: Navega por cientos de páginas para extraer JSON con:
+  - Partes involucradas
+  - Vigencia
+  - Jurisdicción
+  - Montos y penalizaciones
+
+## 🤖 Agente Analista de Riesgos (Validador)
+- **Función**: Compara lo extraído con reglas de negocio.
+- **Alerta**: Marca en rojo (Flag) si el contrato incluye renovaciones automáticas no autorizadas o si la jurisdicción no es local.
+- **Output**: \`Term Sheet\` o Resumen Ejecutivo de 1 página.
+`
+    }
   ],
 
   // ============================================
