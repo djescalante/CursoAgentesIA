@@ -2,12 +2,13 @@ import os
 import re
 from pathlib import Path
 
-base_path = Path("e:/IA/cursoagenteClaude")
+base_path = Path(__file__).parent.resolve()
 
 manifest_paths = [
-    base_path / "MANIFEST.md",
-    base_path / "curso-agentes-skills" / "MANIFEST.md"
+    base_path / "MANIFEST.md"
 ]
+if (base_path / "curso-agentes-skills").exists():
+    manifest_paths.append(base_path / "curso-agentes-skills" / "MANIFEST.md")
 
 def get_module_files(module_dir):
     files = []
@@ -156,8 +157,8 @@ import shutil
 from pathlib import Path
 
 def create_portable_version():
-    base_path = Path("e:/IA/cursoagenteClaude")
-    source_path = base_path / "curso-agentes-skills"
+    base_path = Path(__file__).parent.resolve()
+    source_path = base_path
     portable_path = base_path / "cursoAgentesPortable"
     
     folders = [
@@ -213,7 +214,25 @@ def create_portable_version():
     if struct_file.exists():
         shutil.copy2(struct_file, portable_path / "00_EMPIEZA_AQUI/Mapa_del_Tesoro.txt")
 
-    print(f"Exito! {copied_count} archivos organizados.")
+    # Copy web files for local offline viewing
+    web_source = base_path / "CursoAgentesWebV3"
+    if web_source.exists():
+        print("Copiando visualizador web interactivo...")
+        shutil.copy2(web_source / "index.html", portable_path / "index.html")
+        
+        # Copy css folder
+        portable_css = portable_path / "css"
+        portable_css.mkdir(exist_ok=True)
+        for css_file in (web_source / "css").glob("*.css"):
+            shutil.copy2(css_file, portable_css / css_file.name)
+            
+        # Copy js folder
+        portable_js = portable_path / "js"
+        portable_js.mkdir(exist_ok=True)
+        for js_file in (web_source / "js").glob("*.js"):
+            shutil.copy2(js_file, portable_js / js_file.name)
+
+    print(f"Exito! {copied_count} archivos organizados y visualizador V3 web copiado.")
 
 if __name__ == "__main__":
     create_portable_version()
