@@ -85,34 +85,58 @@ Skill: "Análisis de CSV"
 
 ## 🔄 Diferencias Clave
 
-| Aspecto | Agente | Skill |
-|---------|--------|-------|
-| **Alcance** | Sistema completo | Capacidad específica |
-| **Personalidad** | Tiene personalidad propia | Neutral, es una herramienta |
-| **Autonomía** | Toma decisiones | Ejecuta cuando se le llama |
-| **Composición** | Usa múltiples skills | Es atómico (no usa otros skills) |
-| **Contexto** | Mantiene conversación | Ejecución puntual |
+<div class="chart-wrapper">
+  <div class="comparison-grid">
+    <div class="comparison-card">
+      <div class="comp-icon">🤖</div>
+      <h5>Agente</h5>
+      <ul class="comp-list">
+        <li><strong>Alcance:</strong> Sistema completo</li>
+        <li><strong>Personalidad:</strong> Tiene personalidad propia</li>
+        <li><strong>Autonomía:</strong> Toma decisiones</li>
+        <li><strong>Composición:</strong> Usa múltiples skills</li>
+        <li><strong>Contexto:</strong> Mantiene conversación</li>
+      </ul>
+    </div>
+    <div class="comparison-card">
+      <div class="comp-icon">🛠️</div>
+      <h5>Skill</h5>
+      <ul class="comp-list">
+        <li><strong>Alcance:</strong> Capacidad específica</li>
+        <li><strong>Personalidad:</strong> Neutral, es una herramienta</li>
+        <li><strong>Autonomía:</strong> Ejecuta cuando se le llama</li>
+        <li><strong>Composición:</strong> Es atómico (no usa otros)</li>
+        <li><strong>Contexto:</strong> Ejecución puntual</li>
+      </ul>
+    </div>
+  </div>
+</div>
 
 ---
 
 ## 🏗️ Arquitectura Típica
 
-\`\`\`
-┌─────────────────────────────────────┐
-│           AGENTE                    │
-│  (Personalidad + Contexto)          │
-│                                     │
-│  ┌─────────┐  ┌─────────┐          │
-│  │ Skill A │  │ Skill B │          │
-│  │ (CSV)   │  │ (JSON)  │          │
-│  └─────────┘  └─────────┘          │
-│                                     │
-│  ┌─────────┐  ┌─────────┐          │
-│  │ Skill C │  │ Skill D │          │
-│  │ (API)   │  │ (Email) │          │
-│  └─────────┘  └─────────┘          │
-└─────────────────────────────────────┘
-\`\`\`
+<div class="visual-diagram-container">
+  <div class="diagram-title">🤖 Anatomía de un Agente</div>
+  <svg viewBox="0 0 400 250" width="100%" height="auto" style="background: rgba(0,0,0,0.15); border-radius: 8px; padding: 20px;">
+    <!-- Agente Contenedor -->
+    <rect x="20" y="20" width="360" height="210" rx="12" fill="rgba(108, 99, 255, 0.1)" stroke="#6C63FF" stroke-width="2" stroke-dasharray="6,6"/>
+    <text x="200" y="50" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle">AGENTE (Personalidad + Contexto)</text>
+    
+    <!-- Skills -->
+    <rect x="60" y="80" width="120" height="50" rx="8" fill="rgba(72, 207, 173, 0.2)" stroke="#48CFAD" stroke-width="2"/>
+    <text x="120" y="105" font-family="sans-serif" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">Skill A (CSV)</text>
+    
+    <rect x="220" y="80" width="120" height="50" rx="8" fill="rgba(72, 207, 173, 0.2)" stroke="#48CFAD" stroke-width="2"/>
+    <text x="280" y="105" font-family="sans-serif" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">Skill B (JSON)</text>
+    
+    <rect x="60" y="150" width="120" height="50" rx="8" fill="rgba(72, 207, 173, 0.2)" stroke="#48CFAD" stroke-width="2"/>
+    <text x="120" y="175" font-family="sans-serif" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">Skill C (API)</text>
+    
+    <rect x="220" y="150" width="120" height="50" rx="8" fill="rgba(72, 207, 173, 0.2)" stroke="#48CFAD" stroke-width="2"/>
+    <text x="280" y="175" font-family="sans-serif" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">Skill D (Email)</text>
+  </svg>
+</div>
 
 ---
 
@@ -263,6 +287,30 @@ Los Modelos de Lenguaje Grande (LLMs) como Claude o GPT-4 han sido entrenados ex
 - **Para la IA**: Entienden de manera natural la jerarquía de los encabezados (\`#\`, \`##\`), listas, bloques de código e iteraciones.
 - **Para humanos**: Es un texto limpio y fácil de leer sin el ruido visual de etiquetas complejas o llaves de cierre como en JSON/XML.
 
+<div class="chart-wrapper">
+  <h4 class="chart-title">Comparativa de Formatos</h4>
+  <div class="comparison-grid">
+    <div class="comparison-card card-bad">
+      <div class="comp-icon">📋</div>
+      <h5>JSON / Estructuras Rígidas</h5>
+      <ul class="comp-list">
+        <li class="bad">❌ Difícil de leer textos largos</li>
+        <li class="bad">❌ Errores por comas o comillas</li>
+        <li class="bad">❌ No soporta comentarios nativos</li>
+      </ul>
+    </div>
+    <div class="comparison-card card-good">
+      <div class="comp-icon">📝</div>
+      <h5>Markdown (Archivos .md)</h5>
+      <ul class="comp-list">
+        <li class="good">✅ Excelente legibilidad humana</li>
+        <li class="good">✅ Entendido perfectamente por LLMs</li>
+        <li class="good">✅ Permite formato rico y estructurado</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
 ---
 
 ## 🛠️ 2. Estructura y Flexibilidad
@@ -334,6 +382,34 @@ Ya sabemos qué son los agentes/skills y por qué utilizamos Markdown para confi
 ## 🏗️ Estructura General
 
 Un archivo \`.md\` de definición de agente o skill suele dividirse en secciones jerárquicas lógicas. A continuación, desglosamos las partes más comunes:
+
+<div class="visual-diagram-container" style="max-width: 400px; margin: 24px auto; overflow: hidden; box-sizing: border-box;">
+  <div class="diagram-title">📝 Estructura de Archivo .md</div>
+  <svg viewBox="0 0 300 350" width="100%" height="auto" style="background: rgba(0,0,0,0.15); border-radius: 8px; padding: 10px; max-width: 350px; display: block; margin: 0 auto; box-sizing: border-box;">
+    <!-- Metadatos -->
+    <rect x="20" y="20" width="260" height="40" rx="4" fill="rgba(247, 183, 49, 0.2)" stroke="#F7B731" stroke-width="1.5" stroke-dasharray="4,4"/>
+    <text x="150" y="45" font-family="sans-serif" font-size="12" fill="#F7B731" text-anchor="middle">--- Frontmatter (YAML) ---</text>
+
+    <!-- Titulo -->
+    <rect x="20" y="70" width="260" height="30" rx="4" fill="rgba(255, 255, 255, 0.1)" stroke="#ffffff" stroke-width="1.5"/>
+    <text x="30" y="90" font-family="sans-serif" font-size="14" font-weight="bold" fill="#ffffff"># Título y Propósito</text>
+
+    <!-- Secciones -->
+    <rect x="20" y="110" width="260" height="40" rx="4" fill="rgba(108, 99, 255, 0.1)" stroke="#6C63FF" stroke-width="1.5"/>
+    <text x="30" y="135" font-family="sans-serif" font-size="12" font-weight="bold" fill="#ffffff">## 🎭 Personalidad</text>
+
+    <rect x="20" y="160" width="260" height="40" rx="4" fill="rgba(252, 92, 125, 0.1)" stroke="#FC5C7D" stroke-width="1.5"/>
+    <text x="30" y="185" font-family="sans-serif" font-size="12" font-weight="bold" fill="#ffffff">## ⚠️ Reglas Estrictas</text>
+
+    <rect x="20" y="210" width="260" height="60" rx="4" fill="rgba(72, 207, 173, 0.1)" stroke="#48CFAD" stroke-width="1.5"/>
+    <text x="30" y="235" font-family="sans-serif" font-size="12" font-weight="bold" fill="#ffffff">## ⚙️ Capacidades / Pasos</text>
+    <text x="30" y="255" font-family="sans-serif" font-size="10" fill="#aaaaaa">1. Paso uno... 2. Paso dos...</text>
+
+    <rect x="20" y="280" width="260" height="50" rx="4" fill="rgba(16, 185, 129, 0.1)" stroke="#10B981" stroke-width="1.5"/>
+    <text x="30" y="300" font-family="sans-serif" font-size="12" font-weight="bold" fill="#ffffff">## 📝 Ejemplos</text>
+    <text x="30" y="320" font-family="sans-serif" font-size="10" fill="#aaaaaa">Ejemplo Entrada -> Salida</text>
+  </svg>
+</div>
 
 ### 1. Frontmatter o Metadatos (Opcional pero recomendado)
 Suele ir al principio del archivo para definir variables de sistema.
@@ -478,12 +554,30 @@ Al final de este módulo sabrás:
 
 Todo agente debe tener estos elementos mínimos:
 
-\`\`\`markdown
-1. Identity (Quién es)
-2. Personality (Cómo se comporta)
-3. Capabilities (Qué puede hacer)
-4. Guidelines (Cómo lo hace)
-\`\`\`
+<div class="chart-wrapper">
+  <div class="achievements-grid">
+    <div class="achievement-card earned">
+      <div class="ach-icon">👤</div>
+      <div class="ach-name">1. Identity</div>
+      <div class="ach-desc">Quién es el agente</div>
+    </div>
+    <div class="achievement-card earned">
+      <div class="ach-icon">🎭</div>
+      <div class="ach-name">2. Personality</div>
+      <div class="ach-desc">Cómo se comporta</div>
+    </div>
+    <div class="achievement-card earned">
+      <div class="ach-icon">⚡</div>
+      <div class="ach-name">3. Capabilities</div>
+      <div class="ach-desc">Qué puede hacer</div>
+    </div>
+    <div class="achievement-card earned">
+      <div class="ach-icon">📜</div>
+      <div class="ach-name">4. Guidelines</div>
+      <div class="ach-desc">Cómo lo hace (Reglas)</div>
+    </div>
+  </div>
+</div>
 
 ---
 
@@ -771,69 +865,71 @@ Overall:
 
 ## 🚨 Errores Comunes
 
-### ❌ Error 1: Demasiado Vago
+### 1. Demasiado Vago
 
-\`\`\`markdown
-# BAD
-## Identity
-A helpful assistant that helps with things.
-\`\`\`
-
-### ✅ Corrección:
-
-\`\`\`markdown
-# GOOD
-## Identity
+<div class="comparison-grid">
+  <div class="comparison-card card-bad">
+    <div class="comp-icon">❌</div>
+    <h5>MAL (Vago)</h5>
+    <pre style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; font-size: 12px; margin-top: 10px;"><code style="color: #fca5a5;">## Identity
+A helpful assistant that helps with things.</code></pre>
+  </div>
+  <div class="comparison-card card-good">
+    <div class="comp-icon">✅</div>
+    <h5>BIEN (Específico)</h5>
+    <pre style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; font-size: 12px; margin-top: 10px;"><code style="color: #6ee7b7;">## Identity
 You are MathTutor, a patient mathematics teacher specializing in 
-algebra and calculus for high school students.
-\`\`\`
+algebra and calculus for high school students.</code></pre>
+  </div>
+</div>
 
 ---
 
-### ❌ Error 2: Personalidad Contradictoria
+### 2. Personalidad Contradictoria
 
-\`\`\`markdown
-# BAD
-## Personality
+<div class="comparison-grid">
+  <div class="comparison-card card-bad">
+    <div class="comp-icon">❌</div>
+    <h5>MAL (Contradictorio)</h5>
+    <pre style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; font-size: 12px; margin-top: 10px;"><code style="color: #fca5a5;">## Personality
 - Very formal and professional
 - Uses lots of emojis and slang
-- Casual and fun
-\`\`\`
-
-### ✅ Corrección:
-
-\`\`\`markdown
-# GOOD
-## Personality
+- Casual and fun</code></pre>
+  </div>
+  <div class="comparison-card card-good">
+    <div class="comp-icon">✅</div>
+    <h5>BIEN (Coherente)</h5>
+    <pre style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; font-size: 12px; margin-top: 10px;"><code style="color: #6ee7b7;">## Personality
 - Professional but approachable
 - Uses clear, simple language
 - Friendly tone without being overly casual
-- Occasionally uses relevant examples from pop culture
-\`\`\`
+- Occasionally uses relevant examples</code></pre>
+  </div>
+</div>
 
 ---
 
-### ❌ Error 3: Capacidades Vagas
+### 3. Capacidades Vagas
 
-\`\`\`markdown
-# BAD
-## Capabilities
+<div class="comparison-grid">
+  <div class="comparison-card card-bad">
+    <div class="comp-icon">❌</div>
+    <h5>MAL (Amplio)</h5>
+    <pre style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; font-size: 12px; margin-top: 10px;"><code style="color: #fca5a5;">## Capabilities
 - Help with stuff
 - Answer questions
-- Be useful
-\`\`\`
-
-### ✅ Corrección:
-
-\`\`\`markdown
-# GOOD
-## Capabilities
+- Be useful</code></pre>
+  </div>
+  <div class="comparison-card card-good">
+    <div class="comp-icon">✅</div>
+    <h5>BIEN (Accionable)</h5>
+    <pre style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; font-size: 12px; margin-top: 10px;"><code style="color: #6ee7b7;">## Capabilities
 - Debug Python code and explain errors
 - Suggest performance optimizations
 - Review code for PEP 8 compliance
-- Generate unit tests for functions
-- Explain complex algorithms step-by-step
-\`\`\`
+- Generate unit tests for functions</code></pre>
+  </div>
+</div>
 
 ---
 
@@ -1064,10 +1160,27 @@ pattern hundreds of times and can confirm this approach will work."
 
 ### Framework: PACE
 
-**P**rofessional Level (Formal ↔ Casual)  
-**A**pproach (Directivo ↔ Colaborativo)  
-**C**onfidence (Humilde ↔ Experto)  
-**E**nergy (Calmado ↔ Entusiasta)
+<div class="visual-diagram-container">
+  <div class="diagram-title">🧭 Espectro de Personalidad (PACE)</div>
+  <div class="kpi-bars">
+    <div class="kpi-item">
+      <div class="kpi-label" style="display: flex; justify-content: space-between;"><span>P - Professional Level</span> <span>Formal ↔ Casual</span></div>
+      <div class="kpi-bar-track"><div class="kpi-bar-fill" style="width: 100%; background: linear-gradient(90deg, #6C63FF, #48CFAD);"></div></div>
+    </div>
+    <div class="kpi-item">
+      <div class="kpi-label" style="display: flex; justify-content: space-between;"><span>A - Approach</span> <span>Directivo ↔ Colaborativo</span></div>
+      <div class="kpi-bar-track"><div class="kpi-bar-fill" style="width: 100%; background: linear-gradient(90deg, #FC5C7D, #F7B731);"></div></div>
+    </div>
+    <div class="kpi-item">
+      <div class="kpi-label" style="display: flex; justify-content: space-between;"><span>C - Confidence</span> <span>Humilde ↔ Experto</span></div>
+      <div class="kpi-bar-track"><div class="kpi-bar-fill" style="width: 100%; background: linear-gradient(90deg, #48CFAD, #10B981);"></div></div>
+    </div>
+    <div class="kpi-item">
+      <div class="kpi-label" style="display: flex; justify-content: space-between;"><span>E - Energy</span> <span>Calmado ↔ Entusiasta</span></div>
+      <div class="kpi-bar-track"><div class="kpi-bar-fill" style="width: 100%; background: linear-gradient(90deg, #F7B731, #FC5C7D);"></div></div>
+    </div>
+  </div>
+</div>
 
 ### Ejemplo 1: Agente Técnico
 
@@ -1385,26 +1498,28 @@ Si le decimos a un agente "eres un programador", el agente asumirá muchas cosas
 
 La sección \`## Capabilities\` o \`## Habilidades\` en tu archivo Markdown debe ser una lista clara y concisa de acciones. 
 
-### ❌ Mal Ejemplo (Demasiado vago)
-
-\`\`\`markdown
-## Capacidades
+<div class="comparison-grid" style="margin: 24px 0;">
+  <div class="comparison-card card-bad">
+    <div class="comp-icon">❌</div>
+    <h5>Mal Ejemplo (Vago)</h5>
+    <pre style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; font-size: 12px; margin-top: 10px;"><code style="color: #fca5a5;">## Capacidades
 - Puede ayudar con bases de datos.
 - Sabe programar.
-- Resuelve dudas.
-\`\`\`
-*Problema:* El modelo no sabe qué lenguajes soporta, qué nivel de acceso tiene a la base de datos o qué tipo de dudas debe resolver.
-
-### ✅ Buen Ejemplo (Específico y accionable)
-
-\`\`\`markdown
-## Capacidades
-- Diseñar esquemas de bases de datos relacionales (PostgreSQL/MySQL).
-- Redactar y optimizar consultas SQL complejas.
-- Traducir requerimientos de negocio a diagramas de Entidad-Relación.
-- Detectar ineficiencias (N+1 queries, falta de índices) en código existente.
-\`\`\`
-*Ventaja:* El agente sabe exactamente su perímetro de acción. No intentará programar el frontend porque no está en sus capacidades.
+- Resuelve dudas.</code></pre>
+    <p style="font-size: 11px; margin-top: 10px; color: #fca5a5;"><strong>Problema:</strong> El modelo no sabe qué lenguajes soporta, ni qué tipo de dudas debe resolver.</p>
+  </div>
+  
+  <div class="comparison-card card-good">
+    <div class="comp-icon">✅</div>
+    <h5>Buen Ejemplo (Específico)</h5>
+    <pre style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; font-size: 12px; margin-top: 10px;"><code style="color: #6ee7b7;">## Capacidades
+- Diseñar esquemas relacionales (PostgreSQL).
+- Redactar y optimizar consultas SQL.
+- Traducir requerimientos a diagramas ER.
+- Detectar ineficiencias en código.</code></pre>
+    <p style="font-size: 11px; margin-top: 10px; color: #6ee7b7;"><strong>Ventaja:</strong> El agente sabe exactamente su perímetro de acción. No intentará programar frontend.</p>
+  </div>
+</div>
 
 ---
 
@@ -1863,12 +1978,30 @@ A diferencia de un Agente, un Skill en nuestro formato Markdown se caracteriza p
 
 ## 📝 Agente vs Skill: Resumen
 
-| Característica | Agente | Skill |
-| :--- | :--- | :--- |
-| **Rol principal** | Orquestar, planificar, conversar | Ejecutar una tarea repetitiva/técnica |
-| **Tono / Personalidad** | Sí, definida (amigable, formal, etc.) | No, estrictamente funcional |
-| **Uso de contexto** | Alto (recuerda la conversación) | Bajo (solo procesa el input recibido) |
-| **Interacción** | Interactúa con el usuario y con Skills | Solo interactúa con el Agente que lo llama |
+<div class="chart-wrapper">
+  <div class="comparison-grid">
+    <div class="comparison-card" style="border-color: rgba(108, 99, 255, 0.3); background: rgba(108, 99, 255, 0.03);">
+      <div class="comp-icon">🤖</div>
+      <h5>Agente (El Chef)</h5>
+      <ul class="comp-list">
+        <li><strong>Rol:</strong> Orquestar, planificar, conversar</li>
+        <li><strong>Tono:</strong> Definido (amigable, formal, etc.)</li>
+        <li><strong>Contexto:</strong> Alto (recuerda la charla)</li>
+        <li><strong>Interacción:</strong> Habla con usuario y Skills</li>
+      </ul>
+    </div>
+    <div class="comparison-card" style="border-color: rgba(72, 207, 173, 0.3); background: rgba(72, 207, 173, 0.03);">
+      <div class="comp-icon">🛠️</div>
+      <h5>Skill (La Herramienta)</h5>
+      <ul class="comp-list">
+        <li><strong>Rol:</strong> Tarea repetitiva/técnica</li>
+        <li><strong>Tono:</strong> Funcional (sin personalidad)</li>
+        <li><strong>Contexto:</strong> Bajo (solo procesa input)</li>
+        <li><strong>Interacción:</strong> Habla solo con el Agente</li>
+      </ul>
+    </div>
+  </div>
+</div>
 
 ---
 
@@ -1909,36 +2042,50 @@ Un archivo \`SKILL.md\` bien estructurado es la clave para que tu skill sea efec
 
 ## 🏗️ Estructura Estándar
 
-\`\`\`markdown
-# SKILL: [Nombre del Skill]
-
-## Description
-[Qué hace este skill en 1-3 oraciones]
-
-## Triggers
-[Cuándo debe activarse este skill]
-
-## Inputs
-[Qué información necesita]
-
-## Process
-[Pasos detallados de ejecución]
-
-## Outputs
-[Qué produce/retorna]
-
-## Error Handling
-[Cómo manejar errores comunes]
-
-## Examples
-[Casos de uso concretos]
-
-## Dependencies
-[Herramientas/bibliotecas necesarias]
-
-## Notes
-[Consideraciones adicionales]
-\`\`\`
+<div class="chart-wrapper">
+  <div class="achievements-grid">
+    <div class="achievement-card">
+      <div class="ach-icon">📝</div>
+      <div class="ach-name">Description</div>
+      <div class="ach-desc">Qué hace el skill</div>
+    </div>
+    <div class="achievement-card">
+      <div class="ach-icon">⚡</div>
+      <div class="ach-name">Triggers</div>
+      <div class="ach-desc">Cuándo se activa</div>
+    </div>
+    <div class="achievement-card">
+      <div class="ach-icon">📥</div>
+      <div class="ach-name">Inputs</div>
+      <div class="ach-desc">Qué necesita</div>
+    </div>
+    <div class="achievement-card">
+      <div class="ach-icon">⚙️</div>
+      <div class="ach-name">Process</div>
+      <div class="ach-desc">Pasos lógicos</div>
+    </div>
+    <div class="achievement-card">
+      <div class="ach-icon">📤</div>
+      <div class="ach-name">Outputs</div>
+      <div class="ach-desc">Qué retorna</div>
+    </div>
+    <div class="achievement-card">
+      <div class="ach-icon">⚠️</div>
+      <div class="ach-name">Error Handling</div>
+      <div class="ach-desc">Manejo de fallos</div>
+    </div>
+    <div class="achievement-card">
+      <div class="ach-icon">💡</div>
+      <div class="ach-name">Examples</div>
+      <div class="ach-desc">Casos de uso</div>
+    </div>
+    <div class="achievement-card">
+      <div class="ach-icon">🔗</div>
+      <div class="ach-name">Dependencies</div>
+      <div class="ach-desc">Bibliotecas</div>
+    </div>
+  </div>
+</div>
 
 ---
 
@@ -2408,17 +2555,28 @@ Debe:
 
 Los triggers son **la diferencia entre un skill útil y uno ignorado**.
 
-Sin buenos triggers:
-- ❌ El skill nunca se activa
-- ❌ Se activa cuando no debe
-- ❌ Compite con otros skills
-- ❌ El agente se confunde
-
-Con buenos triggers:
-- ✅ Activación precisa
-- ✅ Sin falsos positivos
-- ✅ Skills complementarios
-- ✅ Agente eficiente
+<div class="comparison-grid" style="margin-top: 20px;">
+  <div class="comparison-card card-bad">
+    <div class="comp-icon">⚠️</div>
+    <h5>Sin buenos triggers:</h5>
+    <ul class="comp-list">
+      <li class="bad">❌ El skill nunca se activa</li>
+      <li class="bad">❌ Se activa cuando no debe</li>
+      <li class="bad">❌ Compite con otros skills</li>
+      <li class="bad">❌ El agente se confunde</li>
+    </ul>
+  </div>
+  <div class="comparison-card card-good">
+    <div class="comp-icon">🎯</div>
+    <h5>Con buenos triggers:</h5>
+    <ul class="comp-list">
+      <li class="good">✅ Activación precisa</li>
+      <li class="good">✅ Sin falsos positivos</li>
+      <li class="good">✅ Skills complementarios</li>
+      <li class="good">✅ Agente eficiente</li>
+    </ul>
+  </div>
+</div>
 
 ---
 
@@ -4175,100 +4333,108 @@ Let me start..."
 
 ## 🏗️ Arquitectura de Skills Múltiples
 
-### Pattern 1: Secuencial
+### Patrones de Orquestación de Skills
 
-Skills se ejecutan uno después del otro:
-
-\`\`\`
-Input → Skill A → Output A → Skill B → Output B → Final Result
-\`\`\`
-
-**Ejemplo**: Análisis de Datos + Reporte
-\`\`\`markdown
-# AGENT: Data Reporter
-
-## Available Skills
-1. CSV Analyzer - Analiza archivos CSV
-2. Insight Generator - Identifica patrones
-3. Report Writer - Crea reportes formateados
-
-## Workflow
-User uploads CSV → 
-  Skill 1 (CSV Analyzer) analyzes data →
-    Skill 2 (Insight Generator) finds patterns →
-      Skill 3 (Report Writer) creates report →
-        Return final report to user
-\`\`\`
-
----
-
-### Pattern 2: Paralelo
-
-Múltiples skills se ejecutan simultáneamente:
-
-\`\`\`
-Input → ┌─ Skill A → Output A ─┐
-        ├─ Skill B → Output B ─┤→ Combined Result
-        └─ Skill C → Output C ─┘
-\`\`\`
-
-**Ejemplo**: Análisis Multi-Perspectiva
-\`\`\`markdown
-# AGENT: Business Analyst
-
-## Available Skills
-1. Financial Analyzer - Perspectiva financiera
-2. Customer Analyzer - Perspectiva de clientes
-3. Operational Analyzer - Perspectiva operacional
-
-## Workflow
-User asks: "Analyze Q1 performance" →
-  → Skill 1 analyzes finances
-  → Skill 2 analyzes customers    } All at once
-  → Skill 3 analyzes operations
-    → Combine all perspectives → Comprehensive report
-\`\`\`
-
----
-
-### Pattern 3: Condicional
-
-Skills se activan según condiciones:
-
-\`\`\`
-Input → Condition Check → 
-  IF condition A → Skill A
-  IF condition B → Skill B
-  IF condition C → Skill C
-\`\`\`
-
-**Ejemplo**: Support Bot Adaptativo
-\`\`\`markdown
-# AGENT: Smart Support
-
-## Skills
-1. FAQ Searcher - Para preguntas comunes
-2. Order Tracker - Para status de órdenes
-3. Technical Troubleshooter - Para problemas técnicos
-4. Escalation Manager - Para casos complejos
-
-## Routing Logic
-\`\`\`
-IF user_query contains "order" OR "tracking":
-    USE Order Tracker skill
-
-ELSE IF user_query matches FAQ topics:
-    USE FAQ Searcher skill
-
-ELSE IF user_query describes technical problem:
-    USE Technical Troubleshooter skill
-
-ELSE IF user seems frustrated OR issue unresolved:
-    USE Escalation Manager skill
-\`\`\`
-\`\`\`
-
----
+<div class="visual-diagram-container">
+  <div class="diagram-title">🧩 Patrones de Orquestación de Skills</div>
+  <div class="css-tabs">
+    <input type="radio" name="pattern-tabs" id="tab-opt1" checked>
+    <input type="radio" name="pattern-tabs" id="tab-opt2">
+    <input type="radio" name="pattern-tabs" id="tab-opt3">
+    <div class="css-tabs-nav">
+      <label for="tab-opt1">1. Secuencial</label>
+      <label for="tab-opt2">2. Paralelo</label>
+      <label for="tab-opt3">3. Condicional</label>
+    </div>
+    <div class="tab-content">
+      <!-- Pane 1: Secuencial -->
+      <div class="tab-pane" id="pane1">
+        <p style="margin-bottom: 12px; font-size: 0.9rem; color: var(--text-secondary);">Los skills se ejecutan uno después del otro, donde la salida de uno es la entrada del siguiente:</p>
+        <div class="flow-flex">
+          <div class="flow-step-card">
+            <div class="step-number">1</div>
+            <div class="step-title">CSV Analyzer</div>
+            <div class="step-desc">Lee y analiza los datos brutos del archivo CSV</div>
+          </div>
+          <div class="flow-arrow-icon">→</div>
+          <div class="flow-step-card">
+            <div class="step-number">2</div>
+            <div class="step-title">Insight Generator</div>
+            <div class="step-desc">Identifica patrones, anomalías y tendencias clave</div>
+          </div>
+          <div class="flow-arrow-icon">→</div>
+          <div class="flow-step-card">
+            <div class="step-number">3</div>
+            <div class="step-title">Report Writer</div>
+            <div class="step-desc">Formatea los hallazgos en un reporte profesional</div>
+          </div>
+        </div>
+      </div>
+      <!-- Pane 2: Paralelo -->
+      <div class="tab-pane" id="pane2">
+        <p style="margin-bottom: 12px; font-size: 0.9rem; color: var(--text-secondary);">Múltiples skills se ejecutan simultáneamente para analizar diferentes perspectivas del mismo input:</p>
+        <div class="parallel-grid">
+          <div class="flow-step-card" style="max-width: 140px;">
+            <div class="step-title">Input</div>
+            <div class="step-desc">Consulta: "Analizar Q1"</div>
+          </div>
+          <div class="parallel-branches">
+            <div class="parallel-node">
+              <span class="parallel-icon">💰</span>
+              <div>
+                <div style="font-weight:700; font-size:0.9rem;">Financial Analyzer</div>
+                <div style="font-size:0.75rem; color:var(--text-secondary);">Analiza métricas de ingresos y costos</div>
+              </div>
+            </div>
+            <div class="parallel-node">
+              <span class="parallel-icon">👥</span>
+              <div>
+                <div style="font-weight:700; font-size:0.9rem;">Customer Analyzer</div>
+                <div style="font-size:0.75rem; color:var(--text-secondary);">Analiza retención y satisfacción de clientes</div>
+              </div>
+            </div>
+            <div class="parallel-node">
+              <span class="parallel-icon">⚙️</span>
+              <div>
+                <div style="font-weight:700; font-size:0.9rem;">Operational Analyzer</div>
+                <div style="font-size:0.75rem; color:var(--text-secondary);">Analiza eficiencia de procesos de entrega</div>
+              </div>
+            </div>
+          </div>
+          <div class="flow-step-card" style="max-width: 150px;">
+            <div class="step-title">Resultado</div>
+            <div class="step-desc">Reporte integral multi-perspectiva</div>
+          </div>
+        </div>
+      </div>
+      <!-- Pane 3: Condicional -->
+      <div class="tab-pane" id="pane3">
+        <p style="margin-bottom: 12px; font-size: 0.9rem; color: var(--text-secondary);">El agente evalúa el query del usuario y decide dinámicamente qué skill activar:</p>
+        <div class="routing-container">
+          <div class="router-box">
+            <span class="router-icon">⚙️</span>
+            <div style="font-weight: 800; font-size: 0.95rem;">Skill Router</div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary);">Analiza intención del usuario</div>
+          </div>
+          <div class="routing-branches">
+            <div class="route-path">
+              <div class="route-cond">IF user_query contains "order" OR "tracking"</div>
+              <div class="route-target">👉 Activar: <strong>Order Tracker</strong></div>
+            </div>
+            <div class="route-path">
+              <div class="route-cond">ELSE IF user_query matches FAQ topics</div>
+              <div class="route-target">👉 Activar: <strong>FAQ Searcher</strong></div>
+            </div>
+            <div class="route-path">
+              <div class="route-cond">ELSE IF user_query describes technical problem</div>
+              <div class="route-target">👉 Activar: <strong>Technical Troubleshooter</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 ## 📝 Implementación: Agente Multi-Skill
 
@@ -4528,15 +4694,43 @@ Here's your report: [report]"
 
 ## 📊 Skill Combination Matrix
 
-| Situation | Skills Used | Order |
-|-----------|------------|-------|
-| "Analyze CSV and report" | Analyzer + Reporter | Sequential |
-| "Compare these datasets" | Analyzer (2x) + Comparator | Parallel → Sequential |
-| "Help me write content" | Ideator OR Outliner OR Writer | Conditional |
-| "Review this article" | Editor + SEO Optimizer | Sequential (optional 2nd) |
-| "Fix my code" | Debugger → Reviewer | Conditional chain |
-
----
+<div class="visual-diagram-container">
+  <div class="diagram-title">📊 Matriz de Combinación de Skills</div>
+  <div class="matrix-flex-grid">
+    <div class="matrix-item-card">
+      <div class="matrix-badge-row">
+        <span class="matrix-badge seq">Secuencial</span>
+        <span style="font-size: 1.2rem;">📊</span>
+      </div>
+      <div class="matrix-situation">Análisis de CSV y Reporte</div>
+      <div class="matrix-skills">CSV Analyzer + Report Writer</div>
+    </div>
+    <div class="matrix-item-card">
+      <div class="matrix-badge-row">
+        <span class="matrix-badge par">Paralelo</span>
+        <span style="font-size: 1.2rem;">⚖️</span>
+      </div>
+      <div class="matrix-situation">Comparación de Datasets</div>
+      <div class="matrix-skills">Analyzer (2x) + Comparator</div>
+    </div>
+    <div class="matrix-item-card">
+      <div class="matrix-badge-row">
+        <span class="matrix-badge cond">Condicional</span>
+        <span style="font-size: 1.2rem;">✍️</span>
+      </div>
+      <div class="matrix-situation">Asistente de Escritura</div>
+      <div class="matrix-skills">Ideator OR Outliner OR Writer</div>
+    </div>
+    <div class="matrix-item-card">
+      <div class="matrix-badge-row">
+        <span class="matrix-badge seq">Secuencial</span>
+        <span style="font-size: 1.2rem;">🔍</span>
+      </div>
+      <div class="matrix-situation">Revisión de Artículos</div>
+      <div class="matrix-skills">Editor + SEO Optimizer</div>
+    </div>
+  </div>
+</div>
 
 ## 💡 Best Practices
 
@@ -4666,25 +4860,30 @@ Imagina una línea de ensamblaje en una fábrica de autos. El trabajador de chas
 
 ### 🤔 ¿Por qué NO usar un solo agente para todo?
 
-Un único agente que intenta hacer todo sufre de varios problemas:
-
-| Problema | Descripción |
-|---|---|
-| **Distracción cognitiva** | El modelo "piensa" en demasiadas cosas a la vez, perdiendo precisión |
-| **Sesgos de confirmación** | El mismo agente que crea algo también lo revisa, tendiendo a ignorar sus propios errores |
-| **Contexto contaminado** | El proceso de "borrador" ensucia la ventana de contexto del resultado final |
-| **Difícil de depurar** | Si falla, no sabes en qué etapa ocurrió el error |
-| **No escalable** | Para mejorarlo, debes reescribir todo |
-
-### ✅ ¿Por qué SÍ encadenar agentes?
-
-1. **Calidad superior:** Un agente que solo hace "Review" siempre será más crítico que el agente que escribió el contenido originalmente. La separación de responsabilidades elimina el sesgo.
-2. **Contexto limpio:** El agente final recibe únicamente el output pulido del anterior, sin el "ruido" ni los pasos intermedios que usó el primer agente.
-3. **Escalabilidad:** Puedes reemplazar el "Agente Redactor" por una versión mejorada sin afectar al "Agente Traductor" que va después.
-4. **Depuración sencilla:** Si la cadena falla, puedes ver exactamente qué agente produjo el output incorrecto.
-5. **Especialización profunda:** Cada agente puede tener un prompt perfectamente optimizado para UNA sola tarea.
-
----
+<div class="compare-two-col" style="max-width: 800px; margin: 24px auto;">
+  <div class="compare-box bad-way">
+    <div class="compare-header">
+      <span>❌</span> Agente Único (Monolítico)
+    </div>
+    <ul class="compare-list">
+      <li><strong>Distracción cognitiva:</strong> El modelo piensa en demasiadas tareas a la vez, perdiendo precisión.</li>
+      <li><strong>Sesgo de confirmación:</strong> El mismo agente escribe y se auto-evalúa, ignorando sus errores.</li>
+      <li><strong>Contexto contaminado:</strong> Los borradores intermedios ensucian la memoria de trabajo.</li>
+      <li><strong>Difícil depuración:</strong> Si el sistema falla, es difícil saber exactamente qué falló.</li>
+    </ul>
+  </div>
+  <div class="compare-box good-way">
+    <div class="compare-header">
+      <span>✅</span> Cadena de Agentes (Especialistas)
+    </div>
+    <ul class="compare-list">
+      <li><strong>Calidad superior:</strong> Cada agente se enfoca al 100% en una sola tarea (Arquitecto, Programador, etc.).</li>
+      <li><strong>Contexto limpio:</strong> Cada agente recibe solo el output pulido del paso anterior.</li>
+      <li><strong>Separación de roles:</strong> Un agente externo e imparcial revisa los resultados sin sesgo.</li>
+      <li><strong>Fácil mantenimiento:</strong> Reemplaza o mejora un agente de la cadena sin afectar a los demás.</li>
+    </ul>
+  </div>
+</div>
 
 ## 🏗️ Anatomía de una Cadena Típica
 
@@ -4707,22 +4906,37 @@ graph LR
 
 ### Tipos de flujo en una cadena
 
-\`\`\`
-Flujo Lineal (más común):
-A → B → C → D → Output
+<div class="visual-diagram-container" style="max-width: 600px; margin: 24px auto; box-sizing: border-box;">
+  <div class="diagram-title">🔗 Tipos de Flujos de Trabajo en Cadenas</div>
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    
+    <div style="background: rgba(108,99,255,0.03); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px;">
+      <div style="font-weight: 700; font-size: 0.9rem; margin-bottom: 8px; color: var(--brand-from);">1. Flujo Lineal (Secuencial Clásico)</div>
+      <div class="flow-flex">
+        <div class="flow-step-card" style="padding: 10px;"><div class="step-title">Agente A</div><div style="font-size: 0.75rem; color: var(--text-muted);">Investiga</div></div>
+        <div class="flow-arrow-icon">→</div>
+        <div class="flow-step-card" style="padding: 10px;"><div class="step-title">Agente B</div><div style="font-size: 0.75rem; color: var(--text-muted);">Redacta</div></div>
+        <div class="flow-arrow-icon">→</div>
+        <div class="flow-step-card" style="padding: 10px;"><div class="step-title">Agente C</div><div style="font-size: 0.75rem; color: var(--text-muted);">Edita</div></div>
+        <div class="flow-arrow-icon">→</div>
+        <div class="flow-step-card" style="padding: 10px;"><div class="step-title">Output</div><div style="font-size: 0.75rem; color: var(--text-muted);">Publicado</div></div>
+      </div>
+    </div>
 
-Flujo con Bucle de Retroalimentación:
-A → B → C → (¿OK?) --No--> B
-                  --Sí--> D → Output
+    <div style="background: rgba(108,99,255,0.03); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px;">
+      <div style="font-weight: 700; font-size: 0.9rem; margin-bottom: 8px; color: var(--brand-to);">2. Flujo con Ramificación (Enrutado)</div>
+      <div class="parallel-grid" style="margin: 0;">
+        <div class="flow-step-card" style="padding: 10px; max-width: 130px;"><div class="step-title">Agente A</div><div style="font-size: 0.75rem; color: var(--text-muted);">Enrutador</div></div>
+        <div class="parallel-branches">
+          <div class="parallel-node" style="padding: 8px 12px;"><span style="font-size: 1rem;">📧</span> <div style="font-size: 0.8rem; font-weight:700;">Agente Email</div></div>
+          <div class="parallel-node" style="padding: 8px 12px;"><span style="font-size: 1rem;">💬</span> <div style="font-size: 0.8rem; font-weight:700;">Agente Chat</div></div>
+        </div>
+        <div class="flow-step-card" style="padding: 10px; max-width: 130px;"><div class="step-title">Resolución</div><div style="font-size: 0.75rem; color: var(--text-muted);">Usuario</div></div>
+      </div>
+    </div>
 
-Flujo con Ramificación:
-A → B → ¿Tipo de tarea?
-          ├─ Si es X → Agente X → Output
-          ├─ Si es Y → Agente Y → Output
-          └─ Si es Z → Agente Z → Output
-\`\`\`
-
----
+  </div>
+</div>
 
 ## 📝 Implementando Cadenas con Archivos Markdown
 
@@ -4850,48 +5064,35 @@ Esta cadena es especialmente poderosa porque:
 
 ### Ejemplo 3: Cadena con Bucle de Calidad (QA Loop)
 
-Este patrón es ideal cuando la calidad es crítica y no puedes permitirte errores.
-
-\`\`\`
-[Agente Generador] → [Agente Validador]
-        ↑                    |
-        |                    | ¿Validación OK?
-        |                    |
-        |-- No, hay errores --'
-        |
-        '-- Sí → [Agente Publicador]
-\`\`\`
-
-**Configuración del Agente Validador:**
-\`\`\`markdown
-# AGENT: Validador de Calidad
-
-## Entrada
-Recibirás el output del Agente Generador.
-
-## Proceso
-1. Verifica que el output cumple TODOS los criterios de calidad
-2. Puntúa de 0 a 100
-3. Si la puntuación es < 85, devuelve el output al Generador con feedback específico
-4. Si la puntuación es >= 85, aprueba y pasa al Publicador
-
-## Output
-\`\`\`json
-{
-  "puntuacion": 0,
-  "aprobado": false,
-  "feedback": "Lista de mejoras específicas necesarias",
-  "iteracion_actual": 1,
-  "max_iteraciones": 3
-}
-\`\`\`
-
-## IMPORTANTE
-- Nunca superes las 3 iteraciones (max_iterations: 3)
-- Si llegas a 3 iteraciones sin aprobar, pasa con puntuación actual y una nota de advertencia
-\`\`\`
-
----
+<div class="visual-diagram-container" style="max-width: 600px; margin: 24px auto; box-sizing: border-box;">
+  <div class="diagram-title">🔄 Bucle de Calidad (QA Loop Pattern)</div>
+  <div class="qa-loop-wrapper">
+    <div class="qa-node">
+      <div style="font-weight: 700; font-size: 0.95rem;">Agente Generador</div>
+      <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px;">Crea borrador de código o texto</div>
+    </div>
+    <div class="qa-loop-arrow">
+      <span>Envía borrador</span>
+      <span style="font-size: 1.2rem;">→</span>
+    </div>
+    <div class="qa-node specialist">
+      <div style="font-weight: 700; font-size: 0.95rem; color: var(--brand-to);">Agente Validador (QA)</div>
+      <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px;">Evalúa calidad (0 - 100)</div>
+    </div>
+    <div class="qa-loop-arrow back">
+      <span style="font-weight: 700;">¿Score &lt; 85?</span>
+      <span>↩️ Devuelve con Feedback</span>
+    </div>
+    <div class="qa-loop-arrow">
+      <span style="color: var(--success); font-weight: 700;">¿Score ≥ 85?</span>
+      <span style="font-size: 1.2rem;">→</span>
+    </div>
+    <div class="qa-node" style="border-color: var(--border-hover);">
+      <div style="font-weight: 700; font-size: 0.95rem;">Agente Publicador</div>
+      <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px;">Envía a producción</div>
+    </div>
+  </div>
+</div>
 
 ## ⚙️ Protocolo de Comunicación Entre Agentes
 
@@ -5043,37 +5244,26 @@ Si le enviamos el historial completo cada vez, rápidamente superaremos la "Vent
 
 ## 🛠️ Tipos de Memoria para Agentes
 
-Existen tres formas principales de gestionar la memoria, y podemos configurarlas en nuestros archivos Markdown.
-
-### 1. Memoria de Corto Plazo (Historial Reciente)
-Consiste en pasar únicamente los últimos *N* mensajes intercambiados (por ejemplo, los últimos 5 mensajes). Es útil para mantener el hilo de una conversación casual.
-
-*En tu archivo Markdown de configuración puedes dictar una regla sobre esto:*
-\`\`\`markdown
-## Reglas de Memoria
-- Al responder, haz referencia siempre a los datos del mensaje inmediatamente anterior para mantener fluidez.
-\`\`\`
-
-### 2. Memoria de Trabajo (Resumen de Contexto)
-En lugar de recordar palabra por palabra, el sistema mantiene un resumen actualizado. Cada vez que hay nueva información, un pequeño "Skill resumidor" reescribe el estado actual.
-
-*Puedes definir un agente que haga esto:*
-\`\`\`markdown
-## Capacidades
-- Eres el encargado de leer el resumen antiguo y el nuevo turno de conversación. 
-- Debes emitir un nuevo resumen consolidado, borrando información irrelevante y conservando fechas y nombres clave.
-\`\`\`
-
-### 3. Memoria de Largo Plazo (RAG - Retrieval-Augmented Generation)
-Esta es la técnica más avanzada. Consiste en guardar datos en una base de datos externa (como una base de datos vectorial) e inyectar al agente solo los fragmentos relevantes cuando hace una búsqueda.
-
-*Cómo documentar esto en el Markdown de tu agente principal:*
-\`\`\`markdown
-## Habilidades (Skills)
-- Tienes acceso al skill \`Consultar_Base_Conocimiento\`. Úsalo SIEMPRE que el usuario te pregunte sobre políticas de la empresa, historia o datos de clientes pasados, antes de intentar responder con tus datos pre-entrenados.
-\`\`\`
-
----
+<div class="visual-diagram-container">
+  <div class="diagram-title">🧠 Tipos de Memoria para Agentes</div>
+  <div class="memory-grid">
+    <div class="memory-type-card">
+      <div class="memory-icon-header">⏱️</div>
+      <div class="memory-title-card">Corto Plazo (Historial Reciente)</div>
+      <div class="memory-desc-card">Conserva los últimos N mensajes para mantener la fluidez de la conversación. Ideal para diálogos rápidos.</div>
+    </div>
+    <div class="memory-type-card">
+      <div class="memory-icon-header">💼</div>
+      <div class="memory-title-card">Trabajo (Resumen Dinámico)</div>
+      <div class="memory-desc-card">Un skill resumidor condensa el historial a medida que avanza el chat, guardando solo hechos clave sin gastar tokens extras.</div>
+    </div>
+    <div class="memory-type-card">
+      <div class="memory-icon-header">📚</div>
+      <div class="memory-title-card">Largo Plazo (RAG Vectorial)</div>
+      <div class="memory-desc-card">Almacena información masiva en una base de datos vectorial externa. Realiza búsquedas semánticas para inyectar contexto bajo demanda.</div>
+    </div>
+  </div>
+</div>
 
 ## 🏗️ Implementando Variables de Contexto (Context Injection)
 
@@ -5081,22 +5271,44 @@ A menudo, no necesitas bases de datos complejas. Puedes simplemente usar "placeh
 
 ### Ejemplo de Archivo de Configuración Dinámico
 
-\`\`\`markdown
-# Agente: Asistente de Ventas
-
-## Contexto del Cliente Actual
-**Nombre:** {{CLIENT_NAME}}
-**Última compra:** {{LAST_PURCHASE_DATE}}
-**Nivel de queja:** {{COMPLAINT_LEVEL}}
-
-## Instrucciones
-Hola Asistente. Estás hablando con {{CLIENT_NAME}}. Su última compra fue el {{LAST_PURCHASE_DATE}}. 
-Si el nivel de queja es ALTO, debes usar un tono extremadamente empático y ofrecer un reembolso.
-\`\`\`
-
-Al utilizar esta plantilla, tu sistema simplemente reemplaza las variables \`{{...}}\` antes de enviarle el Markdown al modelo. ¡Felicidades, le acabas de dar memoria instantánea a tu agente!
-
----
+<div class="visual-diagram-container">
+  <div class="diagram-title">⚡ Inyección de Contexto en Prompts</div>
+  <div class="context-merge-visual">
+    <div class="merge-pane source">
+      <strong>Plantilla Markdown (.md):</strong>
+      # Agente: Ventas
+      
+      ## Contexto de Cliente
+      - Nombre: {{CLIENT_NAME}}
+      - Última compra: {{LAST_DATE}}
+      - Quejas: {{COMPLAINTS}}
+    </div>
+    <div class="merge-action-arrow">
+      <span>➕</span>
+      <div style="font-size: 0.7rem; color: var(--text-muted);">Fusionado por orquestador (Python/Node)</div>
+    </div>
+    <div class="merge-pane variables">
+      <strong>Variables de BD/Sistema:</strong>
+      {
+        "CLIENT_NAME": "Ana Gómez",
+        "LAST_DATE": "2026-05-12",
+        "COMPLAINTS": "Ninguna"
+      }
+    </div>
+    <div class="merge-action-arrow">
+      <span>➔</span>
+    </div>
+    <div class="merge-pane merged">
+      <strong>Prompt Final enviado al LLM:</strong>
+      # Agente: Ventas
+      
+      ## Contexto de Cliente
+      - Nombre: Ana Gómez
+      - Última compra: 2026-05-12
+      - Quejas: Ninguna
+    </div>
+  </div>
+</div>
 
 ## 🚀 Próximos Pasos
 
@@ -5146,76 +5358,47 @@ En este proyecto, vas a crear tres archivos Markdown. Juntos, formarán un siste
 
 ## 🏗️ Paso a Paso Guiado
 
-### 1. El Archivo del Investigador (\`agente_investigador.md\`)
-
-Crea este primer archivo. Su único objetivo es buscar información y estructurarla.
-
-\`\`\`markdown
-# Agente Investigador
-
-## 🎭 Propósito y Personalidad
-Eres un investigador académico extremadamente analítico. Tu objetivo es encontrar hechos, estadísticas y fuentes confiables sobre el tema que el usuario proporcione. No eres creativo, eres 100% factual.
-
-## ⚙️ Capacidades
-- Extraer puntos clave de un tema.
-- Listar al menos 3 fuentes o referencias lógicas.
-- Organizar la información en un esquema (Outline).
-
-## ⚠️ Output Esperado
-Debes entregar ÚNICAMENTE un formato estructurado con:
-- Título del tema.
-- 5 Bullet points con información clave.
-- Posibles enfoques para el redactor.
-NO escribas párrafos largos, solo entrega la estructura cruda.
-\`\`\`
-
-### 2. El Archivo del Redactor (\`agente_redactor.md\`)
-
-Este agente recibirá el *Output* del Investigador como *Input* para su tarea.
-
-\`\`\`markdown
-# Agente Redactor Creativo
-
-## 🎭 Propósito y Personalidad
-Eres un redactor estrella (Copywriter) especializado en artículos de blog persuasivos. Tu tono es entusiasta, cercano y fácil de leer.
-
-## 📥 Entrada Esperada (Input)
-Recibirás un bloque de notas estructurado (Outline) de parte del equipo de investigación.
-
-## ⚙️ Capacidades y Procedimiento
-1. Toma el outline de investigación.
-2. Escribe una introducción gancho (hook).
-3. Desarrolla los 5 bullet points en párrafos atractivos.
-4. Escribe una conclusión con un llamado a la acción (CTA).
-
-## ⚠️ Output Esperado
-Debes entregar el artículo completo formateado en Markdown. No incluyas comentarios sobre el proceso de investigación, simplemente entrega la pieza final.
-\`\`\`
-
-### 3. El Archivo del Editor (\`agente_editor.md\`)
-
-Este es el filtro final de la cadena de agentes. Garantiza la calidad.
-
-\`\`\`markdown
-# Agente Editor en Jefe
-
-## 🎭 Propósito y Personalidad
-Eres un Editor en Jefe implacable pero constructivo. Tienes un ojo agudo para los errores ortográficos, el tono inadecuado y la redundancia.
-
-## 📥 Entrada Esperada (Input)
-Recibirás el borrador final de un artículo escrito por el Agente Redactor.
-
-## ⚙️ Procedimiento
-1. Revisa la gramática y ortografía.
-2. Asegúrate de que el tono no sea excesivamente informal.
-3. Si el artículo tiene menos de 300 palabras, EXPÁNDELO agregando ejemplos relevantes.
-4. Si el artículo está perfecto, añade al inicio "[APROBADO POR EDICIÓN]".
-
-## ⚠️ Salida Obligatoria
-Entrega el artículo final corregido y pulido, listo para publicar.
-\`\`\`
-
----
+<div class="visual-diagram-container">
+  <div class="diagram-title">🏭 La Fábrica de Contenido (Arquitectura de Agentes)</div>
+  <div class="factory-deck">
+    <div class="agent-factory-card">
+      <div class="afc-num-box">1</div>
+      <div class="afc-info">
+        <div class="afc-title">🔍 Agente Investigador</div>
+        <div class="afc-desc">Recopila hechos, estadísticas y referencias sobre el tema. No es creativo, es 100% factual. Genera la estructura o outline.</div>
+      </div>
+      <div class="afc-specs">
+        <div class="spec-line"><span class="spec-label">Input:</span><span class="spec-val">Tema propuesto</span></div>
+        <div class="spec-line"><span class="spec-label">Output:</span><span class="spec-val">Outline (5 puntos)</span></div>
+        <div class="spec-line"><span class="spec-label">Personalidad:</span><span class="spec-val">Académico Factual</span></div>
+      </div>
+    </div>
+    <div class="agent-factory-card">
+      <div class="afc-num-box" style="background: linear-gradient(135deg, var(--accent2), var(--accent));">2</div>
+      <div class="afc-info">
+        <div class="afc-title">✍️ Agente Redactor Creativo</div>
+        <div class="afc-desc">Toma el outline del Investigador y lo desarrolla en párrafos atractivos y fluidos con un hook inicial y un CTA final.</div>
+      </div>
+      <div class="afc-specs">
+        <div class="spec-line"><span class="spec-label">Input:</span><span class="spec-val">Outline del Investigador</span></div>
+        <div class="spec-line"><span class="spec-label">Output:</span><span class="spec-val">Borrador del artículo</span></div>
+        <div class="spec-line"><span class="spec-label">Personalidad:</span><span class="spec-val">Copywriter Persuasivo</span></div>
+      </div>
+    </div>
+    <div class="agent-factory-card">
+      <div class="afc-num-box" style="background: linear-gradient(135deg, var(--brand-to), var(--info));">3</div>
+      <div class="afc-info">
+        <div class="afc-title">👑 Agente Editor en Jefe</div>
+        <div class="afc-desc">Filtro final de calidad. Corrige ortografía, ajusta tono, expande explicaciones y añade la etiqueta de aprobación.</div>
+      </div>
+      <div class="afc-specs">
+        <div class="spec-line"><span class="spec-label">Input:</span><span class="spec-val">Borrador del Redactor</span></div>
+        <div class="spec-line"><span class="spec-val">Output:</span><span class="spec-val">Artículo final pulido</span></div>
+        <div class="spec-line"><span class="spec-label">Personalidad:</span><span class="spec-val">Editor Implacable</span></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 ## ✅ Validación del Ecosistema
 
@@ -5285,25 +5468,34 @@ Crear un **agente de desarrollo completo** que asista en todo el ciclo de progra
 
 ## 🏗️ Arquitectura del Sistema
 
-\`\`\`
-┌──────────────────────────────────────┐
-│     Code Development Assistant       │
-│                                      │
-│  Especialización: Software Dev       │
-└──────────────┬───────────────────────┘
-               │
-    ┌──────────┴──────────┐
-    ▼                     ▼
-┌─────────┐         ┌─────────┐
-│ Writing │         │ Quality │
-│ Skills  │         │ Skills  │
-└─────────┘         └─────────┘
-    │                     │
-    ├─ Code Generator     ├─ Code Reviewer
-    ├─ Refactorer        ├─ Bug Detector
-    └─ Documenter        ├─ Test Generator
-                         └─ Performance Analyzer
-\`\`\`
+<div class="visual-diagram-container" style="max-width: 650px; margin: 24px auto; box-sizing: border-box;">
+  <div class="diagram-title">🏗️ Arquitectura: Code Development Assistant</div>
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 20px; box-shadow: var(--shadow-sm);">
+    <div style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">Code Development Assistant</div>
+    <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Especialización: Software Dev</div>
+  </div>
+  
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <div style="background: rgba(72,207,173,0.05); border: 1px solid rgba(72,207,173,0.2); border-radius: var(--radius-sm); padding: 16px;">
+      <div style="font-weight: 700; color: var(--success); margin-bottom: 12px; text-align: center; font-size: 1.05rem;">✍️ Writing Skills</div>
+      <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 8px;">
+        <li style="background: var(--bg); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); border-left: 3px solid var(--success);">Code Generator</li>
+        <li style="background: var(--bg); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); border-left: 3px solid var(--success);">Refactorer</li>
+        <li style="background: var(--bg); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); border-left: 3px solid var(--success);">Documenter</li>
+      </ul>
+    </div>
+    
+    <div style="background: rgba(108,99,255,0.05); border: 1px solid rgba(108,99,255,0.2); border-radius: var(--radius-sm); padding: 16px;">
+      <div style="font-weight: 700; color: var(--brand-from); margin-bottom: 12px; text-align: center; font-size: 1.05rem;">🔍 Quality Skills</div>
+      <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 8px;">
+        <li style="background: var(--bg); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); border-left: 3px solid var(--brand-from);">Code Reviewer</li>
+        <li style="background: var(--bg); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); border-left: 3px solid var(--brand-from);">Bug Detector</li>
+        <li style="background: var(--bg); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); border-left: 3px solid var(--brand-from);">Test Generator</li>
+        <li style="background: var(--bg); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); border-left: 3px solid var(--brand-from);">Performance Analyzer</li>
+      </ul>
+    </div>
+  </div>
+</div>
 
 ---
 
@@ -5987,26 +6179,36 @@ Crear un **agente especializado en documentos** que pueda:
 
 ## 🏗️ Arquitectura del Sistema
 
-\`\`\`
-┌──────────────────────────────────────┐
-│    Document Analysis Assistant       │
-│                                      │
-│  Especialización: Document Processing│
-└──────────────┬───────────────────────┘
-               │
-    ┌──────────┴──────────┐
-    ▼                     ▼
-┌─────────┐         ┌─────────┐
-│ Reading │         │Analysis │
-│ Skills  │         │ Skills  │
-└─────────┘         └─────────┘
-    │                     │
-    ├─ PDF Reader         ├─ Summarizer
-    ├─ DOCX Reader        ├─ Key Info Extractor
-    ├─ Excel Reader       ├─ Sentiment Analyzer
-    └─ Text Parser        ├─ Comparator
-                          └─ Q&A Engine
-\`\`\`
+<div class="visual-diagram-container" style="max-width: 650px; margin: 24px auto; box-sizing: border-box;">
+  <div class="diagram-title">🏗️ Arquitectura: Document Analysis Assistant</div>
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 20px; box-shadow: var(--shadow-sm);">
+    <div style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">Document Analysis Assistant</div>
+    <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Especialización: Document Processing</div>
+  </div>
+  
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <div style="background: rgba(247,183,49,0.05); border: 1px solid rgba(247,183,49,0.2); border-radius: var(--radius-sm); padding: 16px;">
+      <div style="font-weight: 700; color: var(--warning); margin-bottom: 12px; text-align: center; font-size: 1.05rem;">📖 Reading Skills</div>
+      <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 8px;">
+        <li style="background: var(--bg); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); border-left: 3px solid var(--warning);">PDF Reader</li>
+        <li style="background: var(--bg); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); border-left: 3px solid var(--warning);">DOCX Reader</li>
+        <li style="background: var(--bg); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); border-left: 3px solid var(--warning);">Excel Reader</li>
+        <li style="background: var(--bg); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); border-left: 3px solid var(--warning);">Text Parser</li>
+      </ul>
+    </div>
+    
+    <div style="background: rgba(252,92,125,0.05); border: 1px solid rgba(252,92,125,0.2); border-radius: var(--radius-sm); padding: 16px;">
+      <div style="font-weight: 700; color: var(--error); margin-bottom: 12px; text-align: center; font-size: 1.05rem;">🔬 Analysis Skills</div>
+      <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 8px;">
+        <li style="background: var(--bg); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); border-left: 3px solid var(--error);">Summarizer</li>
+        <li style="background: var(--bg); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); border-left: 3px solid var(--error);">Key Info Extractor</li>
+        <li style="background: var(--bg); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); border-left: 3px solid var(--error);">Sentiment Analyzer</li>
+        <li style="background: var(--bg); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); border-left: 3px solid var(--error);">Comparator</li>
+        <li style="background: var(--bg); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); border-left: 3px solid var(--error);">Q&A Engine</li>
+      </ul>
+    </div>
+  </div>
+</div>
 
 ---
 
@@ -6992,6 +7194,31 @@ Si falla en el 15% de los casos, tu archivo Markdown necesita ser más restricti
 ### 3. LLM-as-a-Judge (IA Evaluando a IA)
 Esta es la técnica más avanzada. Creas un segundo agente cuyo único trabajo es calificar las respuestas de tu primer agente.
 
+<div class="visual-diagram-container" style="max-width: 600px; margin: 24px auto; box-sizing: border-box;">
+  <div class="diagram-title">⚖️ Arquitectura: LLM-as-a-Judge</div>
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 15px;">
+    <!-- Agente Principal -->
+    <div style="flex: 1; min-width: 0; background: var(--bg-card); border: 1px solid var(--brand-from); border-radius: var(--radius-md); padding: 16px; text-align: center; position: relative;">
+      <div style="font-size: 2rem; margin-bottom: 8px;">🤖</div>
+      <div style="font-weight: 700; color: var(--text-primary); font-size: 0.95rem;">Agente de Soporte</div>
+      <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">Responde al usuario</div>
+    </div>
+    
+    <!-- Flecha -->
+    <div style="display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 0.8rem;">
+      <span>Transcripción</span>
+      <span style="font-size: 1.5rem; line-height: 1;">→</span>
+    </div>
+    
+    <!-- Evaluador -->
+    <div style="flex: 1; min-width: 0; background: rgba(252,92,125,0.05); border: 2px dashed var(--error); border-radius: var(--radius-md); padding: 16px; text-align: center; position: relative; box-shadow: 0 0 15px rgba(252,92,125,0.1);">
+      <div style="font-size: 2rem; margin-bottom: 8px;">🧑‍⚖️</div>
+      <div style="font-weight: 700; color: var(--error); font-size: 0.95rem;">Agente Evaluador</div>
+      <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">Califica (1-5)</div>
+    </div>
+  </div>
+</div>
+
 #### Ejemplo del "Agente Evaluador"
 \`\`\`markdown
 # Evaluador de Calidad de Soporte
@@ -7718,11 +7945,31 @@ Triggers:
 - User asks for statistics or trends
 
 ### Test Results:
-| Metric | Version A | Version B |
-|--------|-----------|-----------|
-| Precision | 65% | 92% |
-| Recall | 88% | 85% |
-| F1 Score | 75% | 88% |
+<div class="visual-diagram-container" style="max-width: 600px; margin: 24px auto; box-sizing: border-box; background: var(--bg-card); padding: 0;">
+  <div class="diagram-title" style="margin-bottom: 0; border-bottom: 1px solid var(--border); border-radius: var(--radius-md) var(--radius-md) 0 0;">📊 A/B Test Results</div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; text-align: center;">
+    
+    <!-- Headers -->
+    <div style="padding: 12px; font-weight: bold; color: var(--text-muted); border-bottom: 1px solid var(--border);">Metric</div>
+    <div style="padding: 12px; font-weight: bold; color: var(--text-muted); border-bottom: 1px solid var(--border);">Version A</div>
+    <div style="padding: 12px; font-weight: bold; color: var(--text-muted); border-bottom: 1px solid var(--border);">Version B</div>
+    
+    <!-- Row 1 -->
+    <div style="padding: 16px; font-weight: 600; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); display: flex; align-items: center; justify-content: center;">Precision</div>
+    <div style="padding: 16px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); display: flex; align-items: center; justify-content: center;">65%</div>
+    <div style="padding: 16px; font-weight: 700; color: var(--success); background: rgba(72,207,173,0.05); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center;">92% ⬆️</div>
+    
+    <!-- Row 2 -->
+    <div style="padding: 16px; font-weight: 600; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); display: flex; align-items: center; justify-content: center;">Recall</div>
+    <div style="padding: 16px; font-weight: 700; color: var(--success); background: rgba(72,207,173,0.05); border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); display: flex; align-items: center; justify-content: center;">88% ⬆️</div>
+    <div style="padding: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center;">85%</div>
+    
+    <!-- Row 3 -->
+    <div style="padding: 16px; font-weight: 600; border-right: 1px solid var(--border); display: flex; align-items: center; justify-content: center;">F1 Score</div>
+    <div style="padding: 16px; border-right: 1px solid var(--border); display: flex; align-items: center; justify-content: center;">75%</div>
+    <div style="padding: 16px; font-weight: 700; color: var(--brand-to); background: rgba(108,99,255,0.05); display: flex; align-items: center; justify-content: center;">88% 🌟</div>
+  </div>
+</div>
 
 ### Decision: ✅ Adopt Version B
 Reasoning: Higher precision worth slight recall drop.
@@ -8077,15 +8324,57 @@ Para resolver un problema de Inteligencia de Negocios de punta a punta, diseñar
 
 ## 🔄 El Flujo de Datos (Workflow)
 
-\`\`\`mermaid
-graph TD
-    A[CEO: Pregunta sobre Lácteos] --> B[Agente Estratega]
-    B -->|Delega Búsqueda| C[Agente Analista]
-    C -->|Activa Skill| D((Skill SQL))
-    D -->|Devuelve CSV| C
-    C -->|Devuelve Análisis Duro| B
-    B -->|Respuesta Ejecutiva Final| A
-\`\`\`
+<div class="visual-diagram-container" style="max-width: 600px; margin: 24px auto; box-sizing: border-box; font-family: sans-serif;">
+  <div class="diagram-title" style="text-align: center; margin-bottom: 24px;">🔄 Arquitectura Multi-Agente: Workflow</div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative;">
+    
+    <!-- CEO -->
+    <div style="width: 280px; background: var(--bg-card); border: 2px solid var(--text-muted); border-radius: 8px; padding: 12px; text-align: center; position: relative; z-index: 2;">
+      <div style="font-size: 1.5rem;">👤</div>
+      <div style="font-weight: 700; color: var(--text-primary);">CEO</div>
+    </div>
+    
+    <!-- Arrow CEO <-> Estratega -->
+    <div style="display: flex; width: 400px; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-secondary);">
+      <div style="text-align: right; flex: 1; padding-right: 15px;">Pregunta sobre Lácteos <span style="font-size: 1rem;">⬇️</span></div>
+      <div style="width: 2px; height: 35px; background: var(--border);"></div>
+      <div style="text-align: left; flex: 1; padding-left: 15px;"><span style="font-size: 1rem;">⬆️</span> Respuesta Ejecutiva Final</div>
+    </div>
+    
+    <!-- Estratega -->
+    <div style="width: 280px; background: rgba(108,99,255,0.05); border: 2px solid var(--brand-from); border-radius: 8px; padding: 12px; text-align: center; position: relative; z-index: 2;">
+      <div style="font-size: 1.5rem;">👔</div>
+      <div style="font-weight: 700; color: var(--brand-from);">Agente Estratega</div>
+    </div>
+    
+    <!-- Arrow Estratega <-> Analista -->
+    <div style="display: flex; width: 400px; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-secondary);">
+      <div style="text-align: right; flex: 1; padding-right: 15px;">Delega Búsqueda <span style="font-size: 1rem;">⬇️</span></div>
+      <div style="width: 2px; height: 35px; background: var(--border);"></div>
+      <div style="text-align: left; flex: 1; padding-left: 15px;"><span style="font-size: 1rem;">⬆️</span> Devuelve Análisis Duro</div>
+    </div>
+
+    <!-- Analista -->
+    <div style="width: 280px; background: rgba(72,207,173,0.05); border: 2px solid var(--success); border-radius: 8px; padding: 12px; text-align: center; position: relative; z-index: 2;">
+      <div style="font-size: 1.5rem;">🧮</div>
+      <div style="font-weight: 700; color: var(--success);">Agente Analista</div>
+    </div>
+    
+    <!-- Arrow Analista <-> Skill -->
+    <div style="display: flex; width: 400px; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-secondary);">
+      <div style="text-align: right; flex: 1; padding-right: 15px;">Activa Skill <span style="font-size: 1rem;">⬇️</span></div>
+      <div style="width: 2px; height: 35px; background: var(--border);"></div>
+      <div style="text-align: left; flex: 1; padding-left: 15px;"><span style="font-size: 1rem;">⬆️</span> Devuelve CSV</div>
+    </div>
+
+    <!-- Skill -->
+    <div style="width: 280px; background: rgba(255,193,7,0.05); border: 2px dashed var(--warning); border-radius: 40px; padding: 12px; text-align: center; position: relative; z-index: 2;">
+      <div style="font-size: 1.5rem;">💾</div>
+      <div style="font-weight: 700; color: var(--warning);">Skill SQL</div>
+    </div>
+
+  </div>
+</div>
 
 **Nota Arquitectónica:** Observa cómo el Estratega de Negocios NUNCA toca la base de datos SQL directamente. Sus capacidades están restringidas (Guardrails, Módulo 6). El Estratega *delega* al Analista.
 

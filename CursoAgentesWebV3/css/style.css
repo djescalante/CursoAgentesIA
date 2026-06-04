@@ -928,6 +928,14 @@ body {
 
 .lesson-content table tr:hover td { background: rgba(108,99,255,0.03); }
 
+.lesson-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  margin: 20px 0;
+  box-shadow: var(--shadow-sm);
+}
+
 /* Code blocks */
 .lesson-content pre {
   background: #0A0C18;
@@ -1495,6 +1503,13 @@ pre:hover .copy-btn { opacity: 1; }
   .lesson-nav { flex-wrap: wrap; }
 
   .topbar { padding: 0 16px; }
+
+  .lesson-content table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 @media (max-width: 480px) {
