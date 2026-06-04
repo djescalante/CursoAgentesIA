@@ -173,7 +173,11 @@ def main():
     # 2. Cargar reporte de malos manejos
     print("[INFO] Cargando reporte de malos manejos...")
     excel_file = pd.ExcelFile(report_path)
-    sheet_name = [s for s in excel_file.sheet_names if "MAL MANEJO" in s.upper()][0]
+    matching_sheets = [s for s in excel_file.sheet_names if "MAL MANEJO" in s.upper()]
+    if matching_sheets:
+        sheet_name = matching_sheets[0]
+    else:
+        sheet_name = excel_file.sheet_names[0]
     df_report = pd.read_excel(report_path, sheet_name=sheet_name)
     
     # Conservar el orden original y filas con códigos vacíos
