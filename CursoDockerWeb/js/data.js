@@ -1,9 +1,12 @@
-const cursoData = {
+const COURSE_DATA = {
   courseName: "DockerWeb 2026",
   version: "2.0",
   modules: [
     {
       id: "modulo-1",
+      number: 1,
+      icon: "🐳",
+      difficulty: "beginner",
       title: "Módulo 1: Fundamentos",
       description: "Conceptos básicos y arquitectura de contenedores.",
       lessons: [
@@ -21,6 +24,9 @@ const cursoData = {
     },
     {
       id: "modulo-2",
+      number: 2,
+      icon: "📦",
+      difficulty: "beginner",
       title: "Módulo 2: Tu Primer Contenedor",
       description: "Docker Desktop 2026 y ciclo de vida.",
       lessons: [
@@ -38,6 +44,9 @@ const cursoData = {
     },
     {
       id: "modulo-3",
+      number: 3,
+      icon: "🧩",
+      difficulty: "intermediate",
       title: "Módulo 3: Imágenes y Dockerfiles",
       description: "Construyendo tus propias imágenes.",
       lessons: [
@@ -60,6 +69,9 @@ const cursoData = {
     },
     {
       id: "modulo-4",
+      number: 4,
+      icon: "💾",
+      difficulty: "intermediate",
       title: "Módulo 4: Persistencia y Redes",
       description: "Manejando el estado y conectando contenedores.",
       lessons: [
@@ -77,6 +89,9 @@ const cursoData = {
     },
     {
       id: "modulo-5",
+      number: 5,
+      icon: "🐙",
+      difficulty: "advanced",
       title: "Módulo 5: Docker Compose",
       description: "Orquestación multi-contenedor.",
       lessons: [
@@ -99,6 +114,9 @@ const cursoData = {
     },
     {
       id: "modulo-6",
+      number: 6,
+      icon: "🔒",
+      difficulty: "advanced",
       title: "Módulo 6: Optimización y Seguridad",
       description: "Avanzando con Docker Desktop.",
       lessons: [
@@ -121,6 +139,9 @@ const cursoData = {
     },
     {
       id: "modulo-7",
+      number: 7,
+      icon: "🚀",
+      difficulty: "advanced",
       title: "Módulo 7: Proyecto Final",
       description: "Pon a prueba tus conocimientos.",
       lessons: [
@@ -136,6 +157,8 @@ const cursoData = {
     {
       id: "cheatsheet",
       title: "Cheatsheet de Comandos",
+      description: "Lista de comandos esenciales para el día a día.",
+      tag: "Guía Rápida",
       file: "recursos/cheatsheet.md",
       icon: "📌"
     }
@@ -144,20 +167,26 @@ const cursoData = {
     {
       id: "template-dockerfile",
       title: "Dockerfile Base (Node.js)",
+      description: "Plantilla base optimizada para proyectos en Node.js.",
+      tag: "Template",
       file: "templates/dockerfiles/DOCKERFILE_TEMPLATE.md",
       icon: "📦"
     },
     {
       id: "template-compose",
       title: "Compose Base",
+      description: "Plantilla básica para orquestar servicios con Docker Compose.",
+      tag: "Template",
       file: "templates/compose/COMPOSE_TEMPLATE.md",
       icon: "🐙"
     }
   ],
-  ejemplos: [
+  examples: [
     {
       id: "ejemplo-mern",
       title: "Ejemplo: Stack MERN",
+      description: "Arquitectura completa de MongoDB, Express, React y Node.",
+      tag: "Proyecto",
       file: "ejemplos/ejemplo-mern.md",
       icon: "💻"
     }

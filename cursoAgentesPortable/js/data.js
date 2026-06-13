@@ -5310,6 +5310,123 @@ A menudo, no necesitas bases de datos complejas. Puedes simplemente usar "placeh
   </div>
 </div>
 
+## 🛠️ Caso Práctico: Memoria Persistente con Engram y MCP
+
+En el desarrollo profesional de agentes (por ejemplo, usando frameworks como **Claude Code**, **Cursor**, **Windsurf** o el CLI de Gemini), las variables de contexto dinámicas a menudo se quedan cortas. Los agentes necesitan recordar decisiones arquitectónicas, reglas de nombrado de variables y soluciones a bugs anteriores a lo largo de múltiples sesiones.
+
+Aquí es donde entra **Engram**, un sistema de memoria persistente de código abierto creado para agentes de IA.
+
+<div class="visual-diagram-container">
+  <div class="diagram-title">🧠 Arquitectura de Memoria con MCP</div>
+  <svg viewBox="0 0 500 200" width="100%" height="auto" style="background: rgba(0,0,0,0.15); border-radius: 8px; padding: 15px;">
+    <!-- Agente -->
+    <rect x="20" y="70" width="120" height="60" rx="8" fill="rgba(108, 99, 255, 0.15)" stroke="#6C63FF" stroke-width="2"/>
+    <text x="80" y="100" font-family="sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">Agente de IA</text>
+    <text x="80" y="115" font-family="sans-serif" font-size="9" fill="#aaaaaa" text-anchor="middle">(Claude, Cursor, etc.)</text>
+    
+    <!-- Flecha 1 -->
+    <path d="M 140 100 L 190 100" stroke="#6C63FF" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="165" y="90" font-family="sans-serif" font-size="8" fill="#48CFAD" text-anchor="middle">MCP stdio</text>
+
+    <!-- Engram -->
+    <rect x="190" y="70" width="120" height="60" rx="8" fill="rgba(72, 207, 173, 0.15)" stroke="#48CFAD" stroke-width="2"/>
+    <text x="250" y="100" font-family="sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">Engram Server</text>
+    <text x="250" y="115" font-family="sans-serif" font-size="9" fill="#aaaaaa" text-anchor="middle">(Binario Go local)</text>
+
+    <!-- Flecha 2 -->
+    <path d="M 310 100 L 360 100" stroke="#48CFAD" stroke-width="2"/>
+
+    <!-- SQLite -->
+    <rect x="360" y="70" width="120" height="60" rx="8" fill="rgba(247, 183, 49, 0.15)" stroke="#F7B731" stroke-width="2"/>
+    <text x="420" y="100" font-family="sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">SQLite DB + FTS5</text>
+    <text x="420" y="115" font-family="sans-serif" font-size="9" fill="#aaaaaa" text-anchor="middle">(~/.engram/engram.db)</text>
+    
+    <!-- Markers -->
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#6C63FF"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+### ¿Por qué utilizar Engram y MCP?
+
+<div class="memory-grid">
+  <div class="memory-type-card" style="background: rgba(72, 207, 173, 0.04); border-color: rgba(72, 207, 173, 0.15);">
+    <div class="memory-icon-header">⚡</div>
+    <div class="memory-title-card">Cero Dependencias</div>
+    <div class="memory-desc-card">Es un binario autocontenido en Go. No requiere bases de datos vectoriales, Docker, Node.js ni Python. Se ejecuta al instante.</div>
+  </div>
+  <div class="memory-type-card" style="background: rgba(108, 99, 255, 0.04); border-color: rgba(108, 99, 255, 0.15);">
+    <div class="memory-icon-header">💾</div>
+    <div class="memory-title-card">Persistencia Real</div>
+    <div class="memory-desc-card">Permite al agente guardar observaciones clave (arquitectura, bugs corregidos) y consultarlas en futuras sesiones o chats.</div>
+  </div>
+  <div class="memory-type-card" style="background: rgba(247, 183, 49, 0.04); border-color: rgba(247, 183, 49, 0.15);">
+    <div class="memory-icon-header">🔄</div>
+    <div class="memory-title-card">Sincronización Git</div>
+    <div class="memory-desc-card">Exporta y comparte las memorias del proyecto en el repositorio usando chunks comprimidos sin conflictos de fusión.</div>
+  </div>
+  <div class="memory-type-card" style="background: rgba(252, 92, 125, 0.04); border-color: rgba(252, 92, 125, 0.15);">
+    <div class="memory-icon-header">📑</div>
+    <div class="memory-title-card">Ecosistema SDD</div>
+    <div class="memory-desc-card">Perfecta integración con SDD (Spec-Driven Development) para que los agentes alineen sus tareas con las especificaciones.</div>
+  </div>
+</div>
+
+### Configuración Rápida en 3 Pasos
+
+#### Paso 1: Instalación
+Si usas macOS/Linux (Homebrew):
+\`\`\`bash
+brew install gentleman-programming/tap/engram
+\`\`\`
+Si usas Windows o deseas instalarlo manualmente, puedes descargar el binario directamente desde los releases de GitHub y agregarlo a tu variable de entorno \`PATH\`.
+
+#### Paso 2: Conectar el Servidor MCP al Agente
+Una vez instalado, configúralo en tu editor o agente favorito:
+
+* **Claude Code**:
+  \`\`\`bash
+  claude plugin marketplace add Gentleman-Programming/engram && claude plugin install engram
+  \`\`\`
+* **VS Code (Copilot u otros)**:
+  Añade el servidor MCP a la configuración:
+  \`\`\`json
+  "mcpServers": {
+    "engram": {
+      "command": "engram",
+      "args": ["mcp"]
+    }
+  }
+  \`\`\`
+* **Cursor / Windsurf**:
+  Ve a Configuración > MCP > Agregar nuevo servidor:
+  * **Nombre**: engram
+  * **Tipo**: stdio
+  * **Comando**: \`engram\` (o la ruta absoluta a tu ejecutable \`engram.exe\` en Windows)
+  * **Argumentos**: \`mcp\`
+
+#### Paso 3: Flujo de Trabajo en Acción (What/Why/Where)
+Cuando el agente tiene configurado Engram, gana acceso a herramientas como \`mem_save\` y \`mem_search\`. El flujo es automático:
+
+1. **Guardar memoria**: Le dices al agente: *"Recuerda que a partir de ahora todas las funciones de base de datos deben usar camelCase y estar en \`/src/db\`"*.
+2. El agente llamará a \`mem_save\` y creará una entrada con la estructura:
+   * **Título**: DB function naming convention
+   * **Categoría**: architecture
+   * **Qué/Por qué/Dónde/Aprendido**: Detalles del estándar acordado.
+3. **Recuperación**: En tu próxima sesión de desarrollo (incluso días después), puedes preguntarle al agente: *"¿Qué convención acordamos para las funciones de base de datos?"*. El agente buscará en Engram mediante \`mem_search\` y responderá con precisión sin haber alucinado o consultado prompts extensos.
+
+*💡 **Integración con SDD**: Si utilizas la metodología **SDD (Spec-Driven Development)**, Engram es fundamental para que tus agentes mantengan el contexto de las especificaciones y reglas del proyecto de forma persistente.*
+
+Puedes ver e interactuar con estas memorias ejecutando en tu terminal:
+\`\`\`bash
+engram tui
+\`\`\`
+
+---
+
 ## 🚀 Próximos Pasos
 
 Dominar el contexto significa que tus agentes ya no sufrirán de amnesia ni alucinarán inventando datos para llenar los vacíos. Con agentes especializados, skills y ahora memoria, estás listo para armar un ecosistema completo.
@@ -13854,6 +13971,155 @@ def test_missing_values():
 **Maintained By**: DataTeam
 `
     },
+    {
+      id: "agente-sql",
+      title: "🗄️ Agente Consultas SQL",
+      description: "Generador de consultas SQL desde lenguaje natural y ejecutor seguro",
+      icon: "🗄️",
+      tag: "Agente + Skill",
+      content: `# AGENT: Data Query Assistant
+
+> Un agente especializado en traducir lenguaje de negocio a consultas SQL y ejecutarlas de forma segura.
+
+---
+
+## 📋 Metadata
+
+\`\`\`yaml
+name: SQL Query Generator
+version: 1.0.0
+author: BI Team
+tags: [sql, database, reporting, data-analysis]
+\`\`\`
+
+---
+
+## 🎯 Overview
+
+Este sistema consta de un **Agente Traductor** que recibe preguntas en lenguaje natural y genera una consulta SQL específica (SQL Server, PostgreSQL, MySQL), y un **Skill Ejecutor** que se conecta a la base de datos (solo lectura) para obtener los resultados crudos y presentarlos.
+
+## 🤖 Agente Traductor de Negocio
+
+### Identity
+Eres SQLBot, un experto en bases de datos relacionales y análisis de negocio. Tu trabajo es interpretar las preguntas de los usuarios y transformarlas en consultas SQL válidas y optimizadas.
+
+### Capabilities
+- Traducir lenguaje natural a SQL dialect-specific.
+- Interpretar el esquema de la base de datos proporcionado.
+- Validar reglas de negocio.
+- Formatear resultados crudos a resumen de negocio.
+
+## 🛠️ Skill Ejecutor de Consultas (Músculo)
+
+### Procedimiento
+1. Recibe la consulta SQL generada por el Agente.
+2. Se conecta a la base de datos (ReadOnly Role).
+3. Ejecuta la consulta \`SELECT\`.
+4. Devuelve los resultados en formato JSON o CSV.
+
+## ⚠️ Reglas Estrictas
+- NUNCA ejecutar comandos \`INSERT\`, \`UPDATE\`, \`DELETE\` o \`DROP\`.
+- Siempre agregar \`LIMIT 1000\` a menos que se especifique lo contrario.
+- Formatear el resultado final de manera legible para humanos.
+`
+    },
+    {
+      id: "agente-excel-cleanser",
+      title: "🧹 Agente Excel Cleanser",
+      description: "Estandariza y limpia reportes sucios de Excel usando Python/Pandas",
+      icon: "🧹",
+      tag: "Agente + Skill",
+      content: `# AGENT: Data Cleanser
+
+> Automatización de limpieza de datos en reportes operativos de Excel.
+
+---
+
+## 🎯 Overview
+
+Sistema diseñado para equipos operativos que reciben reportes de sistemas legacy con formatos desastrosos. Elimina la necesidad de horas de limpieza manual.
+
+## 🤖 Agente Analista de Calidad
+
+### Identity
+Eres CleanBot, un ingeniero de datos obsesionado con la calidad de la información. Identificas problemas de formato, valores nulos y cadenas de texto sucias.
+
+### Reglas
+- Los nombres deben estar capitalizados (Title Case).
+- No debe haber espacios dobles o triples.
+- Los "NULL" o "#VALUE!" deben ser nulos reales.
+
+## 🛠️ Skill de Manipulación de Excel
+
+### Implementación (Python/Pandas)
+1. Lee el archivo crudo (\`.xlsx\`).
+2. Aplica expresiones regulares para quitar espacios extras: \`df.replace(r'\\s+', ' ', regex=True)\`.
+3. Convierte cadenas a Title Case: \`df['Nombre'].str.title()\`.
+4. Reemplaza strings inválidos: \`df.replace(['NULL', 'N/A', '#VALUE!'], pd.NA)\`.
+5. Exporta el archivo limpio.
+`
+    },
+    {
+      id: "agente-triage-soporte",
+      title: "🎧 Agente Triage Soporte",
+      description: "Clasificación de tickets, RAG para base de conocimiento y resolución",
+      icon: "🎧",
+      tag: "Multi-Agente",
+      content: `# AGENT SYSTEM: Soporte Técnico Nivel 1
+
+> Sistema de triaje automático para bandejas de entrada colapsadas.
+
+---
+
+## 🎯 Overview
+
+Clasifica tickets entrantes por prioridad y responde dudas frecuentes usando una Base de Conocimiento interna, derivando casos complejos a humanos.
+
+## 1️⃣ Agente Clasificador (Triage)
+- **Propósito**: Leer el correo/ticket y etiquetarlo.
+- **Output**: Nivel de urgencia (Alto/Medio/Bajo) y Categoría.
+
+## 2️⃣ Skill de Búsqueda Vectorial (RAG)
+- **Propósito**: Buscar en la base de conocimientos la posible solución basándose en el problema reportado.
+
+## 3️⃣ Agente Resolutor
+- **Decisión**:
+  - Si hay un artículo RAG de alta confianza: Redacta un correo con la solución paso a paso.
+  - Si es complejo/urgente: Escala el ticket a un agente humano con un resumen ejecutivo.
+`
+    },
+    {
+      id: "agente-paralegal",
+      title: "⚖️ Agente Paralegal",
+      description: "Extracción y análisis de cláusulas en contratos y documentos legales masivos",
+      icon: "⚖️",
+      tag: "Multi-Agente",
+      content: `# AGENT SYSTEM: Revisor de Contratos
+
+> Asistente legal para analizar PDFs masivos y detectar cláusulas riesgosas.
+
+---
+
+## 🎯 Overview
+
+Extrae texto de documentos escaneados, identifica las partes, fechas y penalizaciones, y las compara con el manual de políticas de la empresa.
+
+## 🛠️ Skill Lector de Documentos (OCR)
+- **Función**: Convierte PDF/Imágenes a texto plano o Markdown.
+
+## 🤖 Agente Extractor de Entidades
+- **Función**: Navega por cientos de páginas para extraer JSON con:
+  - Partes involucradas
+  - Vigencia
+  - Jurisdicción
+  - Montos y penalizaciones
+
+## 🤖 Agente Analista de Riesgos (Validador)
+- **Función**: Compara lo extraído con reglas de negocio.
+- **Alerta**: Marca en rojo (Flag) si el contrato incluye renovaciones automáticas no autorizadas o si la jurisdicción no es local.
+- **Output**: \`Term Sheet\` o Resumen Ejecutivo de 1 página.
+`
+    }
   ],
 
   // ============================================

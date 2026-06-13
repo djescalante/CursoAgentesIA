@@ -308,19 +308,49 @@
     // Info bar
     const diff = $('#lessonDifficulty');
     const time = $('#lessonTime');
-    if (diff) diff.innerHTML = `⭐ ${lesson.difficulty}`;
-    if (time) time.innerHTML = `⏱ ${lesson.time}`;
 
     // Content
     const contentEl = $('#lessonContent');
-    if (contentEl) {
-      contentEl.innerHTML = MarkdownParser.parse(lesson.content);
-      // Add interactive checklist behavior
-      addChecklistBehavior(contentEl);
-    }
 
-    // TOC
-    renderTOC(contentEl);
+    const updateView = () => {
+      if (diff) diff.innerHTML = `⭐ ${lesson.difficulty || 'N/A'}`;
+      if (time) time.innerHTML = `⏱ ${lesson.time || 'N/A'}`;
+      if (contentEl) {
+        contentEl.innerHTML = MarkdownParser.parse(lesson.content || '');
+        addChecklistBehavior(contentEl);
+        renderTOC(contentEl);
+      }
+    };
+
+    if (lesson.content) {
+      updateView();
+    } else if (lesson.file) {
+      if (diff) diff.innerHTML = '⭐ Cargando...';
+      if (time) time.innerHTML = '⏱ Cargando...';
+      if (contentEl) contentEl.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-muted)">Cargando contenido...</div>';
+      
+      fetch(lesson.file)
+        .then(res => res.ok ? res.text() : Promise.reject('Error de red'))
+        .then(text => {
+          let contentText = text;
+          const fmMatch = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+          if (fmMatch) {
+            const fm = fmMatch[1];
+            const tMatch = fm.match(/time:\s*(.+)/);
+            const dMatch = fm.match(/difficulty:\s*(.+)/);
+            if (tMatch) lesson.time = tMatch[1].trim();
+            if (dMatch) lesson.difficulty = dMatch[1].trim();
+            contentText = text.substring(fmMatch[0].length).trim();
+          }
+          lesson.content = contentText;
+          updateView();
+        })
+        .catch(err => {
+          if (contentEl) contentEl.innerHTML = '<div style="color:var(--error);padding:20px">Error al cargar la lección. Asegúrate de ejecutarlo en un servidor local.</div>';
+          if (diff) diff.innerHTML = '⭐ Error';
+          if (time) time.innerHTML = '⏱ Error';
+        });
+    }
 
     // Exercise
     const exerciseBox = $('#lessonExerciseBox');
@@ -650,7 +680,22 @@
 
     if (title) title.textContent = `${resource.icon} ${resource.title}`;
     if (body) {
-      body.innerHTML = `<div class="lesson-content">${MarkdownParser.parse(resource.content)}</div>`;
+      if (resource.content) {
+        body.innerHTML = `<div class="lesson-content">${MarkdownParser.parse(resource.content)}</div>`;
+      } else if (resource.file) {
+        body.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-muted)">Cargando recurso...</div>';
+        fetch(resource.file)
+          .then(res => res.ok ? res.text() : Promise.reject('Error de red'))
+          .then(text => {
+            resource.content = text;
+            body.innerHTML = `<div class="lesson-content">${MarkdownParser.parse(text)}</div>`;
+          })
+          .catch(err => {
+            body.innerHTML = '<div style="color:var(--error);padding:20px">Error al cargar el recurso. Asegúrate de ejecutarlo en un servidor local.</div>';
+          });
+      } else {
+        body.innerHTML = '<div style="color:var(--text-muted);padding:20px">No hay contenido disponible para este recurso.</div>';
+      }
     }
     if (footer) footer.style.display = 'none';
 
