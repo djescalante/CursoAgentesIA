@@ -6,7 +6,7 @@
 const COURSE_DATA = {
   title: "Domina Agentes IA y Skills con Markdown",
   version: "2.0",
-  totalLessons: 28,
+  totalLessons: 31,
 
   modules: [
 
@@ -8750,6 +8750,196 @@ El futuro de la programación ya no es solo escribir funciones lógicas, es **di
       ]
     }
 
+    ,
+    // ====== MÓDULO 8: INTEGRACIÓN IDEs ======
+    {
+      id: "modulo-8",
+      number: 8,
+      icon: "💻",
+      title: "Integración IDEs",
+      subtitle: "OpenCode y Antigravity",
+      description: "Aprende a integrar agentes y skills en entornos de desarrollo modernos mediante archivos de configuración.",
+      difficulty: "advanced",
+      lessons: [
+        {
+          id: "8-1",
+          title: "Introducción a OpenCode y Antigravity",
+          time: "15 min",
+          difficulty: "⭐⭐⭐ Avanzado",
+          content: `# Módulo 8: Integración con IDEs Agenticos (OpenCode y Antigravity)
+
+## 01. Introducción a OpenCode y Antigravity
+
+A lo largo de los módulos anteriores, has aprendido la filosofía central de este curso: **Los agentes y las skills se definen en archivos Markdown (\`.md\`)**. Has visto cómo construir un motor propio para leer estos archivos y ejecutar tareas automatizadas, orquestando sistemas multi-agente complejos.
+
+Sin embargo, en el mundo real del desarrollo de software, no siempre necesitas construir el motor desde cero. Existen entornos de desarrollo (IDEs) que ya traen motores de IA integrados y que **comparten exactamente la misma filosofía**.
+
+Aquí es donde entran en juego **OpenCode** y **Antigravity**.
+
+### ¿Qué es OpenCode?
+
+OpenCode es un IDE (Entorno de Desarrollo Integrado) impulsado por IA, diseñado para maximizar la productividad de los desarrolladores al integrar asistencia inteligente directamente en el flujo de trabajo del editor. A diferencia de un simple chat de IA, OpenCode entiende el contexto completo de tu proyecto, los archivos abiertos, e incluso la posición de tu cursor.
+
+### ¿Qué es Antigravity?
+
+**Antigravity** es el agente de IA central que da vida a la asistencia inteligente dentro de OpenCode. Piensa en Antigravity como el equivalente a tu \`course_orchestrator\`, pero hiper-optimizado para programar, analizar código, manejar terminales y ejecutar tareas del sistema.
+
+Antigravity tiene una característica fundamental que enlaza perfectamente con todo lo aprendido en este curso: **su comportamiento, restricciones y capacidades extendidas se controlan mediante archivos Markdown**.
+
+### La Sinergia con CursoAgentesMD
+
+Cuando usas Antigravity, no estás ante una "caja negra" inmodificable. Al igual que en tus prácticas anteriores, puedes dictar cómo debe comportarse el agente simplemente dejando caer archivos \`.md\` en la raíz de tu proyecto.
+
+- ¿Quieres que Antigravity siempre use una arquitectura específica? **Se lo dices en un Markdown**.
+- ¿Quieres que tenga una herramienta nueva (Skill) para compilar tu proyecto de una manera especial? **Le creas un \`SKILL.md\`**.
+
+En las siguientes lecciones de este módulo, aprenderás cómo adaptar las técnicas de creación de agentes y skills basadas en Markdown (que ya conoces) para configurar, potenciar y dominar a **Antigravity** en tus propios proyectos de desarrollo.
+`,
+          exercise: null
+        },
+        {
+          id: "8-2",
+          title: "Archivos de Configuración",
+          time: "20 min",
+          difficulty: "⭐⭐⭐ Avanzado",
+          content: `# 02. Archivos de Configuración para IDEs Agenticos
+
+Para dominar a un agente de IA como **Antigravity** dentro de tu IDE, necesitas comunicarte con él en su idioma nativo: **Archivos Markdown**. A diferencia de los modelos de chat donde escribes un prompt efímero, en el desarrollo asistido por IA, los *prompts* se convierten en archivos persistentes en tu repositorio.
+
+## 1. El archivo \`specs.md\` (Especificaciones del Proyecto)
+
+¿Recuerdas cómo en el Módulo 3 nuestro orquestador leía los archivos de la carpeta \`specs/\` antes de actuar? Los IDEs agenticos funcionan igual.
+
+El archivo \`specs.md\` (a veces llamado \`PRD.md\` o Product Requirements Document) se coloca en la raíz de tu proyecto o en una carpeta específica. 
+
+**Propósito:**
+Proveer a Antigravity con el contexto general de lo que estás intentando construir. En lugar de explicarle en el chat "estoy haciendo una app de tareas en Python que usa SQLite", simplemente lo dejas documentado en este archivo.
+
+**Ejemplo de un \`specs.md\` ideal para Antigravity:**
+\`\`\`markdown
+# Sistema de Gestión de Tareas
+
+## Objetivo
+Desarrollar una API RESTful en Python usando FastAPI para gestionar tareas pendientes.
+
+## Arquitectura
+- **Backend:** FastAPI (Python 3.10+)
+- **Base de Datos:** SQLite con SQLAlchemy
+- **Autenticación:** JWT Tokens
+
+## Reglas de Negocio
+- Una tarea no puede eliminarse, solo marcarse como "inactiva".
+- Las tareas deben tener un campo \`criticidad\` (Alta, Media, Baja).
+
+## Endpoints Esperados
+- \`GET /tasks\`
+- \`POST /tasks\`
+- \`PUT /tasks/{id}\`
+\`\`\`
+Cuando le pidas a Antigravity: *"Crea el endpoint de actualización de tareas"*, el agente automáticamente leerá este archivo y sabrá qué stack tecnológico usar y qué reglas de negocio aplicar, sin necesidad de que se lo repitas.
+
+## 2. El archivo \`AGENTS.md\` (Reglas y Comportamiento)
+
+Así como en los módulos anteriores aprendimos que un agente tiene una sección de \`Personality\` y \`Rules\` en su archivo de definición, Antigravity busca un archivo especial para definir sus propias reglas globales: \`AGENTS.md\` (usualmente ubicado en una carpeta \`.agents/\` o similar en la raíz de tu espacio de trabajo).
+
+**Propósito:**
+Dictar el estilo de código, las restricciones de seguridad, el tono de comunicación y las reglas universales del agente para ese proyecto en particular.
+
+**Ejemplo de un \`.agents/AGENTS.md\`:**
+\`\`\`markdown
+# Reglas Globales para Antigravity
+
+## Estilo de Código
+- Usa \`flake8\` para mantener el estándar PEP-8.
+- Siempre agrega Type Hints (tipado estático) a las funciones en Python.
+- Los docstrings deben estar en formato Google.
+
+## Restricciones Críticas
+- **NUNCA** modifiques la estructura de la base de datos sin preguntar primero al usuario.
+- **NUNCA** utilices librerías experimentales que no estén en \`requirements.txt\`.
+
+## Comportamiento del Agente
+- Sé extremadamente conciso. Muestra el código directamente sin largas explicaciones.
+- Si una prueba (Test) falla, intenta solucionarla automáticamente hasta un máximo de 3 intentos antes de pedir ayuda.
+\`\`\`
+
+## 3. Otros archivos comunes (\`.clinerules\`)
+
+Dependiendo de la extensión específica que uses (como Cline, RooCode, etc.), el nombre de los archivos puede variar. Un estándar emergente es \`.clinerules\`, que cumple la misma función que \`AGENTS.md\`.
+
+Lo importante es **el concepto subyacente**: Transformar tu conocimiento sobre el proyecto en instrucciones persistentes legibles por la IA, asegurando que tus agentes siempre tengan el contexto correcto sin depender de tu memoria a corto plazo.
+
+---
+
+En la próxima lección veremos cómo llevar esto al siguiente nivel: Inyectando "Skills" o habilidades personalizadas en Antigravity para que pueda hacer cosas que por defecto no sabría hacer.
+`,
+          exercise: null
+        },
+        {
+          id: "8-3",
+          title: "Desarrollo de Skills",
+          time: "25 min",
+          difficulty: "⭐⭐⭐ Avanzado",
+          content: `# 03. Desarrollo e Inyección de Skills en Antigravity
+
+En el Módulo 3, aprendimos qué son las "Skills": piezas atómicas de funcionalidad que un agente puede invocar cuando se cumplen ciertas condiciones. 
+
+Con **Antigravity**, este concepto se lleva a la práctica de una manera muy concreta. Puedes extender lo que Antigravity sabe hacer inyectando tus propios "Skills" en la raíz de tu proyecto o de forma global en tu IDE.
+
+## Anatomía de un SKILL para Antigravity
+
+Antigravity y sistemas similares buscan carpetas de Skills dentro del directorio de customizaciones (por ejemplo, \`.agents/skills/\`). Cada Skill es una subcarpeta que **debe contener** un archivo llamado \`SKILL.md\`.
+
+El archivo \`SKILL.md\` se compone de dos partes esenciales:
+1. **Frontmatter (YAML):** Define el nombre y la descripción para que Antigravity sepa *cuándo* usar la herramienta.
+2. **Body (Markdown):** Contiene las instrucciones paso a paso que el agente debe seguir una vez que decide usar el skill.
+
+### Ejemplo de un \`SKILL.md\`
+
+Imagina que quieres que Antigravity tenga una habilidad especial para auditar la seguridad de tus contenedores Docker usando un script que tú escribiste.
+
+Estructura de archivos:
+\`\`\`
+.agents/
+└── skills/
+    └── auditor_docker/
+        ├── SKILL.md
+        └── scripts/
+            └── audit_security.py
+\`\`\`
+
+Contenido de \`.agents/skills/auditor_docker/SKILL.md\`:
+\`\`\`markdown
+---
+name: auditor-seguridad-docker
+description: Utiliza este skill cuando el usuario pida revisar la seguridad de un Dockerfile o de contenedores en ejecución.
+---
+
+# Instrucciones de Auditoría Docker
+
+Has sido invocado para ejecutar la auditoría de seguridad. Sigue estos pasos de forma estricta:
+
+1. Revisa si existe un \`Dockerfile\` en el directorio actual.
+2. Ejecuta el script de auditoría ubicado en \`.agents/skills/auditor_docker/scripts/audit_security.py\` pasando el Dockerfile como argumento.
+3. Lee el output del script (estará en formato JSON).
+4. Genera un reporte en Markdown (crea un archivo llamado \`reporte_auditoria.md\`) usando los resultados.
+5. Usa Alertas de Github (\`> [!WARNING]\`) para destacar vulnerabilidades graves.
+\`\`\`
+
+## Diferencia con los Agentes Tradicionales
+
+En los primeros módulos del curso, tú construías el bucle (loop) en Python que leía los Markdowns y determinaba qué hacer (Ingeniería de Loops).
+
+Con **OpenCode y Antigravity**, el IDE se encarga del bucle. Tu trabajo se centra puramente en **Ingeniería de Prompts y Diseño de Sistemas**: escribes el Markdown (\`AGENTS.md\`, \`specs.md\`, \`SKILL.md\`) y el agente Antigravity hace el resto, interpretando tus instrucciones al vuelo, ejecutando comandos en consola y editando los archivos reales de tu proyecto.
+
+## Resumen del Módulo
+
+Has aprendido cómo el paradigma "Agentes como Código" no es solo un ejercicio académico, sino el estándar de la industria hoy en día en IDEs modernos. Ya sea que orquestes tus propios agentes con scripts Python, o utilices herramientas de grado empresarial como **OpenCode** y **Antigravity**, el secreto siempre radica en saber comunicarte claramente a través de archivos **Markdown**.
+`,
+          exercise: null
+        }
+      ]
+    }
   ],
 
   // ============================================
@@ -14140,6 +14330,7 @@ Extrae texto de documentos escaneados, identifica las partes, fechas y penalizac
     { id: "mod-5-master", name: "🏢 Profesional", description: "Completa el Módulo 5" },
     { id: "mod-6-master", name: "🔧 Optimizador", description: "Completa el Módulo 6" },
     { id: "mod-7-master", name: "🚀 Experto Final", description: "Completa el Módulo 7" },
-    { id: "all-exercises", name: "💪 Practicante", description: "Completa 5 o más ejercicios" }
+    { id: "all-exercises", name: "💪 Practicante", description: "Completa 5 o más ejercicios" },
+    { id: "mod-8-master", name: "💻 IDE Integrador", description: "Completa el Módulo 8" }
   ]
 };
