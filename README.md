@@ -85,7 +85,7 @@ Agentes y  y anatomía   triggers   y cadenas  reales en  y debug    Final    y 
 | **5** | Agentes especializados: desarrollo, documentos, atención al cliente | 4 lecciones |
 | **6** | Testing, debugging, optimización de prompts y seguridad | 4 lecciones |
 | **7** | Proyecto final: Sistema Multi-Agente de Business Intelligence | 1 proyecto |
-| **8** | Integración con IDEs Agenticos: OpenCode y Antigravity | 3 lecciones |
+| **8** | Integración con IDEs Agenticos: OpenCode y Antigravity | 4 lecciones |
 
 ### Recursos Incluidos
 
