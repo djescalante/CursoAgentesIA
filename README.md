@@ -8,7 +8,7 @@
 ---
 
 ![Estado](https://img.shields.io/badge/Estado-Activo-brightgreen?style=flat-square)
-![Módulos](https://img.shields.io/badge/Módulos-7-blue?style=flat-square)
+![Módulos](https://img.shields.io/badge/Módulos-8-blue?style=flat-square)
 ![Agentes](https://img.shields.io/badge/Agentes%20reales-4-purple?style=flat-square)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-yellow?style=flat-square)
 
@@ -37,6 +37,7 @@ cursoagenteClaude/
 │   ├── modulo-5/               # Agentes especializados (dev, docs, atención)
 │   ├── modulo-6/               # Testing, debugging y optimización
 │   ├── modulo-7/               # Proyecto final: sistema multi-agente
+│   ├── modulo-8/               # Integración IDEs: OpenCode y Antigravity
 │   ├── practicas/              # Ejercicios prácticos por módulo
 │   ├── recursos/               # Biblioteca de skills, cheatsheet, FAQ
 │   ├── templates/              # Plantillas reutilizables de agentes y skills
@@ -63,16 +64,16 @@ cursoagenteClaude/
 
 ## 📚 Curso de Agentes en Markdown
 
-> **7 módulos** que llevan al estudiante desde cero hasta sistemas multi-agente funcionales.
+> **8 módulos** que llevan al estudiante desde cero hasta sistemas multi-agente funcionales, incluyendo integración con IDEs.
 
 ### Ruta de Aprendizaje
 
 ```
-Módulo 1 → Módulo 2 → Módulo 3 → Módulo 4 → Módulo 5 → Módulo 6 → Módulo 7
-   ↓           ↓           ↓           ↓           ↓           ↓         ↓
-¿Qué son?  Estructura   Skills     Combinar    Agentes    Testing   Proyecto
-Agentes y  y anatomía   triggers   y cadenas  reales en  y debug    Final
-  skills   del agente   y condic.  de agentes producción  prompts  multi-ag.
+Módulo 1 → Módulo 2 → Módulo 3 → Módulo 4 → Módulo 5 → Módulo 6 → Módulo 7 → Módulo 8
+   ↓           ↓           ↓           ↓           ↓           ↓         ↓         ↓
+¿Qué son?  Estructura   Skills     Combinar    Agentes    Testing   Proyecto   OpenCode
+Agentes y  y anatomía   triggers   y cadenas  reales en  y debug    Final    y Anti-
+  skills   del agente   y condic.  de agentes producción  prompts  multi-ag.  gravity
 ```
 
 | Módulo | Tema | Archivos |
@@ -84,6 +85,7 @@ Agentes y  y anatomía   triggers   y cadenas  reales en  y debug    Final
 | **5** | Agentes especializados: desarrollo, documentos, atención al cliente | 4 lecciones |
 | **6** | Testing, debugging, optimización de prompts y seguridad | 4 lecciones |
 | **7** | Proyecto final: Sistema Multi-Agente de Business Intelligence | 1 proyecto |
+| **8** | Integración con IDEs Agenticos: OpenCode y Antigravity | 4 lecciones |
 
 ### Recursos Incluidos
 
