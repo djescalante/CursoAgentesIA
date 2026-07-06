@@ -229,6 +229,10 @@ def main():
         val_cajeros_pd = None
         found_in_pass1 = False
         
+        # Clasificar tipo de responsable
+        is_flm_type = resp_cierre in ['NCR', 'DIEBOLD', 'BELLTECH']
+        is_admin_type = resp_cierre in ['ATLAS', 'BRINKS', 'TRANSBANK', 'VATCO', 'FUNCIONARIOS', 'SUC']
+        
         # Pasada 1: Validar contra Abril (cajeros_dict) y Sucursales (sucursales_codes)
         # Caso A: Código existe en cajeros Abril
         if code in cajeros_dict:
@@ -240,12 +244,16 @@ def main():
             if admin_val == "SUC":
                 admin_val = "FUNCIONARIOS"
                 
-            # Validar coincidencia
-            if resp_cierre == admin_val or resp_cierre == flm_val:
-                val_coincide = True
-                val_cajeros_pd = admin_val if resp_cierre == admin_val else flm_val
+            # Validar coincidencia estricta
+            if is_flm_type:
+                val_coincide = (resp_cierre == flm_val)
+                val_cajeros_pd = flm_val
+            elif is_admin_type:
+                val_coincide = (resp_cierre == admin_val)
+                val_cajeros_pd = admin_val
             else:
-                val_coincide = False
+                # Caso de respaldo si es vacío o desconocido
+                val_coincide = (resp_cierre == admin_val or resp_cierre == flm_val)
                 val_cajeros_pd = admin_val if admin_val != "NAN" else flm_val
                 
         # Caso B: Código existe en sucursales
@@ -265,13 +273,15 @@ def main():
             if admin_val_mayo == "SUC":
                 admin_val_mayo = "FUNCIONARIOS"
                 
-            if resp_cierre == admin_val_mayo or resp_cierre == flm_val_mayo:
-                val_coincide = True
-                val_cajeros_pd = admin_val_mayo if resp_cierre == admin_val_mayo else flm_val_mayo
+            if is_flm_type:
+                val_coincide = (resp_cierre == flm_val_mayo)
+                val_cajeros_pd = flm_val_mayo
+            elif is_admin_type:
+                val_coincide = (resp_cierre == admin_val_mayo)
+                val_cajeros_pd = admin_val_mayo
             else:
-                # Si no coincide pero existe en Mayo, asignamos el valor de administración de Mayo
+                val_coincide = (resp_cierre == admin_val_mayo or resp_cierre == flm_val_mayo)
                 val_cajeros_pd = admin_val_mayo if admin_val_mayo != "NAN" else flm_val_mayo
-                val_coincide = False
         elif (not found_in_pass1) and (not val_coincide):
             val_cajeros_pd = None
             val_coincide = False
