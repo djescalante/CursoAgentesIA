@@ -90,21 +90,21 @@ El skill ejecuta el script en Python `validador_reporte.py` enviando los paráme
 
 #### Step 4: Auditoría del Responsable de Cierre
 - Si el campo `ResponsableCierre` es `"FUNCIONARIOS"` (caso insensible y omitiendo espacios en blanco):
-  - Escribir directamente `"FUNCIONARIOS"` en la columna `Cajeros PD` y marcar `Coincicde?` como `True`, finalizando la evaluación del registro (sin validar contra la base de datos de cajeros en producción).
-- Si el responsable de cierre es distinto a `"FUNCIONARIOS"` y el código existe en la base de datos de cajeros:
+  - Escribir directamente `"FUNCIONARIOS"` en la columna `Cajeros PD` y omitir el cruce con producción (asumiendo coincidencia).
+- Si el responsable de cierre es distinto a `"FUNCIONARIOS"` y el código existe en la base de datos de cajeros en producción (mes principal o base secundaria):
   - Obtener el proveedor de administración y FLM de producción.
   - Mapear `"SUC"` de administración a `"FUNCIONARIOS"`.
-  - Validar si `ResponsableCierre` coincide con alguno de ellos (en cuyo caso `Coincicde?` es `True` y se escribe el proveedor correspondiente en `Cajeros PD`).
-  - Si no coincide, `Coincicde?` es `False` y se escribe la administración por defecto (o FLM).
+  - Registrar el proveedor esperado en la columna `Cajeros PD`.
 - Si el responsable de cierre es distinto a `"FUNCIONARIOS"` y el código existe en la base de datos de sucursales:
   - Escribir `"FUNCIONARIOS"` en `Cajeros PD`.
-  - `Coincicde?` es `True` si el responsable de cierre es `"FUNCIONARIOS"`, de lo contrario `False`.
 - Si el código no existe en ninguna base de datos:
-  - Escribir `None` en `Cajeros PD` y `False` en `Coincicde?`.
+  - Escribir vacío/None en `Cajeros PD`.
+- **Validación dinámica:** El valor booleano de coincidencia se maneja en el paso de generación de reportes vía fórmulas de Excel.
 
 #### Step 5: Generación de Reportes
-- Guardar la base completa actualizada con las columnas `Tipo de Sitio`, `Cajeros PD` (o `Cajeros PDN`) y `Coincicde?` (conservando todos los registros que coinciden y los que no coinciden).
-- Filtrar la base completa por `Coincicde?` == `False` y guardarla como un archivo Excel independiente de discrepancias para su revisión manual directa.
+- Para la base completa, crear la columna `Coincicde?` utilizando una **fórmula nativa de Excel** (`=EXACT(...)`) que compara dinámicamente `ResponsableCierre` con `Cajeros PD`. Esto asegura que correcciones manuales actualicen la validación.
+- Guardar la base completa actualizada con las columnas `Tipo de Sitio`, `Cajeros PD` y `Coincicde?`.
+- Filtrar la base completa por `Coincicde?` evaluada internamente como falsa y guardarla como un archivo Excel independiente de discrepancias para su revisión manual directa, conservando también sus respectivas fórmulas.
 
 ---
 

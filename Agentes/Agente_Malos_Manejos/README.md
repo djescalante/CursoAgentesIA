@@ -40,14 +40,15 @@ El script implementa los siguientes procesos clave:
    * Si no se detecta prefijo de diseño en la ubicación, aplica búsquedas en cascada por palabras clave secundarias en los campos de texto (`KIOSKO`/`KIOSCO`, `GZ`/`GERENCIA`, `EDIFICIO`/`EDF`).
 
 2. **Cruce y Validación de Responsables (`Cajeros PD` y `Coincicde?`)**:
-   * **Bypass de Funcionarios**: Si `ResponsableCierre` es `"FUNCIONARIOS"` (caso insensible), se escribe directamente `"FUNCIONARIOS"` en la columna `Cajeros PD` y se marca `Coincicde?` como `True` de forma inmediata sin consultar las bases de datos de producción.
-   * Si el responsable del cierre es distinto y el código del sitio se encuentra en la base de datos de cajeros en producción, extrae los proveedores autorizados:
+   * **Bypass de Funcionarios**: Si `ResponsableCierre` es `"FUNCIONARIOS"` (caso insensible), se escribe directamente `"FUNCIONARIOS"` en la columna `Cajeros PD` y se asume coincidencia inmediata.
+   * Si el responsable del cierre es distinto y el código del sitio se encuentra en las bases de datos de cajeros en producción (mes actual o mes secundario), extrae los proveedores autorizados:
      * Columna **Administración** (Transportadora responsable: ATLAS, BRINKS, TRANSBANK, etc.).
      * Columna **FLM** (Soporte técnico: NCR, DIEBOLD, etc.).
      * *Mapeo especial*: El valor `"SUC"` de administración representa una oficina o funcionario interno, por lo que se mapea automáticamente a `"FUNCIONARIOS"`.
-     * Si `ResponsableCierre` coincide con alguno de ellos, `Coincicde?` se marca como `True` y se escribe el valor coincidente en `Cajeros PD`. De lo contrario, se marca como `False` y se escribe la administración registrada por defecto.
-   * Si el código del sitio se encuentra en la base de datos de sucursales, el proveedor esperado es siempre `"FUNCIONARIOS"`. Si `ResponsableCierre` coincide, se marca como `True`, de lo contrario `False`.
-   * Si el código no existe en ninguna base de datos, `Cajeros PD` es `None` y `Coincicde?` es `False`.
+     * Se escribe en `Cajeros PD` el proveedor correspondiente según la validación.
+   * Si el código del sitio se encuentra en la base de datos de sucursales, el proveedor esperado es siempre `"FUNCIONARIOS"`.
+   * Si el código no existe en ninguna base de datos, `Cajeros PD` se deja vacío.
+   * **Fórmula de Validación Dinámica**: La columna `Coincicde?` se genera mediante una **fórmula nativa de Excel** (`=EXACT(...)`). Esto permite que, si un operador corrige manualmente un dato erróneo en el reporte final, el estado de coincidencia se actualice automáticamente en tiempo real.
 
 ---
 

@@ -18,10 +18,10 @@ def parse_args():
         help="Ruta a la base de datos de cajeros en producción (.xlsb) de abril."
     )
     parser.add_argument(
-        "--cajeros_mayo", 
+        "--cajeros_secundario", 
         type=str, 
         default="D:/cursoagenteClaude/Agentes/Agente_Malos_Manejos/Ejemplo/Cajeros en Produccion/CAJEROS EN PRODUCCION MAYO 30.xlsb",
-        help="Ruta a la base de datos de cajeros en producción (.xlsb) de mayo."
+        help="Ruta a la base de datos de cajeros en producción (.xlsb) del mes secundario."
     )
     parser.add_argument(
         "--sucursales", 
@@ -117,20 +117,20 @@ def main():
         mismatches_path = Path(args.mismatches)
         
     cajeros_path = Path(args.cajeros)
-    cajeros_mayo_path = Path(args.cajeros_mayo) if args.cajeros_mayo else None
+    cajeros_sec_path = Path(args.cajeros_secundario) if args.cajeros_secundario else None
     sucursales_path = Path(args.sucursales)
     
     print(f"[INFO] Iniciando validación de reporte...")
     print(f"[INFO] Reporte de incidentes: {report_path.name}")
-    print(f"[INFO] BD Cajeros (Abril): {cajeros_path.name}")
-    if cajeros_mayo_path:
-        print(f"[INFO] BD Cajeros (Mayo): {cajeros_mayo_path.name}")
+    print(f"[INFO] BD Cajeros (Principal): {cajeros_path.name}")
+    if cajeros_sec_path:
+        print(f"[INFO] BD Cajeros (Secundario): {cajeros_sec_path.name}")
     print(f"[INFO] BD Sucursales: {sucursales_path.name}")
     
     # Validar existencia de archivos
     files_to_check = [(report_path, "Reporte"), (cajeros_path, "BD Cajeros"), (sucursales_path, "BD Sucursales")]
-    if cajeros_mayo_path:
-        files_to_check.append((cajeros_mayo_path, "BD Cajeros Mayo"))
+    if cajeros_sec_path:
+        files_to_check.append((cajeros_sec_path, "BD Cajeros Secundario"))
         
     for path, desc in files_to_check:
         if not path.exists():
@@ -152,15 +152,15 @@ def main():
         'NOMBRE': 'Nombre_PDN'
     })
     
-    # Cargar Cajeros Mayo
-    cajeros_mayo_db = None
-    if cajeros_mayo_path:
-        df_cajeros_mayo = pd.read_excel(cajeros_mayo_path, sheet_name='Listado cajeros', engine='pyxlsb')
-        admin_col_mayo = [c for c in df_cajeros_mayo.columns if "ADMINISTRA" in c.upper()][0]
-        cajeros_mayo_db = df_cajeros_mayo[['CODIGO', admin_col_mayo, 'FLM', 'NOMBRE']].dropna(subset=['CODIGO']).copy()
-        cajeros_mayo_db['CODIGO'] = cajeros_mayo_db['CODIGO'].astype(int)
-        cajeros_mayo_db = cajeros_mayo_db.rename(columns={
-            admin_col_mayo: 'Admin_PDN',
+    # Cargar Cajeros Secundario
+    cajeros_sec_db = None
+    if cajeros_sec_path:
+        df_cajeros_sec = pd.read_excel(cajeros_sec_path, sheet_name='Listado cajeros', engine='pyxlsb')
+        admin_col_sec = [c for c in df_cajeros_sec.columns if "ADMINISTRA" in c.upper()][0]
+        cajeros_sec_db = df_cajeros_sec[['CODIGO', admin_col_sec, 'FLM', 'NOMBRE']].dropna(subset=['CODIGO']).copy()
+        cajeros_sec_db['CODIGO'] = cajeros_sec_db['CODIGO'].astype(int)
+        cajeros_sec_db = cajeros_sec_db.rename(columns={
+            admin_col_sec: 'Admin_PDN',
             'FLM': 'FLM_PDN',
             'NOMBRE': 'Nombre_PDN'
         })
@@ -201,7 +201,7 @@ def main():
     print("[INFO] Cruzando datos con bases de datos en producción...")
     
     cajeros_dict = cajeros_db.set_index('CODIGO').to_dict(orient='index')
-    cajeros_mayo_dict = cajeros_mayo_db.set_index('CODIGO').to_dict(orient='index') if cajeros_mayo_db is not None else {}
+    cajeros_sec_dict = cajeros_sec_db.set_index('CODIGO').to_dict(orient='index') if cajeros_sec_db is not None else {}
     sucursales_codes = set(sucursales_db['CODIGO_NUEVO'])
     
     cajeros_pdn_list = []
@@ -265,23 +265,23 @@ def main():
             else:
                 val_coincide = False
                 
-        # Pasada 2: Si no coincide o no se encontró en la pasada 1, validar contra Mayo
-        if (not val_coincide) and (cajeros_mayo_dict is not None) and (code in cajeros_mayo_dict):
-            admin_val_mayo = str(cajeros_mayo_dict[code]['Admin_PDN']).strip().upper()
-            flm_val_mayo = str(cajeros_mayo_dict[code]['FLM_PDN']).strip().upper()
+        # Pasada 2: Si no coincide o no se encontró en la pasada 1, validar contra BD Secundaria
+        if (not val_coincide) and (cajeros_sec_dict is not None) and (code in cajeros_sec_dict):
+            admin_val_sec = str(cajeros_sec_dict[code]['Admin_PDN']).strip().upper()
+            flm_val_sec = str(cajeros_sec_dict[code]['FLM_PDN']).strip().upper()
             
-            if admin_val_mayo == "SUC":
-                admin_val_mayo = "FUNCIONARIOS"
+            if admin_val_sec == "SUC":
+                admin_val_sec = "FUNCIONARIOS"
                 
             if is_flm_type:
-                val_coincide = (resp_cierre == flm_val_mayo)
-                val_cajeros_pd = flm_val_mayo
+                val_coincide = (resp_cierre == flm_val_sec)
+                val_cajeros_pd = flm_val_sec
             elif is_admin_type:
-                val_coincide = (resp_cierre == admin_val_mayo)
-                val_cajeros_pd = admin_val_mayo
+                val_coincide = (resp_cierre == admin_val_sec)
+                val_cajeros_pd = admin_val_sec
             else:
-                val_coincide = (resp_cierre == admin_val_mayo or resp_cierre == flm_val_mayo)
-                val_cajeros_pd = admin_val_mayo if admin_val_mayo != "NAN" else flm_val_mayo
+                val_coincide = (resp_cierre == admin_val_sec or resp_cierre == flm_val_sec)
+                val_cajeros_pd = admin_val_sec if admin_val_sec != "NAN" else flm_val_sec
         elif (not found_in_pass1) and (not val_coincide):
             val_cajeros_pd = None
             val_coincide = False
@@ -322,6 +322,39 @@ def main():
         cols.insert(idx_resp + 2, 'Coincicde?')
         
     df_report = df_report[cols]
+    
+    # 5. Filtrar Mismatches antes de reemplazar por fórmulas
+    mismatches_df = df_report[df_report['Coincicde?'] == False].copy()
+
+    # Función auxiliar para convertir índice de columna a letra de Excel
+    def get_col_letter(col_idx):
+        col_idx += 1
+        letter = ""
+        while col_idx > 0:
+            col_idx, remainder = divmod(col_idx - 1, 26)
+            letter = chr(65 + remainder) + letter
+        return letter
+        
+    idx_resp = cols.index(resp_col_name) if resp_cols else -1
+    idx_cajeros = cols.index(cajeros_pd_col_name) if cajeros_pd_col_name in cols else -1
+    
+    if idx_resp != -1 and idx_cajeros != -1:
+        letter_resp = get_col_letter(idx_resp)
+        letter_cajeros = get_col_letter(idx_cajeros)
+        
+        # Generar fórmulas para el reporte completo
+        formulas_full = [
+            f'=EXACT(TRIM(UPPER({letter_resp}{i+2})), TRIM(UPPER({letter_cajeros}{i+2})))'
+            for i in range(len(df_report))
+        ]
+        df_report['Coincicde?'] = formulas_full
+        
+        # Generar fórmulas para el reporte de discrepancias
+        formulas_mismatches = [
+            f'=EXACT(TRIM(UPPER({letter_resp}{i+2})), TRIM(UPPER({letter_cajeros}{i+2})))'
+            for i in range(len(mismatches_df))
+        ]
+        mismatches_df['Coincicde?'] = formulas_mismatches
         
     print(f"[INFO] Guardando reporte completo validado en: {output_path}")
     try:
@@ -332,8 +365,6 @@ def main():
         print(f"[INFO] Guardando en ruta alternativa: {alternative_output}")
         df_report.to_excel(alternative_output, sheet_name=sheet_name, index=False)
     
-    # 5. Guardar Reporte de Mismatches (Discrepancias)
-    mismatches_df = df_report[df_report['Coincicde?'] == False]
     print(f"[INFO] Guardando reporte de discrepancias ({len(mismatches_df)} filas) en: {mismatches_path}")
     try:
         mismatches_df.to_excel(mismatches_path, sheet_name="Mismatches", index=False)
