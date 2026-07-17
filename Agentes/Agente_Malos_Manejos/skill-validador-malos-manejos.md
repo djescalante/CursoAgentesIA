@@ -89,7 +89,8 @@ El skill ejecuta el script en Python `validador_reporte.py` enviando los paráme
   - Si no coincide con ninguna palabra clave anterior, clasificar como `"ATM"`.
 
 #### Step 4: Auditoría del Responsable de Cierre
-- Si el campo `ResponsableCierre` es `"FUNCIONARIOS"` (caso insensible y omitiendo espacios en blanco):
+- Si el campo `ResponsableCierre` es `"FUNCIONARIOS"` o alguna de sus variantes singular/errores de tipeo (ej. `"funcionario"`, `"fucionarios"`, `"fucionario"`, `"funcioanrios"`) (caso insensible y omitiendo espacios en blanco):
+  - Normalizar el valor a `"FUNCIONARIOS"` en la columna del reporte.
   - Escribir directamente `"FUNCIONARIOS"` en la columna `Cajeros PD` y omitir el cruce con producción (asumiendo coincidencia).
 - Si el responsable de cierre es distinto a `"FUNCIONARIOS"` y el código existe en la base de datos de cajeros en producción (mes principal o base secundaria):
   - Obtener el proveedor de administración y FLM de producción.

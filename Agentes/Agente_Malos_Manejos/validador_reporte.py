@@ -180,6 +180,17 @@ def main():
         sheet_name = excel_file.sheet_names[0]
     df_report = pd.read_excel(report_path, sheet_name=sheet_name)
     
+    # Normalizar ResponsableCierre (ej. "funcionario", "fucionarios" -> "FUNCIONARIOS")
+    if 'ResponsableCierre' in df_report.columns:
+        def normalize_resp(val):
+            if pd.isna(val):
+                return val
+            s = str(val).strip().upper()
+            if s in ["FUNCIONARIO", "FUNCIONARIOS", "FUCIONARIO", "FUCIONARIOS", "FUNCIOANRIOS"]:
+                return "FUNCIONARIOS"
+            return val
+        df_report['ResponsableCierre'] = df_report['ResponsableCierre'].apply(normalize_resp)
+    
     # Conservar el orden original y filas con códigos vacíos
     df_report['Original_Index'] = range(len(df_report))
     

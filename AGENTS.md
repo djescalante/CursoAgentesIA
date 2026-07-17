@@ -28,7 +28,7 @@ Use the following commands to execute or test each production agent:
 ## Agent Business Rules & Crucial Mappings
 
 ### Agente_Malos_Manejos (Auditoría)
-- **Bypass of "FUNCIONARIOS"**: If `ResponsableCierre` is `"FUNCIONARIOS"` (case-insensitive), bypass checking the ATMs database entirely. Write `"FUNCIONARIOS"` directly into the target ATM column (`Cajeros PD` or similar) and mark `Coincicde?` as `True`.
+- **Bypass of "FUNCIONARIOS"**: If `ResponsableCierre` is `"FUNCIONARIOS"` or any of its singular/typo variations (e.g., `"FUNCIONARIO"`, `"FUCIONARIOS"`, `"FUCIONARIO"`, `"FUNCIOANRIOS"`) (case-insensitive), normalize it to `"FUNCIONARIOS"`, bypass checking the ATMs database entirely. Write `"FUNCIONARIOS"` directly into the target ATM column (`Cajeros PD` or similar) and mark `Coincicde?` as `True`.
 - **Generic Monthly Databases**: Do not hardcode specific months (e.g., April, May, June) in the codebase logic, variables, or command-line parameters. Use generic parameters/variables like `primary` and `secondary/fallback` databases to ensure the script remains reusable as months progress.
 - **"SUC" Administration Mapping**: In the master ATM database, the administrative value `"SUC"` represents an internal bank office. Map this string value to `"FUNCIONARIOS"` before conducting any comparisons.
 - **Prefix-Based Site Classification**: Classify the site type using the first non-numeric/non-hyphen token of the `Ubicacion` string:
