@@ -1,21 +1,24 @@
 import os
 import re
+import sys
+import subprocess
 from pathlib import Path
 
 base_path = Path(__file__).parent.resolve()
+
+# Run the compilation of data.js first
+try:
+    print("Compilando data.js desde update_all.py...")
+    subprocess.run([sys.executable, str(base_path / "compile_data_js.py")], check=True)
+except Exception as e:
+    print(f"Error compilando data.js: {e}")
+    sys.exit(1)
 
 manifest_paths = [
     base_path / "MANIFEST.md"
 ]
 if (base_path / "curso-agentes-skills").exists():
     manifest_paths.append(base_path / "curso-agentes-skills" / "MANIFEST.md")
-
-def get_module_files(module_dir):
-    files = []
-    if (base_path / module_dir).exists():
-        for f in sorted((base_path / module_dir).glob("*.md")):
-            files.append(f.name)
-    return files
 
 new_manifest_content = """# 📦 Manifiesto del Curso - Agentes y Skills
 
@@ -25,10 +28,10 @@ new_manifest_content = """# 📦 Manifiesto del Curso - Agentes y Skills
 
 ## 📊 Resumen Ejecutivo
 
-**Contenido Total**: 27 archivos principales
-**Palabras**: ~60,000+
-**Ejemplos de código**: 80+
-**Ejercicios prácticos**: 25+
+**Contenido Total**: 31 archivos principales
+**Palabras**: ~65,000+
+**Ejemplos de código**: 85+
+**Ejercicios prácticos**: 29+
 **Proyectos completos**: 5
 
 ---
@@ -42,6 +45,14 @@ new_manifest_content = """# 📦 Manifiesto del Curso - Agentes y Skills
 ✅ INSTALLATION.md             - Setup e instalación
 ✅ MANIFEST.md                 - Este archivo
 ✅ requirements.txt            - Dependencias Python
+```
+
+### 🧭 Módulo 0: Inicio y Mapa de Ruta
+```
+✅ modulo-0/01-mapa-ruta.md
+✅ modulo-0/02-plantilla-leccion.md
+✅ modulo-0/03-estilo-visual.md
+✅ modulo-0/04-compilacion.md
 ```
 
 ### 📚 Módulo 1: Fundamentos
@@ -99,6 +110,14 @@ new_manifest_content = """# 📦 Manifiesto del Curso - Agentes y Skills
 ✅ modulo-7/proyecto-final.md
 ```
 
+### 💻 Módulo 8: Integración IDEs
+```
+✅ modulo-8/01-opencode-y-antigravity.md
+✅ modulo-8/02-archivos-de-configuracion.md
+✅ modulo-8/03-desarrollo-de-skills.md
+✅ modulo-8/04-ecosistema-specs-y-agents.md
+```
+
 ### 📖 Recursos
 ```
 ✅ recursos/cheatsheet.md
@@ -125,25 +144,25 @@ new_manifest_content = """# 📦 Manifiesto del Curso - Agentes y Skills
 
 ### Por Módulo
 
-| Módulo | Archivos | Páginas Est. | Dificultad | Tiempo Est. |
-|--------|----------|--------------|------------|-------------|
-| 1 | 3 | 15 | ⭐ | 45 min |
-| 2 | 4 | 20 | ⭐⭐ | 120 min |
-| 3 | 4 | 25 | ⭐⭐⭐ | 150 min |
-| 4 | 4 | 25 | ⭐⭐⭐ | 150 min |
-| 5 | 4 | 40 | ⭐⭐⭐⭐ | 240 min |
-| 6 | 4 | 35 | ⭐⭐⭐⭐ | 200 min |
-| 7 | 4 | 45 | ⭐⭐⭐⭐ | 300 min |
-| **Total** | **27** | **205** | **Mixto** | **~20 hrs** |
+| Módulo | Tema | Archivos | Páginas Est. | Dificultad | Tiempo Est. |
+|--------|------|----------|--------------|------------|-------------|
+| 0 | Inicio y Mapa de Ruta | 4 | 15 | ⭐ | 50 min |
+| 1 | Fundamentos | 3 | 15 | ⭐ | 45 min |
+| 2 | Creando tu Primer Agente | 4 | 20 | ⭐⭐ | 120 min |
+| 3 | Skills Avanzados | 4 | 25 | ⭐⭐⭐ | 150 min |
+| 4 | Integración y Workflows | 4 | 25 | ⭐⭐⭐ | 150 min |
+| 5 | Casos de Uso Reales | 4 | 40 | ⭐⭐⭐⭐ | 240 min |
+| 6 | Optimización | 4 | 35 | ⭐⭐⭐⭐ | 200 min |
+| 7 | Proyecto Final | 4 | 45 | ⭐⭐⭐⭐ | 300 min |
+| 8 | Integración IDEs | 4 | 20 | ⭐⭐⭐ | 120 min |
+| **Total** | **31** | **240** | **Mixto** | **~22.5 hrs** |
 
 ---
 
 ## 🔍 Contenido por Tipo
 
-(Conserva resto original adaptado o mantenido similar al original)
-
-**Versión**: 1.1
-**Fecha**: Mayo 2026
+**Versión**: 3.0
+**Fecha**: Julio 2026
 **Estado**: Completo y funcional
 """
 
@@ -157,8 +176,8 @@ import shutil
 from pathlib import Path
 
 def create_portable_version():
-    base_path = Path(__file__).parent.resolve()
-    source_path = base_path
+    # base_path resolves to the project root (parent of scripts folder)
+    base_path = Path(__file__).parent.parent.resolve()
     portable_path = base_path / "cursoAgentesPortable"
     
     folders = [
@@ -177,19 +196,19 @@ def create_portable_version():
 
     file_map = {
         base_path / "README.md": "00_EMPIEZA_AQUI/00_Indice_General.md",
-        source_path / "QUICK_START.md": "00_EMPIEZA_AQUI/01_Quick_Start.md",
-        source_path / "INSTALLATION.md": "00_EMPIEZA_AQUI/02_Guia_Instalacion.md",
+        base_path / "engram/QUICK_START.md": "00_EMPIEZA_AQUI/01_Quick_Start.md",
+        base_path / "engram/INSTALLATION.md": "00_EMPIEZA_AQUI/02_Guia_Instalacion.md",
         
-        base_path / "ejemplos/agente-python-dev.md": "02_PROYECTOS_Y_EJEMPLOS/Agente_Python_Dev.md",
-        base_path / "ejemplos/skill-csv-analyzer.md": "02_PROYECTOS_Y_EJEMPLOS/Skill_CSV_Analyzer.md",
+        base_path / "CursoAgentesMD/ejemplos/agente-python-dev.md": "02_PROYECTOS_Y_EJEMPLOS/Agente_Python_Dev.md",
+        base_path / "CursoAgentesMD/ejemplos/skill-csv-analyzer.md": "02_PROYECTOS_Y_EJEMPLOS/Skill_CSV_Analyzer.md",
         
-        base_path / "templates/agents/AGENT_TEMPLATE.md": "03_RECURSOS_Y_TEMPLATES/AGENT_TEMPLATE.md",
-        base_path / "templates/skills/SKILL_TEMPLATE.md": "03_RECURSOS_Y_TEMPLATES/SKILL_TEMPLATE.md",
-        base_path / "recursos/cheatsheet.md": "03_RECURSOS_Y_TEMPLATES/CheatSheet_Rapida.md",
-        base_path / "recursos/biblioteca-skills.md": "03_RECURSOS_Y_TEMPLATES/Biblioteca_de_Skills.md",
-        base_path / "recursos/faq.md": "03_RECURSOS_Y_TEMPLATES/FAQ_Troubleshooting.md",
+        base_path / "CursoAgentesMD/templates/agents/AGENT_TEMPLATE.md": "03_RECURSOS_Y_TEMPLATES/AGENT_TEMPLATE.md",
+        base_path / "CursoAgentesMD/templates/skills/SKILL_TEMPLATE.md": "03_RECURSOS_Y_TEMPLATES/SKILL_TEMPLATE.md",
+        base_path / "CursoAgentesMD/recursos/cheatsheet.md": "03_RECURSOS_Y_TEMPLATES/CheatSheet_Rapida.md",
+        base_path / "CursoAgentesMD/recursos/biblioteca-skills.md": "03_RECURSOS_Y_TEMPLATES/Biblioteca_de_Skills.md",
+        base_path / "CursoAgentesMD/recursos/faq.md": "03_RECURSOS_Y_TEMPLATES/FAQ_Troubleshooting.md",
         
-        base_path / "recursos/guia-implementacion.md": "04_IMPLEMENTACION_TECNICA/Guia_de_APIs.md",
+        base_path / "CursoAgentesMD/recursos/guia-implementacion.md": "04_IMPLEMENTACION_TECNICA/Guia_de_APIs.md",
     }
 
     print("Creando version portable en:", portable_path)
@@ -200,17 +219,19 @@ def create_portable_version():
             dest_file = portable_path / dst
             shutil.copy2(src, dest_file)
             copied_count += 1
+        else:
+            print(f"Advertencia: No se encontro el archivo a copiar: {src}")
             
-    # Copy all modulos
-    for mod_idx in range(1, 8):
-        mod_dir = base_path / f"modulo-{mod_idx}"
+    # Copy all modulos (including module 0 to module 8)
+    for mod_idx in range(0, 9):
+        mod_dir = base_path / "CursoAgentesMD" / f"modulo-{mod_idx}"
         if mod_dir.exists():
             for md_file in mod_dir.glob("*.md"):
                 dst = portable_path / f"01_MODULOS_TEORICOS/M{mod_idx}_{md_file.name}"
                 shutil.copy2(md_file, dst)
                 copied_count += 1
 
-    struct_file = base_path / "structure.txt"
+    struct_file = base_path / "engram" / "structure.txt"
     if struct_file.exists():
         shutil.copy2(struct_file, portable_path / "00_EMPIEZA_AQUI/Mapa_del_Tesoro.txt")
 
@@ -241,4 +262,4 @@ if __name__ == "__main__":
 with open(base_path / "make_portable.py", "w", encoding="utf-8") as f:
     f.write(make_portable_content)
 
-print("Updated script and MANIFEST.md")
+print("Updated script, make_portable.py and MANIFEST.md")

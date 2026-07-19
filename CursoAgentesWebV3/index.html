@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Domina Agentes y Skills con IA · Curso Interactivo</title>
   <meta name="description"
-    content="Aprende a crear agentes IA y skills mediante archivos Markdown. Curso completo e interactivo con 7 módulos, 28 lecciones, ejercicios prácticos y seguimiento de progreso." />
+    content="Aprende a crear agentes IA y skills mediante archivos Markdown. Curso completo e interactivo con 9 módulos, 36 lecciones, ejercicios prácticos y seguimiento de progreso." />
   <meta name="author" content="Curso Agentes IA" />
   <meta name="keywords" content="agentes IA, skills, markdown, Claude, GPT-4, prompt engineering, LLM, multi-agente" />
   <meta name="theme-color" content="#6C63FF" />
@@ -15,7 +15,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Domina Agentes y Skills con IA · Curso Interactivo" />
   <meta property="og:description"
-    content="7 módulos · 28 lecciones para aprender a diseñar, construir y desplegar agentes IA y skills profesionales con archivos Markdown." />
+    content="9 módulos · 36 lecciones para aprender a diseñar, construir y desplegar agentes IA y skills profesionales con archivos Markdown." />
   <meta property="og:locale" content="es_ES" />
   <meta property="og:site_name" content="AgentesIA Curso" />
 
@@ -23,7 +23,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Domina Agentes y Skills con IA" />
   <meta name="twitter:description"
-    content="Curso interactivo completo: 7 módulos, 28 lecciones, ejercicios prácticos y proyectos reales." />
+    content="Curso interactivo completo: 9 módulos, 36 lecciones, ejercicios prácticos y proyectos reales." />
 
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -101,7 +101,7 @@
         <div class="progress-badge" id="progressBadge" role="button" tabindex="0"
           aria-label="Ver mi progreso del curso">
           <span class="pb-icon" aria-hidden="true">📊</span>
-          <span id="progressText">0/28</span>
+          <span id="progressText">0/36</span>
         </div>
       </div>
     </header>
@@ -111,7 +111,7 @@
       <!-- Landing / Home -->
       <section class="page active" id="page-home" aria-labelledby="home-title">
         <div class="hero">
-          <div class="hero-badge">🚀 v2.0 · 7 Módulos · 28 Lecciones</div>
+          <div class="hero-badge">🚀 v3.0 · 9 Módulos · 36 Lecciones</div>
           <h1 class="hero-title" id="home-title">
             Domina <span class="gradient-text">Agentes IA</span><br />y Skills con Markdown
           </h1>
@@ -131,20 +131,20 @@
           </div>
           <div class="hero-stats">
             <div class="stat-item">
-              <span class="stat-num">7</span>
+              <span class="stat-num">9</span>
               <span class="stat-label">Módulos</span>
             </div>
             <div class="stat-item">
-              <span class="stat-num">28</span>
+              <span class="stat-num">36</span>
               <span class="stat-label">Lecciones</span>
             </div>
             <div class="stat-item">
-              <span class="stat-num">15+</span>
+              <span class="stat-num">18</span>
               <span class="stat-label">Ejercicios</span>
             </div>
             <div class="stat-item">
-              <span class="stat-num">∞</span>
-              <span class="stat-label">Templates</span>
+              <span class="stat-num">17</span>
+              <span class="stat-label">Logros</span>
             </div>
           </div>
         </div>
@@ -264,7 +264,20 @@
   <!-- Toast Notification -->
   <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-  <script src="js/data.js"></script>
+  <!-- Datos del curso (fuente única, sin build step). Orden de carga obligatorio: core primero -->
+  <script src="js/data/core.js"></script>
+  <script src="js/data/modulo-0.js"></script>
+  <script src="js/data/modulo-1.js"></script>
+  <script src="js/data/modulo-2.js"></script>
+  <script src="js/data/modulo-3.js"></script>
+  <script src="js/data/modulo-4.js"></script>
+  <script src="js/data/modulo-5.js"></script>
+  <script src="js/data/modulo-6.js"></script>
+  <script src="js/data/modulo-7.js"></script>
+  <script src="js/data/modulo-8.js"></script>
+  <script src="js/data/recursos.js"></script>
+  <script src="js/data/templates.js"></script>
+  <script src="js/data/ejemplos.js"></script>
   <script src="js/prism.js"></script>
   <script src="js/markdown.js"></script>
   <script src="js/app.js"></script>
