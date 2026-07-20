@@ -272,7 +272,7 @@ Diseña la ficha técnica de una lección nueva para este curso:
 
 ## 🎨 Componentes Visuales Premium
 
-El visualizador interactivo del curso (v3) soporta la inserción de HTML enriquecido dentro de los archivos Markdown. Esto permite mostrar tarjetas, comparaciones y diagramas con una estética moderna y profesional.
+El visualizador interactivo del curso (v3) soporta la inserción de HTML enriquecido dentro del contenido de las lecciones. Esto permite mostrar tarjetas, comparaciones y diagramas con una estética moderna y profesional.
 
 A continuación, se detallan los componentes CSS listos para usar en tus lecciones:
 
@@ -355,8 +355,10 @@ Si deseas incrustar diagramas SVGs vectoriales nativos para estructurar arquitec
 
 ---
 
-## ⚠️ Regla de Oro para el Compilador
-Cuando uses estos fragmentos de HTML dentro de tus lecciones Markdown, ten cuidado de **no utilizar backticks (\`) sin escapar** en las descripciones si las estás editando directamente en JavaScript. Al usar nuestro compilador automatizado, el script se encargará de realizar el escape automáticamente.
+## ⚠️ Regla de Oro de Edición
+Cuando uses estos fragmentos de HTML dentro de tus lecciones, ten cuidado de **no utilizar backticks (\`) sin escapar**: el contenido se edita directamente en JavaScript (template literals), así que tú eres el responsable del escape. Tras cada edición, ejecuta la suite de verificación (ver lección 0.4).
+
+> Estos componentes son los únicos vigentes. La lista completa de clases permitidas y eliminadas está en \`specs/02-web-interface.md\`.
 
 ---
 **Dificultad**: ⭐⭐ Intermedio
@@ -366,48 +368,57 @@ Cuando uses estos fragmentos de HTML dentro de tus lecciones Markdown, ten cuida
         },
         {
           id: `0-4`,
-          title: `Guía de Compilación y Publicación del Curso`,
+          title: `Guía de Mantenimiento y Verificación del Curso`,
           time: `10 min`,
           difficulty: `⭐⭐ Intermedio`,
-          content: `# 0.4 - Guía de Compilación y Publicación del Curso
+          content: `# 0.4 - Guía de Mantenimiento y Verificación del Curso
 
-## ⚙️ El Pipeline de Compilación
+## 🧭 El Nuevo Flujo: Edición Directa
 
-Para mantener el visualizador web interactivo actualizado sin tener que editar manualmente el objeto JavaScript global, disponemos de una suite de scripts automatizados en la carpeta \`scripts/\`.
+Desde la versión 3.0, **el curso ya no se compila**. Los antiguos scripts (\`compile_data_js.py\`, \`update_all.py\`, \`make_portable.py\`) están archivados y no deben ejecutarse.
 
-El flujo es el siguiente:
-1. Redactas tus lecciones en Markdown dentro de carpetas como \`modulo-N/\`.
-2. Ejecutas el script de compilación \`compile_data_js.py\` (ubicado en \`scripts/\`), el cual lee los archivos Markdown, escapa caracteres especiales, y genera el archivo \`data.js\`.
-3. Ejecutas los scripts de build portable.
+El flujo de mantenimiento es simple:
 
----
-
-## 🛠️ Comandos de Compilación
-
-Abre una terminal en la raíz del proyecto y ejecuta los siguientes comandos según corresponda:
-
-### 1. Compilar de Markdown a JavaScript
-Este comando regenera los archivos \`data.js\` del visualizador local y portable inyectando los Markdowns limpios.
-\`\`\`powershell
-python scripts/compile_data_js.py
-\`\`\`
-
-### 2. Actualizar el Manifiesto del Curso
-Este script actualiza el listado global de contenidos y estadísticas del curso en \`MANIFEST.md\` y reconstruye el script de empaquetado portable.
-\`\`\`powershell
-python scripts/update_all.py
-\`\`\`
-
-### 3. Reconstruir la Versión Portable
-Este script crea una versión offline e independiente del curso en la carpeta \`cursoAgentesPortable/\` copiando el visualizador, estilos, scripts y los archivos \`.md\` limpios para distribución local.
-\`\`\`powershell
-python scripts/make_portable.py
-\`\`\`
+1. Editas directamente el archivo del módulo en \`js/data/modulo-N.js\`.
+2. Ejecutas la suite de verificación (más abajo).
+3. Publicas = guardar y abrir \`index.html\`. Sin build, sin servidor, 100% offline.
 
 ---
 
-## ⚡ Automatización en un Solo Comando
-Para simplificar la creación y despliegue al máximo, al ejecutar \`python scripts/update_all.py\` se llamará en cadena a la compilación y la generación portable automáticamente, haciendo que desplegar nuevos contenidos sea cuestión de segundos.
+## 📐 Las Especificaciones Canónicas
+
+Las reglas completas del proyecto viven en la carpeta \`specs/\`:
+
+| Spec | Qué define |
+|------|------------|
+| \`specs/01-content-structure.md\` | Tono, estructura de lecciones, escapes, enlaces, checklist de calidad |
+| \`specs/02-web-interface.md\` | Componentes visuales vigentes, clases CSS eliminadas, verificación |
+| \`specs/03-agent-workflow.md\` | Contrato de colaboración multi-agente y uso de Engram |
+
+> Léelas antes de crear o modificar contenido: son la fuente de verdad del mantenimiento.
+
+---
+
+## ✅ La Suite de Verificación
+
+Tras **cada** edición de contenido, ejecuta desde \`CursoAgentesWebV3/\`:
+
+\`\`\`powershell
+node tests/verify-course.js   # Parseo + conteos + regresiones
+node tests/test-markdown.js   # 41 tests del parser y resaltado
+node tests/test-e2e.js        # Render de los 62 contenidos
+node tests/test-smoke.js      # Smoke test de la app (init + navegación)
+\`\`\`
+
+Criterio de aceptación: las cuatro suites en verde **y** la consola del navegador sin errores.
+
+---
+
+## ⚠️ Errores Frecuentes
+
+1. **Backtick sin escapar** → la página queda en blanco. Todo backtick interno del contenido debe ir como \\\` (barra invertida + acento grave).
+2. **Enlace a \`.md\`** → no navega a ningún sitio. Usa hash-links: \`#4-2\`, \`#recursos\`…
+3. **Clase CSS eliminada** → se verá sin estilo. Consulta la lista de clases prohibidas en \`specs/02\` §3.
 
 ---
 **Dificultad**: ⭐⭐ Intermedio
