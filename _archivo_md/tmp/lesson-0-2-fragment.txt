@@ -1,0 +1,101 @@
+        {
+          id: `0-2`,
+          title: `Guía del Creador: Creando Nuevos Módulos y Lecciones`,
+          time: `10 min`,
+          difficulty: `⭐ Principiante`,
+          content: `# 0.2 - Guía del Creador: Creando Nuevos Módulos y Lecciones
+
+## 🏗️ Estructura de Datos del Curso
+
+Desde la versión 3.0, el curso **ya no se compila desde archivos .md**: cada archivo de \`js/data/\` es la fuente única de verdad y se edita directamente, sin build step.
+
+\`\`\`
+CursoAgentesWebV3/
+│
+├── index.html               # Carga los datos en orden: core → módulos → secciones
+└── js/
+    ├── data/
+    │   ├── core.js          # Metadatos del curso + logros (achievements)
+    │   ├── modulo-0.js … modulo-8.js   # Un archivo por módulo
+    │   ├── recursos.js      # Cheatsheet, FAQ, guías, biblioteca de skills
+    │   ├── templates.js     # Plantillas de agente y skill
+    │   └── ejemplos.js      # Ejemplos completos
+    ├── app.js               # Lógica de la aplicación (no tocar para añadir contenido)
+    └── markdown.js          # Parser Markdown → HTML
+\`\`\`
+
+---
+
+## 📝 Anatomía de una Lección
+
+Cada módulo es un objeto JavaScript registrado con \`COURSE_DATA.modules.push({...})\`. Dentro, el array \`lessons\` contiene un objeto por lección:
+
+\`\`\`javascript
+{
+  id: \`9-1\`,                      // Único en todo el curso; la URL admite #9-1
+  title: \`Título de la Lección\`,
+  time: \`15 min\`,                 // Estimación realista (lectura + práctica)
+  difficulty: \`⭐ Principiante\`,   // ⭐ · ⭐⭐ · ⭐⭐⭐ · ⭐⭐⭐⭐
+  content: \`# 9.1 - Título de la Lección
+
+## 🎯 Objetivo
+...
+
+---
+**Dificultad**: ⭐ Principiante
+**Tiempo estimado**: 15 minutos
+\`,
+  exercise: {                     // o null si no hay ejercicio
+    title: \`Ejercicio Práctico\`,
+    prompt: \`## 💡 Ejercicio Práctico\n\n1. Paso uno...\`,
+    type: \`text\`
+  }
+}
+\`\`\`
+
+### Reglas de Oro
+
+1. **El \`id\` debe ser único** en todo el curso (se usa para progreso, logros y enlaces directos).
+2. **El contenido va dentro de template literals** (acentos graves): todas las comillas invertidas internas del Markdown deben ir escapadas con barra invertida — copia el patrón de cualquier lección existente.
+3. **Cabecera estándar**: el Markdown empieza con \`# N.M - Título\` (N = módulo, M = lección).
+4. **Pie obligatorio**: dificultad y tiempo estimado al final del contenido.
+5. **Sin enlaces a archivos .md locales**: para referenciar otra lección usa su ancla, por ejemplo \`#4-2\`.
+
+---
+
+## ➕ Crear un Nuevo Módulo
+
+1. Crea \`js/data/modulo-9.js\` copiando la estructura de otro módulo.
+2. Regístralo en \`index.html\` añadiendo su etiqueta \`<script>\` después de \`modulo-8.js\`.
+3. Actualiza \`totalLessons\` en \`core.js\` y los textos del hero/meta de \`index.html\`.
+4. Opcional: añade el logro \`mod-9-master\` en \`core.js\`.
+
+> ⚠️ Verifica siempre la consola del navegador tras editar: un error de sintaxis en cualquier archivo de datos impide que el curso cargue.
+
+---
+
+## ✅ Checklist de Calidad para Nuevas Lecciones
+
+- [ ] \`id\` único con formato \`N-M\`
+- [ ] Sección \`## 🎯 Objetivo\` al inicio del contenido
+- [ ] Bloques de código con lenguaje especificado (\`python\`, \`markdown\`…)
+- [ ] Ejercicio práctico con pasos accionables (si aplica)
+- [ ] Pie con dificultad y tiempo estimado realistas
+- [ ] Consola del navegador sin errores tras guardar
+
+---
+**Dificultad**: ⭐ Principiante
+**Tiempo estimado**: 10 minutos
+`,
+          exercise: {
+            title: `Ejercicio Práctico`,
+            prompt: `## 💡 Ejercicio Práctico
+
+Diseña la ficha técnica de una lección nueva para este curso:
+
+1. Elige un tema que no esté cubierto (por ejemplo: "Agentes con visión" o "Despliegue de agentes en producción").
+2. Escribe su objeto JavaScript completo: \`id\`, \`title\`, \`time\`, \`difficulty\` y un \`content\` en Markdown que incluya la cabecera \`# N.M -\`, la sección \`## 🎯 Objetivo\` y al menos un bloque de código con lenguaje.
+3. Redacta además el \`exercise.prompt\` con 2-3 pasos accionables para el estudiante.`,
+            type: `text`
+          }
+        },

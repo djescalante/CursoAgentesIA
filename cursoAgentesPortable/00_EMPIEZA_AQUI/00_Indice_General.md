@@ -1,101 +1,238 @@
-# 🚀 Curso: Domina Agentes y Skills con Archivos Markdown
+<div align="center">
 
-## Bienvenido al Curso Definitivo de Agentes IA y Skills
+# 🤖 Curso Agentes IA con Claude
 
-Este curso te enseñará a crear, configurar y usar agentes IA y skills mediante archivos `.md` (Markdown), una práctica estándar en la industria del desarrollo con IA.
-
----
-
-## 📚 Estructura del Curso
-
-### Módulo 1: Fundamentos
-- [1.1 - ¿Qué son los Agentes y Skills?](modulo-1/01-que-son-agentes-skills.md)
-- [1.2 - Por qué usar archivos Markdown](modulo-1/02-por-que-markdown.md)
-- [1.3 - Anatomía de un archivo de configuración](modulo-1/03-anatomia-archivo.md)
-
-### Módulo 2: Creando tu Primer Agent
-- [2.1 - Estructura básica de un agente](modulo-2/01-estructura-basica.md)
-- [2.2 - Definiendo personalidad y comportamiento](modulo-2/02-personalidad-comportamiento.md)
-- [2.3 - Configurando capacidades](modulo-2/03-capacidades.md)
-- [2.4 - Proyecto práctico: Agente asistente personal](modulo-2/04-proyecto-asistente.md)
-
-### Módulo 3: Skills Avanzados
-- [3.1 - Qué es un Skill](modulo-3/01-que-es-skill.md)
-- [3.2 - Estructura de un SKILL.md](modulo-3/02-estructura-skill.md)
-- [3.3 - Triggers y condiciones](modulo-3/03-triggers-condiciones.md)
-- [3.4 - Proyecto práctico: Skill de análisis de datos](modulo-3/04-proyecto-skill-datos.md)
-
-### Módulo 4: Integración y Workflows
-- [4.1 - Combinando múltiples skills](modulo-4/01-combinando-skills.md)
-- [4.2 - Cadenas de agentes](modulo-4/02-cadenas-agentes.md)
-- [4.3 - Manejo de contexto y memoria](modulo-4/03-contexto-memoria.md)
-- [4.4 - Proyecto: Sistema multi-agente](modulo-4/04-proyecto-multi-agente.md)
-
-### Módulo 5: Casos de Uso Reales
-- [5.1 - Agente de desarrollo de código](modulo-5/01-agente-desarrollo.md)
-- [5.2 - Agente de análisis de documentos](modulo-5/02-agente-documentos.md)
-- [5.3 - Agente de atención al cliente](modulo-5/03-agente-atencion.md)
-- [5.4 - Skill de automatización de tareas](modulo-5/04-skill-automatizacion.md)
-
-### Módulo 6: Optimización y Mejores Prácticas
-- [6.1 - Testing y evaluación](modulo-6/01-testing-evaluacion.md)
-- [6.2 - Debugging de agentes](modulo-6/02-debugging.md)
-- [6.3 - Optimización de prompts](modulo-6/03-optimizacion-prompts.md)
-- [6.4 - Seguridad y límites](modulo-6/04-seguridad-limites.md)
-
-### Módulo 7: Proyecto Final
-- [7.1 - Diseño del sistema](modulo-7/01-diseno-sistema.md)
-- [7.2 - Implementación completa](modulo-7/02-implementacion.md)
-- [7.3 - Evaluación y refinamiento](modulo-7/03-evaluacion-refinamiento.md)
+**Aprende a diseñar, construir y desplegar agentes de IA funcionales usando archivos Markdown**  
+*De los conceptos fundamentales hasta sistemas multi-agente en producción*
 
 ---
 
-## 🎯 Objetivos del Curso
+![Estado](https://img.shields.io/badge/Estado-Activo-brightgreen?style=flat-square)
+![Módulos](https://img.shields.io/badge/Módulos-8-blue?style=flat-square)
+![Agentes](https://img.shields.io/badge/Agentes%20reales-4-purple?style=flat-square)
+![Python](https://img.shields.io/badge/Python-3.10%2B-yellow?style=flat-square)
 
-Al finalizar este curso serás capaz de:
-
-✅ Crear agentes IA personalizados con archivos Markdown  
-✅ Diseñar skills especializados para tareas específicas  
-✅ Integrar múltiples agentes en workflows complejos  
-✅ Optimizar el rendimiento de tus agentes  
-✅ Implementar soluciones reales para problemas del día a día  
+</div>
 
 ---
 
-## 🛠️ Herramientas Necesarias
+## ¿Qué es este repositorio?
 
-- Editor de texto (VS Code recomendado)
-- Conocimientos básicos de Markdown
-- Acceso a una API de IA (Claude, OpenAI, etc.)
-- Terminal/consola
+Un ecosistema completo de aprendizaje y desarrollo de **Agentes de IA** con Claude. Combina material de curso estructurado en Markdown con agentes reales ya en producción, interfaces web interactivas y herramientas de soporte.
 
----
-
-## 📖 Recursos Adicionales
-
-- [Plantillas de agentes](templates/agents/)
-- [Plantillas de skills](templates/skills/)
-- [Ejemplos completos](ejemplos/)
-- [Cheatsheet de sintaxis](recursos/cheatsheet.md)
-- [FAQ](recursos/faq.md)
+La filosofía central: **los agentes y skills se definen en archivos `.md`** — legibles por humanos, versionables con Git, y consumibles directamente por los LLMs.
 
 ---
 
-## 🚦 Cómo Usar Este Curso
+## 🗂️ Estructura del Proyecto
 
-1. **Secuencial**: Sigue los módulos en orden si eres principiante
-2. **Por necesidad**: Ve directo al módulo que necesites si tienes experiencia
-3. **Práctico**: Cada módulo incluye proyectos hands-on
-4. **Experimenta**: Modifica los ejemplos y crea tus propias variaciones
+```
+cursoagenteClaude/
+│
+├── 📚 CursoAgentesMD/          # Curso completo de Agentes en Markdown
+│   ├── modulo-1/               # Fundamentos: qué son agentes y skills
+│   ├── modulo-2/               # Estructura y anatomía de un agente
+│   ├── modulo-3/               # Skills: diseño y triggers
+│   ├── modulo-4/               # Combinando skills y cadenas de agentes
+│   ├── modulo-5/               # Agentes especializados (dev, docs, atención)
+│   ├── modulo-6/               # Testing, debugging y optimización
+│   ├── modulo-7/               # Proyecto final: sistema multi-agente
+│   ├── modulo-8/               # Integración IDEs: OpenCode y Antigravity
+│   ├── practicas/              # Ejercicios prácticos por módulo
+│   ├── recursos/               # Biblioteca de skills, cheatsheet, FAQ
+│   ├── templates/              # Plantillas reutilizables de agentes y skills
+│   ├── ejemplos/               # Ejemplos funcionales de agentes y skills
+│   └── specs/                  # Especificaciones técnicas del curso
+│
+├── 🤖 Agentes/                 # Agentes reales en producción
+│   ├── AgenteANS/              # Análisis de Acuerdos de Nivel de Servicio
+│   ├── Agente_Clasificador_MM/ # Clasificador de Malos Manejos
+│   ├── Agente_Malos_Manejos/   # Auditoría y validación de reportes
+│   ├── Agente_Top_Criticidad/  # Análisis y ranking de incidentes críticos
+│   └── requirements.txt        # Dependencias Python de los agentes
+│
+├── 🌐 CursoAgentesWebV3/       # Interfaz web del curso (v3)
+├── 🐳 CursoDockerWeb/          # Versión dockerizada del curso web
+├── 📦 cursoAgentesPortable/    # Versión portable sin dependencias
+│
+├── 🔧 engram/                  # Herramienta Engram (memoria persistente para agentes)
+├── 📜 scripts/                 # Scripts utilitarios Python
+└── .gitignore
+```
 
 ---
 
-## 💡 Comienza Ahora
+## 📚 Curso de Agentes en Markdown
 
-👉 [Ir al Módulo 1: Fundamentos](modulo-1/01-que-son-agentes-skills.md)
+> **8 módulos** que llevan al estudiante desde cero hasta sistemas multi-agente funcionales, incluyendo integración con IDEs.
+
+### Ruta de Aprendizaje
+
+```
+Módulo 1 → Módulo 2 → Módulo 3 → Módulo 4 → Módulo 5 → Módulo 6 → Módulo 7 → Módulo 8
+   ↓           ↓           ↓           ↓           ↓           ↓         ↓         ↓
+¿Qué son?  Estructura   Skills     Combinar    Agentes    Testing   Proyecto   OpenCode
+Agentes y  y anatomía   triggers   y cadenas  reales en  y debug    Final    y Anti-
+  skills   del agente   y condic.  de agentes producción  prompts  multi-ag.  gravity
+```
+
+| Módulo | Tema | Archivos |
+|--------|------|----------|
+| **1** | Fundamentos — Qué son agentes y skills, por qué Markdown | 3 lecciones |
+| **2** | Estructura básica, personalidad y capacidades del agente | 4 lecciones |
+| **3** | Skills: anatomía, triggers, condiciones y proyecto práctico | 5 lecciones |
+| **4** | Combinando skills, cadenas de agentes y contexto/memoria | 4 lecciones |
+| **5** | Agentes especializados: desarrollo, documentos, atención al cliente | 4 lecciones |
+| **6** | Testing, debugging, optimización de prompts y seguridad | 4 lecciones |
+| **7** | Proyecto final: Sistema Multi-Agente de Business Intelligence | 1 proyecto |
+| **8** | Integración con IDEs Agenticos: OpenCode y Antigravity | 4 lecciones |
+
+### Recursos Incluidos
+
+- 📖 **Biblioteca de Skills** — catálogo de skills reutilizables
+- 📋 **Cheatsheet** — referencia rápida de sintaxis y patrones
+- ❓ **FAQ** — preguntas frecuentes y soluciones comunes
+- 🗺️ **Guía de Implementación** — cómo llevar agentes a producción
+- 🧩 **Templates** — plantillas de agentes y skills listas para usar
 
 ---
 
-**Autor**: Curso de Agentes y Skills  
-**Versión**: 1.0  
-**Última actualización**: 2026
+## 🤖 Agentes en Producción
+
+Agentes funcionales construidos y desplegados como resultado del curso.
+
+### Agente de Auditoría — Malos Manejos
+
+> Valida y cruza reportes operativos de incidentes contra bases de datos de cajeros ATM y sucursales para auditar responsables de cierre.
+
+- **Input**: Reporte de Malos Manejos (`.xlsx`) + BDs de cajeros (`.xlsb`) y sucursales
+- **Proceso**: Clasificación de sitio → cruce de responsables → detección de discrepancias
+- **Output**: Reporte validado completo + archivo de mismatches para auditoría
+- **Skills**: `skill-validador-malos-manejos.md`
+
+```bash
+python Agentes/Agente_Malos_Manejos/validador_reporte.py
+```
+
+---
+
+### Agente Top Criticidad
+
+> Analiza bases de datos de incidentes de seguridad, calcula scores de criticidad por sitio y genera representaciones visuales del Top N más críticos.
+
+- **Input**: Base de datos de incidentes (Excel)
+- **Proceso**: Normalización de códigos → cálculo de score → ranking
+- **Output**: Gráfico de barras horizontales del Top críticos
+- **Skills**: `skill-analisis-criticidad-excel.md` · `skill-graficador-criticidad.md`
+
+---
+
+### Agente ANS
+
+> Especializado en el análisis de Acuerdos de Nivel de Servicio (ANS/SLA), procesa reportes mensuales y genera análisis de cumplimiento.
+
+---
+
+### Agente Clasificador MM
+
+> Clasifica automáticamente registros de Malos Manejos por empresa, proveedor y función para facilitar el seguimiento operativo.
+
+---
+
+## 🚀 Inicio Rápido
+
+### Prerrequisitos
+
+- Python 3.10+
+- Claude / cualquier LLM compatible con MCP
+- Git
+
+### Instalación
+
+```bash
+# Clonar el repositorio
+git clone <url-del-repo>
+cd cursoagenteClaude
+
+# Instalar dependencias de los agentes
+pip install -r Agentes/requirements.txt
+```
+
+### Empezar el Curso
+
+1. Abre la carpeta `CursoAgentesMD/`
+2. Comienza con [`modulo-1/01-que-son-agentes-skills.md`](CursoAgentesMD/modulo-1/01-que-son-agentes-skills.md)
+3. Sigue la ruta módulo por módulo
+4. Usa las plantillas en `CursoAgentesMD/templates/` para tus propios agentes
+
+### Usar la Interfaz Web
+
+```bash
+# Abrir el curso en el navegador
+start CursoAgentesWebV3/index.html
+
+# O la versión portable
+start cursoAgentesPortable/index.html
+```
+
+---
+
+## 🧩 Anatomía de un Agente (`.md`)
+
+La estructura básica que aprenderás en el curso:
+
+```markdown
+# AGENT: Nombre del Agente
+
+## Identity
+Descripción de quién es y cuál es su propósito.
+
+## Personality
+- Características de comportamiento
+- Tono de comunicación
+
+## Expertise
+- Área 1 de conocimiento
+- Área 2 de conocimiento
+
+## Available Skills
+- [skill-nombre.md]: Para qué sirve y cuándo usarlo
+
+## Rules
+1. SIEMPRE hacer X
+2. NUNCA hacer Y
+3. Cuando Z, entonces W
+```
+
+---
+
+## 🛠️ Stack Tecnológico
+
+| Componente | Tecnología |
+|------------|------------|
+| Definición de agentes | Markdown (`.md`) |
+| Lógica de automatización | Python 3.10+ |
+| Procesamiento de datos | pandas, openpyxl |
+| Interfaz web del curso | HTML + CSS + JS (Vanilla) |
+| Memoria de agentes | [Engram](engram/) |
+| Control de versiones | Git |
+
+---
+
+## 📁 Recursos Adicionales
+
+| Recurso | Descripción |
+|---------|-------------|
+| [`CursoAgentesMD/recursos/cheatsheet.md`](CursoAgentesMD/recursos/cheatsheet.md) | Referencia rápida de patrones |
+| [`CursoAgentesMD/recursos/biblioteca-skills.md`](CursoAgentesMD/recursos/biblioteca-skills.md) | Catálogo de skills reutilizables |
+| [`CursoAgentesMD/recursos/faq.md`](CursoAgentesMD/recursos/faq.md) | Preguntas frecuentes |
+| [`CursoAgentesMD/recursos/guia-implementacion.md`](CursoAgentesMD/recursos/guia-implementacion.md) | Llevar agentes a producción |
+| [`engram/README.md`](engram/README.md) | Documentación de Engram |
+
+---
+
+<div align="center">
+
+*Construido con 🧠 y mucho ☕ — Aprende. Construye. Automatiza.*
+
+</div>

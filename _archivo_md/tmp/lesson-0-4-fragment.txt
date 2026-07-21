@@ -1,0 +1,60 @@
+        {
+          id: `0-4`,
+          title: `Guía de Mantenimiento y Verificación del Curso`,
+          time: `10 min`,
+          difficulty: `⭐⭐ Intermedio`,
+          content: `# 0.4 - Guía de Mantenimiento y Verificación del Curso
+
+## 🧭 El Nuevo Flujo: Edición Directa
+
+Desde la versión 3.0, **el curso ya no se compila**. Los antiguos scripts (\`compile_data_js.py\`, \`update_all.py\`, \`make_portable.py\`) están archivados y no deben ejecutarse.
+
+El flujo de mantenimiento es simple:
+
+1. Editas directamente el archivo del módulo en \`js/data/modulo-N.js\`.
+2. Ejecutas la suite de verificación (más abajo).
+3. Publicas = guardar y abrir \`index.html\`. Sin build, sin servidor, 100% offline.
+
+---
+
+## 📐 Las Especificaciones Canónicas
+
+Las reglas completas del proyecto viven en la carpeta \`specs/\`:
+
+| Spec | Qué define |
+|------|------------|
+| \`specs/01-content-structure.md\` | Tono, estructura de lecciones, escapes, enlaces, checklist de calidad |
+| \`specs/02-web-interface.md\` | Componentes visuales vigentes, clases CSS eliminadas, verificación |
+| \`specs/03-agent-workflow.md\` | Contrato de colaboración multi-agente y uso de Engram |
+
+> Léelas antes de crear o modificar contenido: son la fuente de verdad del mantenimiento.
+
+---
+
+## ✅ La Suite de Verificación
+
+Tras **cada** edición de contenido, ejecuta desde \`CursoAgentesWebV3/\`:
+
+\`\`\`powershell
+node tests/verify-course.js   # Parseo + conteos + regresiones
+node tests/test-markdown.js   # 41 tests del parser y resaltado
+node tests/test-e2e.js        # Render de los 62 contenidos
+node tests/test-smoke.js      # Smoke test de la app (init + navegación)
+\`\`\`
+
+Criterio de aceptación: las cuatro suites en verde **y** la consola del navegador sin errores.
+
+---
+
+## ⚠️ Errores Frecuentes
+
+1. **Backtick sin escapar** → la página queda en blanco. Todo backtick interno del contenido debe ir como \\\` (barra invertida + acento grave).
+2. **Enlace a \`.md\`** → no navega a ningún sitio. Usa hash-links: \`#4-2\`, \`#recursos\`…
+3. **Clase CSS eliminada** → se verá sin estilo. Consulta la lista de clases prohibidas en \`specs/02\` §3.
+
+---
+**Dificultad**: ⭐⭐ Intermedio
+**Tiempo estimado**: 10 minutos
+`,
+          exercise: null
+        }

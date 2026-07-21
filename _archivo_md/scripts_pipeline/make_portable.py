@@ -3,8 +3,8 @@ import shutil
 from pathlib import Path
 
 def create_portable_version():
-    base_path = Path(__file__).parent.resolve()
-    source_path = base_path
+    # base_path resolves to the project root (parent of scripts folder)
+    base_path = Path(__file__).parent.parent.resolve()
     portable_path = base_path / "cursoAgentesPortable"
     
     folders = [
@@ -23,19 +23,19 @@ def create_portable_version():
 
     file_map = {
         base_path / "README.md": "00_EMPIEZA_AQUI/00_Indice_General.md",
-        source_path / "QUICK_START.md": "00_EMPIEZA_AQUI/01_Quick_Start.md",
-        source_path / "INSTALLATION.md": "00_EMPIEZA_AQUI/02_Guia_Instalacion.md",
+        base_path / "engram/QUICK_START.md": "00_EMPIEZA_AQUI/01_Quick_Start.md",
+        base_path / "engram/INSTALLATION.md": "00_EMPIEZA_AQUI/02_Guia_Instalacion.md",
         
-        base_path / "ejemplos/agente-python-dev.md": "02_PROYECTOS_Y_EJEMPLOS/Agente_Python_Dev.md",
-        base_path / "ejemplos/skill-csv-analyzer.md": "02_PROYECTOS_Y_EJEMPLOS/Skill_CSV_Analyzer.md",
+        base_path / "CursoAgentesMD/ejemplos/agente-python-dev.md": "02_PROYECTOS_Y_EJEMPLOS/Agente_Python_Dev.md",
+        base_path / "CursoAgentesMD/ejemplos/skill-csv-analyzer.md": "02_PROYECTOS_Y_EJEMPLOS/Skill_CSV_Analyzer.md",
         
-        base_path / "templates/agents/AGENT_TEMPLATE.md": "03_RECURSOS_Y_TEMPLATES/AGENT_TEMPLATE.md",
-        base_path / "templates/skills/SKILL_TEMPLATE.md": "03_RECURSOS_Y_TEMPLATES/SKILL_TEMPLATE.md",
-        base_path / "recursos/cheatsheet.md": "03_RECURSOS_Y_TEMPLATES/CheatSheet_Rapida.md",
-        base_path / "recursos/biblioteca-skills.md": "03_RECURSOS_Y_TEMPLATES/Biblioteca_de_Skills.md",
-        base_path / "recursos/faq.md": "03_RECURSOS_Y_TEMPLATES/FAQ_Troubleshooting.md",
+        base_path / "CursoAgentesMD/templates/agents/AGENT_TEMPLATE.md": "03_RECURSOS_Y_TEMPLATES/AGENT_TEMPLATE.md",
+        base_path / "CursoAgentesMD/templates/skills/SKILL_TEMPLATE.md": "03_RECURSOS_Y_TEMPLATES/SKILL_TEMPLATE.md",
+        base_path / "CursoAgentesMD/recursos/cheatsheet.md": "03_RECURSOS_Y_TEMPLATES/CheatSheet_Rapida.md",
+        base_path / "CursoAgentesMD/recursos/biblioteca-skills.md": "03_RECURSOS_Y_TEMPLATES/Biblioteca_de_Skills.md",
+        base_path / "CursoAgentesMD/recursos/faq.md": "03_RECURSOS_Y_TEMPLATES/FAQ_Troubleshooting.md",
         
-        base_path / "recursos/guia-implementacion.md": "04_IMPLEMENTACION_TECNICA/Guia_de_APIs.md",
+        base_path / "CursoAgentesMD/recursos/guia-implementacion.md": "04_IMPLEMENTACION_TECNICA/Guia_de_APIs.md",
     }
 
     print("Creando version portable en:", portable_path)
@@ -46,17 +46,19 @@ def create_portable_version():
             dest_file = portable_path / dst
             shutil.copy2(src, dest_file)
             copied_count += 1
+        else:
+            print(f"Advertencia: No se encontro el archivo a copiar: {src}")
             
-    # Copy all modulos
-    for mod_idx in range(1, 8):
-        mod_dir = base_path / f"modulo-{mod_idx}"
+    # Copy all modulos (including module 0 to module 8)
+    for mod_idx in range(0, 9):
+        mod_dir = base_path / "CursoAgentesMD" / f"modulo-{mod_idx}"
         if mod_dir.exists():
             for md_file in mod_dir.glob("*.md"):
                 dst = portable_path / f"01_MODULOS_TEORICOS/M{mod_idx}_{md_file.name}"
                 shutil.copy2(md_file, dst)
                 copied_count += 1
 
-    struct_file = base_path / "structure.txt"
+    struct_file = base_path / "engram" / "structure.txt"
     if struct_file.exists():
         shutil.copy2(struct_file, portable_path / "00_EMPIEZA_AQUI/Mapa_del_Tesoro.txt")
 

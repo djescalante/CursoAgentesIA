@@ -19,7 +19,12 @@ const MarkdownParser = {
     html = this._extractHtmlBlocks(html, htmlBlocks);
 
     // 3. Extract inline code
-    html = html.replace(/`([^`]+)`/g, (_, code) => {
+    //    - no cruza saltos de línea (un backtick desparejado no debe tragar
+    //      medio documento)
+    //    - no captura matches que contengan placeholders %%CODE_BLOCK/…%%
+    //      (evita que se pierdan en la restauración)
+    html = html.replace(/`([^`\n]+)`/g, (m, code) => {
+      if (code.includes('%%')) return m;
       const idx = inlineCode.length;
       inlineCode.push(code);
       return `%%INLINE_CODE_${idx}%%`;
@@ -36,11 +41,14 @@ const MarkdownParser = {
     html = html.replace(/^#{2} (.+)$/gm, '<h2>$1</h2>');
     html = html.replace(/^# (.+)$/gm,    '<h1>$1</h1>');
 
-    // 6. Blockquotes
-    html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
+    // 6. Blockquotes (líneas consecutivas se fusionan en uno solo)
+    html = html.replace(/((?:^&gt; ?.*(?:\n|$))+)/gm, (block) => {
+      const quote = block.trim().split('\n').map(l => l.replace(/^&gt; ?/, '')).join('<br>');
+      return `<blockquote>${quote}</blockquote>`;
+    });
 
-    // 7. Horizontal rules
-    html = html.replace(/^---$/gm, '<hr>');
+    // 7. Horizontal rules (---, ***, ___)
+    html = html.replace(/^(?:-{3,}|\*{3,}|_{3,})$/gm, '<hr>');
 
     // 8. Bold and italic
     // ── Safety: temporarily replace underscores IN placeholders so the italic
@@ -52,9 +60,9 @@ const MarkdownParser = {
     html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
     html = html.replace(/\*\*(.+?)\*\*/g,     '<strong>$1</strong>');
     html = html.replace(/\*(.+?)\*/g,          '<em>$1</em>');
-    // Use single \w (word character class) to correctly skip word-adjacent underscores
-    html = html.replace(/(?<![\w%])__(.+?)__(?![\w%])/g, '<strong>$1</strong>');
-    html = html.replace(/(?<![\w%])_([^_]+?)_(?![\w%])/g,  '<em>$1</em>');
+    // Sin lookbehind (compatible con Safari <16.4): captura el carácter previo
+    html = html.replace(/(^|[^\w%])__(.+?)__(?![\w%])/gm, '$1<strong>$2</strong>');
+    html = html.replace(/(^|[^\w%])_([^_]+?)_(?![\w%])/gm,  '$1<em>$2</em>');
 
     // Restore the underscores inside placeholders
     html = html.replace(/\x00USCORE\x00/g, '_');
@@ -64,22 +72,33 @@ const MarkdownParser = {
     html = this._parseTables(html);
 
     // 10. Details/Summary (escaped because they went through step 4)
-    html = html.replace(/&lt;details&gt;/g,                            '<details>');
-    html = html.replace(/&lt;\/details&gt;/g,                          '</details>');
-    html = html.replace(/&lt;summary&gt;(.+?)&lt;\/summary&gt;/g,      '<summary>$1</summary>');
+    html = html.replace(/&lt;details(.*?)&gt;/g,                     '<details$1>');
+    html = html.replace(/&lt;\/details&gt;/g,                        '</details>');
+    html = html.replace(/&lt;summary&gt;([\s\S]+?)&lt;\/summary&gt;/g, '<summary>$1</summary>');
 
-    // 11. Checkboxes
+    // 11. Checkboxes ([x] y [X])
     html = html.replace(/^- \[ \] (.+)$/gm,
       '<div class="checklist-item" role="checkbox" aria-checked="false" tabindex="0"><div class="ci-box"></div><span class="ci-text">$1</span></div>');
-    html = html.replace(/^- \[x\] (.+)$/gm,
+    html = html.replace(/^- \[[xX]\] (.+)$/gm,
       '<div class="checklist-item checked" role="checkbox" aria-checked="true" tabindex="0"><div class="ci-box">✓</div><span class="ci-text">$1</span></div>');
 
     // 12. Lists
     html = this._parseLists(html);
 
-    // 13. Links
-    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g,
-      '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    // 13. Images (antes que los links para que ![alt] no se parsee como enlace)
+    html = html.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (m, alt, url) => {
+      const safe = url.replace(/"/g, '&quot;');
+      return `<img src="${safe}" alt="${alt}" loading="lazy">`;
+    });
+
+    // 13b. Links — anclas internas (#…) sin target=_blank; URLs con comillas escapadas
+    html = html.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, text, url) => {
+      if (/^\s*javascript:/i.test(url)) return text;
+      const safe = url.replace(/"/g, '&quot;');
+      return safe.startsWith('#')
+        ? `<a href="${safe}">${text}</a>`
+        : `<a href="${safe}" target="_blank" rel="noopener">${text}</a>`;
+    });
 
     // 14. Paragraphs
     html = this._parseParagraphs(html);
@@ -140,6 +159,14 @@ const MarkdownParser = {
           tag    = m[1].toLowerCase();
           depth  = 0;
           buffer = [];
+          // Bloque autocerrado de una línea: <div ... />
+          if (new RegExp('<' + tag + '[^>]*/>').test(line)) {
+            const idx = htmlBlocks.length;
+            htmlBlocks.push(line);
+            out.push(`%%HTML_BLOCK_${idx}%%`);
+            tag = '';
+            continue;
+          }
         } else {
           out.push(line);
           continue;
@@ -196,7 +223,8 @@ const MarkdownParser = {
 
       if (!inBlock) {
         // Detect opening fence: 0-3 spaces indent, then 3+ backticks, optional lang tag
-        const openMatch = line.match(/^ {0,3}(`{3,})(\w*)\s*$/);
+        // (soporta c++, c#, objective-c, etc.)
+        const openMatch = line.match(/^ {0,3}(`{3,})([\w+#.-]*)\s*$/);
         if (openMatch) {
           inBlock    = true;
           fenceLen   = openMatch[1].length;
@@ -246,9 +274,22 @@ const MarkdownParser = {
       const rows = table.trim().split('\n');
       if (rows.length < 3) return table;
 
-      const headers  = rows[0].split('|').filter(c => c.trim()).map(c => `<th>${c.trim()}</th>`).join('');
+      // primera y última celda son '' por los pipes exteriores — slice, no filter
+      // (filter eliminaría celdas vacías legítimas y desalinearía columnas)
+      const splitRow = (row) => row.split('|').slice(1, -1).map(c => c.trim());
+
+      const alignOf = (cell) => {
+        const c = cell.trim();
+        if (/^:-+:$/.test(c)) return 'center';
+        if (/^-+:$/.test(c))  return 'right';
+        return '';
+      };
+      const aligns = rows[1].split('|').slice(1, -1).map(alignOf);
+      const style  = (i) => aligns[i] ? ` style="text-align:${aligns[i]}"` : '';
+
+      const headers  = splitRow(rows[0]).map((c, i) => `<th${style(i)}>${c}</th>`).join('');
       const dataRows = rows.slice(2).map(row => {
-        const cells = row.split('|').filter(c => c.trim()).map(c => `<td>${c.trim()}</td>`).join('');
+        const cells = splitRow(row).map((c, i) => `<td${style(i)}>${c}</td>`).join('');
         return `<tr>${cells}</tr>`;
       }).join('');
 
@@ -315,48 +356,68 @@ const MarkdownParser = {
   },
 
   _highlight(code, lang) {
-    // Escape HTML first
-    let escaped = this._escapeHtml(code);
+    // Escapa solo & < > (las comillas se necesitan intactas para detectar strings)
+    let escaped = code
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
 
-    if (!lang || lang === 'text') return escaped;
+    if (!lang || lang === 'text' || lang === 'mermaid') return escaped;
 
-    // Simple syntax highlighting
+    // ── Pipeline seguro ─────────────────────────────────────────────
+    // 1) Strings y comentarios se extraen PRIMERO a placeholders
+    //    (una sola pasada combinada: el match más a la izquierda gana,
+    //    así un comentario "traga" strings y viceversa correctamente).
+    // 2) Keywords / números / funciones después (los placeholders no
+    //    contienen keywords, así no hay colisiones con atributos HTML).
+    // 3) Restaurar placeholders al final.
+    const protected_ = [];
+    const protect = (m, cls) => {
+      const idx = protected_.length;
+      protected_.push(`<span class="token ${cls}">${m}</span>`);
+      return `\x00P${idx}\x00`;
+    };
+    const isComment = (m) => m.startsWith('#') || m.startsWith('//') || m.startsWith('/*');
+    const STR = '"(?:[^"\\\\\\n]|\\\\.)*"|\'(?:[^\'\\\\\\n]|\\\\.)*\'';
+
     if (lang === 'python' || lang === 'py') {
       escaped = escaped
+        .replace(new RegExp('("""[\\s\\S]*?"""|\'\'\'[\\s\\S]*?\'\'\'|' + STR + '|#[^\\n]*)', 'g'),
+          (m) => protect(m, isComment(m) ? 'comment' : 'string'))
         .replace(/\b(def|class|import|from|return|if|elif|else|for|while|with|try|except|finally|and|or|not|in|is|None|True|False|self|lambda|yield|pass|break|continue|raise|del|global|nonlocal|async|await)\b/g,
           '<span class="token keyword">$1</span>')
-        .replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|"[^"]*"|'[^']*')/g,
-          '<span class="token string">$1</span>')
-        .replace(/(#[^\n]*)/g, '<span class="token comment">$1</span>')
-        .replace(/\b(\d+\.?\d*)\b/g, '<span class="token number">$1</span>')
+        .replace(/\b(0x[0-9a-fA-F]+|0b[01]+|\d+\.?\d*)\b/g, '<span class="token number">$1</span>')
         .replace(/\b([a-z_][a-z0-9_]*)\s*(?=\()/g, '<span class="token function">$1</span>');
     } else if (lang === 'javascript' || lang === 'js' || lang === 'typescript' || lang === 'ts') {
       escaped = escaped
+        .replace(new RegExp('(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/|`(?:[^`\\\\]|\\\\.)*`|' + STR + ')', 'g'),
+          (m) => protect(m, isComment(m) ? 'comment' : 'string'))
         .replace(/\b(const|let|var|function|class|return|if|else|for|while|do|switch|case|break|continue|import|export|default|from|async|await|try|catch|finally|new|this|typeof|instanceof|null|undefined|true|false|void|throw|yield)\b/g,
           '<span class="token keyword">$1</span>')
-        .replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)/g, '<span class="token comment">$1</span>')
-        .replace(/(`[^`]*`|"[^"]*"|'[^']*')/g, '<span class="token string">$1</span>')
-        .replace(/\b(\d+\.?\d*)\b/g, '<span class="token number">$1</span>')
-        .replace(/\b([a-z_][a-z0-9_]*)\s*(?=\()/g, '<span class="token function">$1</span>');
+        .replace(/\b(0x[0-9a-fA-F]+|0b[01]+|\d+\.?\d*)\b/g, '<span class="token number">$1</span>')
+        .replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)\s*(?=\()/g, '<span class="token function">$1</span>');
     } else if (lang === 'json') {
       escaped = escaped
-        .replace(/("(?:[^"\\]|\\.)*")\s*:/g,  '<span class="token attr-name">$1</span>:')
-        .replace(/:\s*("(?:[^"\\]|\\.)*")/g,  ': <span class="token string">$1</span>')
-        .replace(/\b(true|false|null)\b/g,     '<span class="token boolean">$1</span>')
-        .replace(/:\s*(-?\d+\.?\d*)/g,         ': <span class="token number">$1</span>');
+        // claves "key": → attr-name ; strings sueltos → string
+        .replace(/("(?:[^"\\]|\\.)*")(\s*:)?/g, (m, str, colon) => colon ? protect(str, 'attr-name') + colon : protect(str, 'string'))
+        .replace(/\b(true|false|null)\b/g, '<span class="token boolean">$1</span>')
+        .replace(/:\s*(-?\d+\.?\d*)/g, ': <span class="token number">$1</span>');
     } else if (lang === 'bash' || lang === 'sh' || lang === 'shell') {
       escaped = escaped
-        .replace(/(#[^\n]*)/g, '<span class="token comment">$1</span>')
-        .replace(/\b(if|then|else|fi|for|do|done|while|case|esac|echo|cd|ls|git|npm|pip|python|export|mkdir|rm|cp|mv)\b/g,
-          '<span class="token keyword">$1</span>')
-        .replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, '<span class="token string">$1</span>');
+        .replace(new RegExp('(#[^\\n]*|' + STR + ')', 'g'),
+          (m) => protect(m, isComment(m) ? 'comment' : 'string'))
+        .replace(/\b(if|then|else|fi|for|do|done|while|case|esac|echo|cd|ls|git|npm|npx|pip|python|export|mkdir|rm|cp|mv|node)\b/g,
+          '<span class="token keyword">$1</span>');
     } else if (lang === 'yaml' || lang === 'yml') {
       escaped = escaped
-        .replace(/(#[^\n]*)/g, '<span class="token comment">$1</span>')
+        .replace(new RegExp('(#[^\\n]*|' + STR + ')', 'g'),
+          (m) => protect(m, isComment(m) ? 'comment' : 'string'))
         .replace(/^(\s*[\w-]+)\s*:/gm, '<span class="token attr-name">$1</span>:')
-        .replace(/:\s*("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, ': <span class="token string">$1</span>')
         .replace(/\b(true|false|null)\b/g, '<span class="token boolean">$1</span>');
     }
+
+    // Restaurar strings/comentarios protegidos
+    escaped = escaped.replace(/\x00P(\d+)\x00/g, (_, i) => protected_[parseInt(i, 10)]);
 
     return escaped;
   },

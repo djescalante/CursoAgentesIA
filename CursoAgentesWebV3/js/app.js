@@ -377,8 +377,16 @@
 
       const item = el('div', `toc-item${h.tagName === 'H3' ? ' toc-h3' : ''}`);
       item.textContent = h.textContent.replace(/^#+\s/, '');
+      item.setAttribute('role', 'link');
+      item.setAttribute('tabindex', '0');
       item.addEventListener('click', () => {
         h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       });
       toc.appendChild(item);
     });
@@ -412,7 +420,15 @@
     quickResources.forEach(r => {
       const link = el('div', 'lesson-resource-link');
       link.innerHTML = `<span>${r.icon}</span><span>${r.label}</span>`;
+      link.setAttribute('role', 'link');
+      link.setAttribute('tabindex', '0');
       link.addEventListener('click', r.action);
+      link.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          r.action();
+        }
+      });
       resourcesEl.appendChild(link);
     });
   }
@@ -521,7 +537,7 @@
     if (title) title.textContent = lesson.exercise.title;
     if (body) {
       body.innerHTML = `
-        <p class="exercise-prompt">${lesson.exercise.prompt}</p>
+        <div class="lesson-content exercise-prompt-md">${MarkdownParser.parse(lesson.exercise.prompt)}</div>
         <textarea
           class="exercise-textarea"
           id="exerciseInput"
@@ -758,7 +774,7 @@
     const exercisesCount = Object.keys(STATE.exercises).filter(k => !k.includes('_answer')).length;
 
     if (achievement.threshold !== undefined) {
-      if (achievement.threshold <= 32) {
+      if (achievement.threshold <= TOTAL_LESSONS) {
         return count >= achievement.threshold;
       }
       return false;
@@ -852,6 +868,13 @@
   function handleHash() {
     const hash = window.location.hash.slice(1);
     if (!hash) return;
+
+    // Secciones estáticas (#recursos, #templates, #ejemplos, #progreso)
+    const SECTIONS = ['recursos', 'templates', 'ejemplos', 'progreso'];
+    if (SECTIONS.includes(hash)) {
+      navigateToSection(hash);
+      return;
+    }
 
     // Check if it's a lesson ID
     for (const module of COURSE_DATA.modules) {
@@ -1012,24 +1035,3 @@
   }
 
 })();
-
-/**
- * Global helper — Interactive Flow Diagram Tabs (Lección 4.2)
- * Called via inline onclick on the flow-tab buttons rendered inside lesson HTML.
- */
-window.showFlow = function(type) {
-  // Hide all panels
-  document.querySelectorAll('.flow-panel').forEach(panel => panel.classList.remove('active'));
-  document.querySelectorAll('.flow-tab').forEach(tab => tab.classList.remove('active'));
-
-  // Show the selected panel
-  const panel = document.getElementById('flow-' + type);
-  if (panel) panel.classList.add('active');
-
-  // Activate the clicked tab
-  document.querySelectorAll('.flow-tab').forEach(tab => {
-    if (tab.getAttribute('onclick') && tab.getAttribute('onclick').includes("'" + type + "'")) {
-      tab.classList.add('active');
-    }
-  });
-};
