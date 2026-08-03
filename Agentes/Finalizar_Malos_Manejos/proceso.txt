@@ -1,0 +1,7 @@
+1. este proceso aplica para todos los malos manejos que en la columna coincide esté en FALSO
+2. tomar el archivo de malos manejos y buscar el código del cajero el archivo accounts y que además en la columna tipositio diga ATM
+3. encontrado el código del cajeo buscar el numero del abonado en la columna abonado y extraer todos los códigos del mimos abonado y que en tipo de sitio diga ATM 
+4. ahora nuevamente en el archivo de malos manejos tener en encuenta quien realizo el mal manejo si fue transportadora o proveedor. y como  ya sabemos que no coincide  vas a buscar cual de los cajeros del mismo abonado coinicide  la transportadora o proveedor que realizó el malmanejo y ponerlo en la columna validar para que este mal manejo ahora si coincida 
+
+
+ 
