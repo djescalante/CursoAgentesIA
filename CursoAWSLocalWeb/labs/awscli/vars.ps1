@@ -1,0 +1,1 @@
+﻿VPC_ID=vpc-a9d88be1AZ1=us-east-1aAZ2=us-east-1bPUB_SUB_1=subnet-eb1a78d1PUB_SUB_2=subnet-3b2d4030PRIV_SUB_1=subnet-6bb77828PRIV_SUB_2=subnet-6aaa8b08IGW_ID=igw-c446f661RT_PUBLIC=rtb-0869f2aeSG_WEB=sg-b63e0a6fe12f89440KEY_NAME=curso-key

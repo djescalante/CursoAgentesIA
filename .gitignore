@@ -29,3 +29,8 @@ Thumbs.db
 ~$*
 *.tmp
 mismatches_50.csv
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*

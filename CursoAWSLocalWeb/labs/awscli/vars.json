@@ -1,0 +1,19 @@
+﻿{
+    "KEY_NAME":  "curso-key",
+    "TG_ARN":  "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/curso-web-tg/2fc55e3dd1474298",
+    "SG_WEB":  "sg-3cf2f7d03100c02ef",
+    "INST_A":  "i-de78946997291d6f2",
+    "PRIV_SUB_2":  "subnet-80458377",
+    "INST_B":  "i-f39d18f323f75c125",
+    "PRIV_SUB_1":  "subnet-e10aa0d8",
+    "VPC_ID":  "vpc-1ded7984",
+    "SG_LB":  "sg-2b70768cd3292554a",
+    "PUB_SUB_1":  "subnet-922fa776",
+    "LB_ARN":  "arn:aws:elasticloadbalancing:us-east-1:000000000000:loadbalancer/app/curso-alb/3f46f19ed9a24fd9",
+    "AZ1":  "us-east-1a",
+    "AZ2":  "us-east-1b",
+    "PUB_SUB_2":  "subnet-f7fec22c",
+    "LISTENER_ARN":  "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/curso-alb/3f46f19ed9a24fd9/4d9661b9a7ae4626",
+    "IGW_ID":  "igw-433aabc1",
+    "RT_PUBLIC":  "rtb-f52180d1"
+}

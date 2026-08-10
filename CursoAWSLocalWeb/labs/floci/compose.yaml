@@ -1,0 +1,22 @@
+services:
+  floci:
+    image: floci/floci:latest
+    container_name: floci
+    # Nota: los puertos de EC2 (SSH 2200-2299 y apps 30000-30999) los asignan en el
+    # host los contenedores que floci lanza (instancias + sidecars socat). Por eso
+    # NO se publican aqui: publicarlos causaria conflicto de puertos.
+    ports:
+      - "4566:4566"            # API de AWS (endpoint http://localhost:4566)
+      - "80:80"                # Listener HTTP del ALB (se enlaza en el host de floci)
+      - "7001-7099:7001-7099"  # RDS proxy (PostgreSQL/MySQL/MariaDB)
+      - "9169:9169"            # IMDS para las instancias EC2
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - floci-data:/app/data
+    environment:
+      FLOCI_STORAGE_MODE: persistent
+      FLOCI_STORAGE_PERSISTENT_PATH: /app/data
+      FLOCI_DEFAULT_REGION: us-east-1
+
+volumes:
+  floci-data:
