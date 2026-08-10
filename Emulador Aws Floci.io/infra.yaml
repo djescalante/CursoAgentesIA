@@ -1,0 +1,190 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: VPC 2AZ + 2 Windows Server + 2 RDS + ALB (curso Floci)
+
+Parameters:
+  DbPassword:
+    Type: String
+    NoEcho: true
+    Default: Passw0rd123!
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      Tags: [{ Key: Name, Value: curso-vpc }]
+
+  IGW:
+    Type: AWS::EC2::InternetGateway
+
+  IGWAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref IGW
+
+  SubnetPubA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: us-east-1a
+      MapPublicIpOnLaunch: true
+
+  SubnetPubB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: us-east-1b
+      MapPublicIpOnLaunch: true
+
+  SubnetPrivA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.11.0/24
+      AvailabilityZone: us-east-1a
+
+  SubnetPrivB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.12.0/24
+      AvailabilityZone: us-east-1b
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: IGWAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref IGW
+
+  RouteAssocA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetPubA
+      RouteTableId: !Ref PublicRouteTable
+
+  RouteAssocB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetPubB
+      RouteTableId: !Ref PublicRouteTable
+
+  SGAlb:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ALB SG
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - { IpProtocol: tcp, FromPort: 80, ToPort: 80, CidrIp: 0.0.0.0/0 }
+
+  SGWindows:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Windows EC2 SG
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - { IpProtocol: tcp, FromPort: 80, ToPort: 80, SourceSecurityGroupId: !Ref SGAlb }
+        - { IpProtocol: tcp, FromPort: 3389, ToPort: 3389, CidrIp: 10.0.0.0/16 }
+
+  SGRds:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: RDS SG
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - { IpProtocol: tcp, FromPort: 3306, ToPort: 3306, SourceSecurityGroupId: !Ref SGWindows }
+
+  WinServerA:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-windows-2022
+      InstanceType: t3.medium
+      SubnetId: !Ref SubnetPrivA
+      SecurityGroupIds: [!Ref SGWindows]
+      Tags: [{ Key: Name, Value: win-server-az-a }]
+
+  WinServerB:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-windows-2022
+      InstanceType: t3.medium
+      SubnetId: !Ref SubnetPrivB
+      SecurityGroupIds: [!Ref SGWindows]
+      Tags: [{ Key: Name, Value: win-server-az-b }]
+
+  DbSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnets privadas RDS
+      SubnetIds: [!Ref SubnetPrivA, !Ref SubnetPrivB]
+
+  RdsA:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: rds-az-a
+      Engine: mysql
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: "20"
+      MasterUsername: admin
+      MasterUserPassword: !Ref DbPassword
+      VPCSecurityGroups: [!Ref SGRds]
+      DBSubnetGroupName: !Ref DbSubnetGroup
+      AvailabilityZone: us-east-1a
+
+  RdsB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: rds-az-b
+      Engine: mysql
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: "20"
+      MasterUsername: admin
+      MasterUserPassword: !Ref DbPassword
+      VPCSecurityGroups: [!Ref SGRds]
+      DBSubnetGroupName: !Ref DbSubnetGroup
+      AvailabilityZone: us-east-1b
+
+  ALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: curso-alb
+      Subnets: [!Ref SubnetPubA, !Ref SubnetPubB]
+      SecurityGroups: [!Ref SGAlb]
+      Scheme: internet-facing
+      Type: application
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: curso-tg-windows
+      Port: 80
+      Protocol: HTTP
+      VpcId: !Ref VPC
+      TargetType: instance
+      Targets:
+        - { Id: !Ref WinServerA }
+        - { Id: !Ref WinServerB }
+
+  Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ALB
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - { Type: forward, TargetGroupArn: !Ref TargetGroup }
+
+Outputs:
+  ALBDNSName:
+    Value: !GetAtt ALB.DNSName
+  VpcId:
+    Value: !Ref VPC

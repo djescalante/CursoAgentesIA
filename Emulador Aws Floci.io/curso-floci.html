@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curso Floci — VPC, Windows Server, RDS y ALB</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.47.0/iconfont/tabler-icons.min.css">
+<style>
+:root{
+  --bg:#0b0e14; --panel:#111521; --panel2:#161b29; --border:#232a3d;
+  --text:#e8ebf3; --text2:#9aa3b8; --text3:#5c6580;
+  --accent:#7f77dd; --accent2:#5dcaa5; --warn:#f0997b;
+  --radius:10px;
+}
+@media (prefers-color-scheme: light){
+  :root{
+    --bg:#f6f7fb; --panel:#ffffff; --panel2:#f0f2f8; --border:#e2e5ee;
+    --text:#1c1f2a; --text2:#565f75; --text3:#8890a3;
+  }
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.65;
+}
+a{color:var(--accent);}
+.layout{display:flex; min-height:100vh;}
+.sidebar{
+  width:270px; flex-shrink:0; background:var(--panel); border-right:0.5px solid var(--border);
+  padding:1.5rem 1rem; position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+.brand{display:flex; align-items:center; gap:10px; padding:0 .5rem 1.25rem; border-bottom:0.5px solid var(--border); margin-bottom:1rem;}
+.brand i{font-size:22px; color:var(--accent);}
+.brand span{font-weight:500; font-size:15px;}
+.brand small{display:block; color:var(--text3); font-size:11px;}
+.nav-group{margin-bottom:.5rem;}
+.nav-item{
+  display:flex; align-items:center; gap:10px; padding:.6rem .75rem; border-radius:var(--radius);
+  color:var(--text2); text-decoration:none; font-size:14px; cursor:pointer; transition:background .15s;
+}
+.nav-item i{font-size:17px; width:18px; text-align:center; flex-shrink:0;}
+.nav-item:hover{background:var(--panel2); color:var(--text);}
+.nav-item.active{background:rgba(127,119,221,.14); color:var(--accent); font-weight:500;}
+.progress-wrap{margin:1.25rem .5rem 0; padding-top:1rem; border-top:0.5px solid var(--border);}
+.progress-label{font-size:11px; color:var(--text3); display:flex; justify-content:space-between; margin-bottom:6px;}
+.progress-bar{height:5px; background:var(--panel2); border-radius:99px; overflow:hidden;}
+.progress-fill{height:100%; background:var(--accent2); width:0%; transition:width .3s;}
+
+main{flex:1; min-width:0; padding:2.5rem 3rem 6rem; max-width:920px;}
+.hero{margin-bottom:2.5rem;}
+.badge-row{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:1rem;}
+.badge{
+  font-size:12px; padding:4px 10px; border-radius:99px; border:0.5px solid var(--border);
+  color:var(--text2); display:inline-flex; align-items:center; gap:5px;
+}
+.badge i{font-size:13px;}
+h1{font-size:28px; font-weight:500; margin:0 0 .5rem; line-height:1.3;}
+.subtitle{color:var(--text2); font-size:16px; max-width:640px; margin:0;}
+
+.callout{
+  background:rgba(240,153,123,.08); border:0.5px solid rgba(240,153,123,.35);
+  border-radius:var(--radius); padding:1rem 1.25rem; margin:1.5rem 0; font-size:14px; color:var(--text2);
+  display:flex; gap:10px;
+}
+.callout i{color:var(--warn); font-size:18px; flex-shrink:0; margin-top:1px;}
+.callout strong{color:var(--text);}
+
+.arch-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; margin:1.5rem 0;}
+.arch-card{
+  background:var(--panel); border:0.5px solid var(--border); border-radius:12px; padding:14px 16px;
+}
+.arch-card i{font-size:18px; color:var(--accent); margin-bottom:6px; display:block;}
+.arch-card .t{font-size:13px; font-weight:500; margin-bottom:2px;}
+.arch-card .s{font-size:12px; color:var(--text3);}
+
+section.module{scroll-margin-top:1.5rem; margin-bottom:3.5rem; padding-bottom:1rem; border-bottom:0.5px solid var(--border);}
+section.module:last-child{border-bottom:none;}
+.module-head{display:flex; align-items:center; gap:12px; margin-bottom:1rem;}
+.module-num{
+  width:34px; height:34px; border-radius:9px; background:var(--panel2); border:0.5px solid var(--border);
+  display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:var(--accent); flex-shrink:0;
+}
+h2{font-size:19px; font-weight:500; margin:0;}
+h3{font-size:15px; font-weight:500; margin:1.5rem 0 .5rem; color:var(--text);}
+p{color:var(--text2); font-size:14.5px;}
+code.inline{
+  background:var(--panel2); border:0.5px solid var(--border); border-radius:5px; padding:1px 6px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:13px; color:var(--accent2);
+}
+
+.tabs{display:flex; gap:4px; margin:1.25rem 0 0; border-bottom:0.5px solid var(--border); flex-wrap:wrap;}
+.tab-btn{
+  background:none; border:none; color:var(--text3); font-size:13.5px; font-weight:500;
+  padding:.6rem 1rem; cursor:pointer; border-bottom:2px solid transparent; font-family:inherit;
+}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:var(--accent); border-bottom-color:var(--accent);}
+.tab-panel{display:none; padding-top:1.25rem;}
+.tab-panel.active{display:block;}
+
+.code-block{position:relative; margin:1rem 0; border-radius:var(--radius); overflow:hidden; border:0.5px solid var(--border);}
+.code-head{
+  display:flex; justify-content:space-between; align-items:center; padding:.5rem .9rem;
+  background:var(--panel2); font-size:11.5px; color:var(--text3); font-family:ui-monospace,monospace;
+}
+.copy-btn{
+  background:none; border:0.5px solid var(--border); color:var(--text2); font-size:11.5px;
+  padding:3px 9px; border-radius:6px; cursor:pointer; display:flex; align-items:center; gap:5px; font-family:inherit;
+}
+.copy-btn:hover{background:var(--panel); color:var(--text);}
+.copy-btn i{font-size:13px;}
+pre{margin:0 !important; padding:1rem 1.1rem !important; font-size:12.8px !important; overflow-x:auto;}
+pre code{background:none !important;}
+
+.step-note{
+  background:var(--panel); border-left:2px solid var(--accent2); border-radius:0 var(--radius) var(--radius) 0;
+  padding:.75rem 1rem; font-size:13.5px; color:var(--text2); margin:1rem 0;
+}
+
+.checklist{list-style:none; margin:1rem 0; padding:0;}
+.checklist li{
+  display:flex; align-items:flex-start; gap:10px; padding:.5rem 0; font-size:14px; color:var(--text2); cursor:pointer;
+}
+.checklist input{margin-top:3px; accent-color:var(--accent2); width:15px; height:15px; flex-shrink:0;}
+.checklist li.done span{color:var(--text3); text-decoration:line-through;}
+
+.compare-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin:1.25rem 0;}
+.compare-card{background:var(--panel); border:0.5px solid var(--border); border-radius:12px; padding:16px;}
+.compare-card i{font-size:20px; color:var(--accent); margin-bottom:8px; display:block;}
+.compare-card h4{font-size:14px; margin:0 0 6px; font-weight:500;}
+.compare-card p{font-size:13px; margin:0; color:var(--text3);}
+
+.topbar{
+  display:none; position:sticky; top:0; z-index:10; background:var(--panel);
+  border-bottom:0.5px solid var(--border); padding:.85rem 1rem; align-items:center; justify-content:space-between;
+}
+.topbar button{background:none; border:0.5px solid var(--border); border-radius:8px; color:var(--text); padding:6px 10px; font-size:16px;}
+
+@media (max-width: 880px){
+  .sidebar{
+    position:fixed; left:0; top:0; height:100vh; z-index:20; transform:translateX(-100%);
+    transition:transform .25s ease; box-shadow:0 0 0 9999px rgba(0,0,0,0); width:250px;
+  }
+  .sidebar.open{transform:translateX(0); box-shadow:0 0 40px rgba(0,0,0,.35);}
+  .topbar{display:flex;}
+  main{padding:1.5rem 1.25rem 5rem;}
+  h1{font-size:23px;}
+}
+footer{color:var(--text3); font-size:12.5px; padding:2rem 3rem 3rem; max-width:920px;}
+@media (max-width: 880px){ footer{padding:2rem 1.25rem 3rem;} }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button id="menuBtn" aria-label="Abrir menú"><i class="ti ti-menu-2"></i></button>
+  <strong style="font-size:14px;">Curso Floci</strong>
+  <span></span>
+</div>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <i class="ti ti-cloud-cog"></i>
+      <div><span>Curso Floci</span><small>AWS local, gratis</small></div>
+    </div>
+
+    <div class="nav-group">
+      <a class="nav-item" data-target="s-intro"><i class="ti ti-info-circle"></i>Introducción</a>
+      <a class="nav-item" data-target="s-m0"><i class="ti ti-plug"></i>0. Preparar entorno</a>
+      <a class="nav-item" data-target="s-m1"><i class="ti ti-terminal-2"></i>1. AWS CLI</a>
+      <a class="nav-item" data-target="s-m2"><i class="ti ti-file-code"></i>2. CloudFormation</a>
+      <a class="nav-item" data-target="s-m3"><i class="ti ti-brackets"></i>3. Terraform</a>
+      <a class="nav-item" data-target="s-m4"><i class="ti ti-scale"></i>4. Comparación</a>
+      <a class="nav-item" data-target="s-m5"><i class="ti ti-bug"></i>5. Troubleshooting</a>
+      <a class="nav-item" data-target="s-next"><i class="ti ti-rocket"></i>Siguientes pasos</a>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Progreso</span><span id="progressPct">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+  </aside>
+
+  <main>
+
+    <section id="s-intro" class="hero module">
+      <div class="badge-row">
+        <span class="badge"><i class="ti ti-coin-off"></i>Costo $0</span>
+        <span class="badge"><i class="ti ti-lock-open"></i>Sin cuenta AWS</span>
+        <span class="badge"><i class="ti ti-server-2"></i>69 servicios emulados</span>
+      </div>
+      <h1>VPC, 2 AZ, Windows Server, RDS y ALB — sin gastar un centavo</h1>
+      <p class="subtitle">Laboratorio práctico con <a href="https://floci.io" target="_blank" rel="noopener">floci.io</a>, un emulador local MIT que replica el protocolo real de AWS en <code class="inline">localhost:4566</code>. Construimos la misma arquitectura tres veces: AWS CLI, CloudFormation y Terraform.</p>
+
+      <div class="callout">
+        <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+        <div><strong>Alcance real:</strong> Floci emula la API de AWS con fidelidad total (mismos IDs, ARNs, comportamiento) y RDS corre motores reales en Docker. Las instancias EC2 "Windows Server" se registran igual que en AWS real pero no bootean un sistema operativo — no hay RDP funcional. El valor es practicar los comandos y plantillas exactos que usarías contra una cuenta real.</div>
+      </div>
+
+      <h3>Arquitectura objetivo</h3>
+      <div class="arch-grid">
+        <div class="arch-card"><i class="ti ti-network"></i><div class="t">1 VPC</div><div class="s">10.0.0.0/16</div></div>
+        <div class="arch-card"><i class="ti ti-map-pin"></i><div class="t">2 zonas de disp.</div><div class="s">us-east-1a / 1b</div></div>
+        <div class="arch-card"><i class="ti ti-layout-grid"></i><div class="t">4 subredes</div><div class="s">2 públicas + 2 privadas</div></div>
+        <div class="arch-card"><i class="ti ti-brand-windows"></i><div class="t">2 EC2 Windows</div><div class="s">1 por AZ</div></div>
+        <div class="arch-card"><i class="ti ti-database"></i><div class="t">2 RDS MySQL</div><div class="s">1 por AZ</div></div>
+        <div class="arch-card"><i class="ti ti-arrows-split"></i><div class="t">1 ALB</div><div class="s">Balancea las 2 EC2</div></div>
+      </div>
+    </section>
+
+    <section id="s-m0" class="module">
+      <div class="module-head"><div class="module-num">0</div><h2>Preparar el entorno</h2></div>
+      <p>Instalá floci-cli, levantá el emulador y cargá las variables que apuntan el AWS CLI hacia tu máquina local.</p>
+
+      <h3>Instalar floci-cli</h3>
+      <div class="code-block">
+        <div class="code-head"><span>macOS / Linux</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+        <pre><code class="language-bash">curl -fsSL https://floci.io/install.sh | sh</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>Windows (PowerShell)</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+        <pre><code class="language-bash">irm https://floci.io/install.ps1 | iex</code></pre>
+      </div>
+
+      <h3>Levantar el emulador y cargar variables</h3>
+      <div class="code-block">
+        <div class="code-head"><span>terminal</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+        <pre><code class="language-bash">floci start
+eval $(floci env)
+floci doctor   # valida que todo esté corriendo (puerto 4566)</code></pre>
+      </div>
+      <p>Si preferís exportar las variables a mano:</p>
+      <div class="code-block">
+        <div class="code-head"><span>terminal</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+        <pre><code class="language-bash">export AWS_ENDPOINT_URL=http://localhost:4566
+export AWS_ACCESS_KEY_ID=test
+export AWS_SECRET_ACCESS_KEY=test
+export AWS_DEFAULT_REGION=us-east-1</code></pre>
+      </div>
+
+      <h3>Verificar</h3>
+      <div class="code-block">
+        <div class="code-head"><span>terminal</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+        <pre><code class="language-bash">aws sts get-caller-identity
+aws ec2 describe-regions</code></pre>
+      </div>
+
+      <ul class="checklist" id="checklist-0">
+        <li><input type="checkbox"><span>floci-cli instalado</span></li>
+        <li><input type="checkbox"><span>floci start ejecutado, floci doctor en verde</span></li>
+        <li><input type="checkbox"><span>aws sts get-caller-identity responde</span></li>
+      </ul>
+    </section>
+
+    <section id="s-m1" class="module">
+      <div class="module-head"><div class="module-num">1</div><h2>Despliegue con AWS CLI</h2></div>
+      <p>Todos los comandos corren contra el endpoint local; no hace falta <code class="inline">--endpoint-url</code> si ya exportaste <code class="inline">AWS_ENDPOINT_URL</code>.</p>
+
+      <h3>1.1 Crear la VPC</h3>
+      <div class="code-block"><div class="code-head"><span>bash</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+      <pre><code class="language-bash">VPC_ID=$(aws ec2 create-vpc --cidr-block 10.0.0.0/16 \
+  --query 'Vpc.VpcId' --output text)
+
+aws ec2 create-tags --resources $VPC_ID --tags Key=Name,Value=curso-vpc</code></pre></div>
+
+      <h3>1.2 Subredes en dos AZ</h3>
+      <div class="code-block"><div class="code-head"><span>bash</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+      <pre><code class="language-bash"># Públicas (para el ALB)
+SUBNET_PUB_A=$(aws ec2 create-subnet --vpc-id $VPC_ID \
+  --cidr-block 10.0.1.0/24 --availability-zone us-east-1a \
+  --query 'Subnet.SubnetId' --output text)
+
+SUBNET_PUB_B=$(aws ec2 create-subnet --vpc-id $VPC_ID \
+  --cidr-block 10.0.2.0/24 --availability-zone us-east-1b \
+  --query 'Subnet.SubnetId' --output text)
+
+# Privadas (para EC2 y RDS)
+SUBNET_PRIV_A=$(aws ec2 create-subnet --vpc-id $VPC_ID \
+  --cidr-block 10.0.11.0/24 --availability-zone us-east-1a \
+  --query 'Subnet.SubnetId' --output text)
+
+SUBNET_PRIV_B=$(aws ec2 create-subnet --vpc-id $VPC_ID \
+  --cidr-block 10.0.12.0/24 --availability-zone us-east-1b \
+  --query 'Subnet.SubnetId' --output text)</code></pre></div>
+
+      <h3>1.3 Internet Gateway y ruteo público</h3>
+      <div class="code-block"><div class="code-head"><span>bash</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+      <pre><code class="language-bash">IGW_ID=$(aws ec2 create-internet-gateway --query 'InternetGateway.InternetGatewayId' --output text)
+aws ec2 attach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $VPC_ID
+
+RTB_ID=$(aws ec2 create-route-table --vpc-id $VPC_ID --query 'RouteTable.RouteTableId' --output text)
+aws ec2 create-route --route-table-id $RTB_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW_ID
+
+aws ec2 associate-route-table --route-table-id $RTB_ID --subnet-id $SUBNET_PUB_A
+aws ec2 associate-route-table --route-table-id $RTB_ID --subnet-id $SUBNET_PUB_B</code></pre></div>
+
+      <h3>1.4 Security Groups</h3>
+      <div class="code-block"><div class="code-head"><span>bash</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+      <pre><code class="language-bash">SG_ALB=$(aws ec2 create-security-group --group-name sg-alb --description "ALB SG" \
+  --vpc-id $VPC_ID --query 'GroupId' --output text)
+aws ec2 authorize-security-group-ingress --group-id $SG_ALB --protocol tcp --port 80 --cidr 0.0.0.0/0
+
+SG_EC2=$(aws ec2 create-security-group --group-name sg-windows --description "Windows EC2 SG" \
+  --vpc-id $VPC_ID --query 'GroupId' --output text)
+aws ec2 authorize-security-group-ingress --group-id $SG_EC2 --protocol tcp --port 80 --source-group $SG_ALB
+aws ec2 authorize-security-group-ingress --group-id $SG_EC2 --protocol tcp --port 3389 --cidr 10.0.0.0/16
+
+SG_RDS=$(aws ec2 create-security-group --group-name sg-rds --description "RDS SG" \
+  --vpc-id $VPC_ID --query 'GroupId' --output text)
+aws ec2 authorize-security-group-ingress --group-id $SG_RDS --protocol tcp --port 3306 --source-group $SG_EC2</code></pre></div>
+
+      <h3>1.5 Dos instancias Windows Server (una por AZ)</h3>
+      <div class="code-block"><div class="code-head"><span>bash</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+      <pre><code class="language-bash">INSTANCE_A=$(aws ec2 run-instances \
+  --image-id ami-windows-2022 \
+  --instance-type t3.medium \
+  --subnet-id $SUBNET_PRIV_A \
+  --security-group-ids $SG_EC2 \
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=win-server-az-a}]' \
+  --query 'Instances[0].InstanceId' --output text)
+
+INSTANCE_B=$(aws ec2 run-instances \
+  --image-id ami-windows-2022 \
+  --instance-type t3.medium \
+  --subnet-id $SUBNET_PRIV_B \
+  --security-group-ids $SG_EC2 \
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=win-server-az-b}]' \
+  --query 'Instances[0].InstanceId' --output text)</code></pre></div>
+      <div class="step-note"><i class="ti ti-bulb" style="margin-right:6px;"></i>En AWS real reemplazá <code class="inline">ami-windows-2022</code> por un AMI válido: <code class="inline">aws ec2 describe-images --owners amazon --filters "Name=name,Values=Windows_Server-2022-English-Full-Base*"</code></div>
+
+      <h3>1.6 DB Subnet Group y dos instancias RDS</h3>
+      <div class="code-block"><div class="code-head"><span>bash</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+      <pre><code class="language-bash">aws rds create-db-subnet-group \
+  --db-subnet-group-name curso-db-subnets \
+  --db-subnet-group-description "Subnets privadas para RDS" \
+  --subnet-ids $SUBNET_PRIV_A $SUBNET_PRIV_B
+
+aws rds create-db-instance \
+  --db-instance-identifier rds-az-a \
+  --db-instance-class db.t3.micro \
+  --engine mysql \
+  --master-username admin \
+  --master-user-password Passw0rd123! \
+  --allocated-storage 20 \
+  --vpc-security-group-ids $SG_RDS \
+  --db-subnet-group-name curso-db-subnets \
+  --availability-zone us-east-1a
+
+aws rds create-db-instance \
+  --db-instance-identifier rds-az-b \
+  --db-instance-class db.t3.micro \
+  --engine mysql \
+  --master-username admin \
+  --master-user-password Passw0rd123! \
+  --allocated-storage 20 \
+  --vpc-security-group-ids $SG_RDS \
+  --db-subnet-group-name curso-db-subnets \
+  --availability-zone us-east-1b</code></pre></div>
+
+      <h3>1.7 Application Load Balancer + Target Group</h3>
+      <div class="code-block"><div class="code-head"><span>bash</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+      <pre><code class="language-bash">ALB_ARN=$(aws elbv2 create-load-balancer \
+  --name curso-alb \
+  --subnets $SUBNET_PUB_A $SUBNET_PUB_B \
+  --security-groups $SG_ALB \
+  --scheme internet-facing --type application \
+  --query 'LoadBalancers[0].LoadBalancerArn' --output text)
+
+TG_ARN=$(aws elbv2 create-target-group \
+  --name curso-tg-windows \
+  --protocol HTTP --port 80 \
+  --vpc-id $VPC_ID \
+  --target-type instance \
+  --query 'TargetGroups[0].TargetGroupArn' --output text)
+
+aws elbv2 register-targets --target-group-arn $TG_ARN \
+  --targets Id=$INSTANCE_A Id=$INSTANCE_B
+
+aws elbv2 create-listener \
+  --load-balancer-arn $ALB_ARN \
+  --protocol HTTP --port 80 \
+  --default-actions Type=forward,TargetGroupArn=$TG_ARN</code></pre></div>
+
+      <h3>1.8 Verificar y limpiar</h3>
+      <div class="code-block"><div class="code-head"><span>bash — verificar</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+      <pre><code class="language-bash">aws elbv2 describe-load-balancers --names curso-alb
+aws ec2 describe-instances --instance-ids $INSTANCE_A $INSTANCE_B
+aws rds describe-db-instances</code></pre></div>
+      <div class="code-block"><div class="code-head"><span>bash — limpieza (orden inverso)</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+      <pre><code class="language-bash">aws elbv2 delete-load-balancer --load-balancer-arn $ALB_ARN
+aws rds delete-db-instance --db-instance-identifier rds-az-a --skip-final-snapshot
+aws rds delete-db-instance --db-instance-identifier rds-az-b --skip-final-snapshot
+aws ec2 terminate-instances --instance-ids $INSTANCE_A $INSTANCE_B
+aws ec2 delete-vpc --vpc-id $VPC_ID   # borrá SGs/subredes/IGW antes si falla por dependencias</code></pre></div>
+
+      <ul class="checklist" id="checklist-1">
+        <li><input type="checkbox"><span>VPC y subredes creadas</span></li>
+        <li><input type="checkbox"><span>IGW, rutas y security groups listos</span></li>
+        <li><input type="checkbox"><span>2 instancias EC2 y 2 RDS creadas</span></li>
+        <li><input type="checkbox"><span>ALB con listener funcionando</span></li>
+      </ul>
+    </section>
+
+    <section id="s-m2" class="module">
+      <div class="module-head"><div class="module-num">2</div><h2>Despliegue con CloudFormation</h2></div>
+      <p>Guardá la plantilla como <code class="inline">infra.yaml</code> y desplegala en un solo comando.</p>
+
+      <div class="code-block"><div class="code-head"><span>infra.yaml</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+      <pre><code class="language-yaml">AWSTemplateFormatVersion: "2010-09-09"
+Description: VPC 2AZ + 2 Windows Server + 2 RDS + ALB (curso Floci)
+
+Parameters:
+  DbPassword:
+    Type: String
+    NoEcho: true
+    Default: Passw0rd123!
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      Tags: [{ Key: Name, Value: curso-vpc }]
+
+  IGW:
+    Type: AWS::EC2::InternetGateway
+
+  IGWAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref IGW
+
+  SubnetPubA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: us-east-1a
+      MapPublicIpOnLaunch: true
+
+  SubnetPubB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: us-east-1b
+      MapPublicIpOnLaunch: true
+
+  SubnetPrivA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.11.0/24
+      AvailabilityZone: us-east-1a
+
+  SubnetPrivB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.12.0/24
+      AvailabilityZone: us-east-1b
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: IGWAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref IGW
+
+  RouteAssocA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetPubA
+      RouteTableId: !Ref PublicRouteTable
+
+  RouteAssocB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetPubB
+      RouteTableId: !Ref PublicRouteTable
+
+  SGAlb:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ALB SG
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - { IpProtocol: tcp, FromPort: 80, ToPort: 80, CidrIp: 0.0.0.0/0 }
+
+  SGWindows:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Windows EC2 SG
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - { IpProtocol: tcp, FromPort: 80, ToPort: 80, SourceSecurityGroupId: !Ref SGAlb }
+        - { IpProtocol: tcp, FromPort: 3389, ToPort: 3389, CidrIp: 10.0.0.0/16 }
+
+  SGRds:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: RDS SG
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - { IpProtocol: tcp, FromPort: 3306, ToPort: 3306, SourceSecurityGroupId: !Ref SGWindows }
+
+  WinServerA:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-windows-2022
+      InstanceType: t3.medium
+      SubnetId: !Ref SubnetPrivA
+      SecurityGroupIds: [!Ref SGWindows]
+      Tags: [{ Key: Name, Value: win-server-az-a }]
+
+  WinServerB:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-windows-2022
+      InstanceType: t3.medium
+      SubnetId: !Ref SubnetPrivB
+      SecurityGroupIds: [!Ref SGWindows]
+      Tags: [{ Key: Name, Value: win-server-az-b }]
+
+  DbSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnets privadas RDS
+      SubnetIds: [!Ref SubnetPrivA, !Ref SubnetPrivB]
+
+  RdsA:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: rds-az-a
+      Engine: mysql
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: "20"
+      MasterUsername: admin
+      MasterUserPassword: !Ref DbPassword
+      VPCSecurityGroups: [!Ref SGRds]
+      DBSubnetGroupName: !Ref DbSubnetGroup
+      AvailabilityZone: us-east-1a
+
+  RdsB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: rds-az-b
+      Engine: mysql
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: "20"
+      MasterUsername: admin
+      MasterUserPassword: !Ref DbPassword
+      VPCSecurityGroups: [!Ref SGRds]
+      DBSubnetGroupName: !Ref DbSubnetGroup
+      AvailabilityZone: us-east-1b
+
+  ALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: curso-alb
+      Subnets: [!Ref SubnetPubA, !Ref SubnetPubB]
+      SecurityGroups: [!Ref SGAlb]
+      Scheme: internet-facing
+      Type: application
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: curso-tg-windows
+      Port: 80
+      Protocol: HTTP
+      VpcId: !Ref VPC
+      TargetType: instance
+      Targets:
+        - { Id: !Ref WinServerA }
+        - { Id: !Ref WinServerB }
+
+  Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ALB
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - { Type: forward, TargetGroupArn: !Ref TargetGroup }
+
+Outputs:
+  ALBDNSName:
+    Value: !GetAtt ALB.DNSName
+  VpcId:
+    Value: !Ref VPC</code></pre></div>
+
+      <h3>Desplegar contra Floci</h3>
+      <div class="code-block"><div class="code-head"><span>bash</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+      <pre><code class="language-bash">aws cloudformation create-stack \
+  --stack-name curso-infra \
+  --template-body file://infra.yaml
+
+aws cloudformation wait stack-create-complete --stack-name curso-infra
+aws cloudformation describe-stacks --stack-name curso-infra --query 'Stacks[0].Outputs'</code></pre></div>
+
+      <h3>Eliminar todo</h3>
+      <div class="code-block"><div class="code-head"><span>bash</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+      <pre><code class="language-bash">aws cloudformation delete-stack --stack-name curso-infra</code></pre></div>
+    </section>
+
+    <section id="s-m3" class="module">
+      <div class="module-head"><div class="module-num">3</div><h2>Despliegue con Terraform</h2></div>
+      <p>Estructura de archivos: <code class="inline">main.tf</code>, <code class="inline">variables.tf</code>, <code class="inline">outputs.tf</code>.</p>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="tf-main">main.tf</button>
+        <button class="tab-btn" data-tab="tf-vars">variables.tf</button>
+        <button class="tab-btn" data-tab="tf-out">outputs.tf</button>
+      </div>
+
+      <div class="tab-panel active" id="tf-main">
+        <div class="code-block"><div class="code-head"><span>main.tf</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+        <pre><code class="language-bash">terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+provider "aws" {
+  region                      = "us-east-1"
+  access_key                  = "test"
+  secret_key                  = "test"
+  skip_credentials_validation = true
+  skip_requesting_account_id  = true
+  skip_metadata_api_check     = true
+
+  endpoints {
+    ec2      = "http://localhost:4566"
+    rds      = "http://localhost:4566"
+    elbv2    = "http://localhost:4566"
+    iam      = "http://localhost:4566"
+    sts      = "http://localhost:4566"
+    cloudformation = "http://localhost:4566"
+  }
+}
+
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+  tags       = { Name = "curso-vpc" }
+}
+
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.main.id
+}
+
+resource "aws_subnet" "public" {
+  for_each                = { a = { cidr = "10.0.1.0/24", az = "us-east-1a" }, b = { cidr = "10.0.2.0/24", az = "us-east-1b" } }
+  vpc_id                  = aws_vpc.main.id
+  cidr_block               = each.value.cidr
+  availability_zone        = each.value.az
+  map_public_ip_on_launch  = true
+  tags = { Name = "public-${each.key}" }
+}
+
+resource "aws_subnet" "private" {
+  for_each          = { a = { cidr = "10.0.11.0/24", az = "us-east-1a" }, b = { cidr = "10.0.12.0/24", az = "us-east-1b" } }
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = each.value.cidr
+  availability_zone = each.value.az
+  tags = { Name = "private-${each.key}" }
+}
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+}
+
+resource "aws_route_table_association" "public" {
+  for_each       = aws_subnet.public
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_security_group" "alb" {
+  name   = "sg-alb"
+  vpc_id = aws_vpc.main.id
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "windows" {
+  name   = "sg-windows"
+  vpc_id = aws_vpc.main.id
+  ingress {
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb.id]
+  }
+  ingress {
+    from_port   = 3389
+    to_port     = 3389
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+  egress {
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "rds" {
+  name   = "sg-rds"
+  vpc_id = aws_vpc.main.id
+  ingress {
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [aws_security_group.windows.id]
+  }
+}
+
+resource "aws_instance" "windows" {
+  for_each        = { a = aws_subnet.private["a"].id, b = aws_subnet.private["b"].id }
+  ami             = "ami-windows-2022"
+  instance_type   = "t3.medium"
+  subnet_id       = each.value
+  security_groups = [aws_security_group.windows.id]
+  tags            = { Name = "win-server-az-${each.key}" }
+}
+
+resource "aws_db_subnet_group" "main" {
+  name       = "curso-db-subnets"
+  subnet_ids = [for s in aws_subnet.private : s.id]
+}
+
+resource "aws_db_instance" "main" {
+  for_each               = aws_subnet.private
+  identifier              = "rds-az-${each.key}"
+  engine                  = "mysql"
+  instance_class          = "db.t3.micro"
+  allocated_storage       = 20
+  username                = "admin"
+  password                = var.db_password
+  db_subnet_group_name    = aws_db_subnet_group.main.name
+  vpc_security_group_ids  = [aws_security_group.rds.id]
+  availability_zone       = each.value.availability_zone
+  skip_final_snapshot     = true
+}
+
+resource "aws_lb" "main" {
+  name               = "curso-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.alb.id]
+  subnets            = [for s in aws_subnet.public : s.id]
+}
+
+resource "aws_lb_target_group" "windows" {
+  name     = "curso-tg-windows"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.main.id
+}
+
+resource "aws_lb_target_group_attachment" "windows" {
+  for_each         = aws_instance.windows
+  target_group_arn = aws_lb_target_group.windows.arn
+  target_id        = each.value.id
+  port             = 80
+}
+
+resource "aws_lb_listener" "http" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = 80
+  protocol          = "HTTP"
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.windows.arn
+  }
+}</code></pre></div>
+      </div>
+
+      <div class="tab-panel" id="tf-vars">
+        <div class="code-block"><div class="code-head"><span>variables.tf</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+        <pre><code class="language-bash">variable "db_password" {
+  type      = string
+  default   = "Passw0rd123!"
+  sensitive = true
+}</code></pre></div>
+      </div>
+
+      <div class="tab-panel" id="tf-out">
+        <div class="code-block"><div class="code-head"><span>outputs.tf</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+        <pre><code class="language-bash">output "alb_dns_name" {
+  value = aws_lb.main.dns_name
+}
+
+output "vpc_id" {
+  value = aws_vpc.main.id
+}</code></pre></div>
+      </div>
+
+      <h3>Ejecución</h3>
+      <div class="code-block"><div class="code-head"><span>bash</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+      <pre><code class="language-bash">terraform init
+terraform plan
+terraform apply -auto-approve
+terraform output</code></pre></div>
+
+      <h3>Destruir todo</h3>
+      <div class="code-block"><div class="code-head"><span>bash</span><button class="copy-btn"><i class="ti ti-copy"></i>Copiar</button></div>
+      <pre><code class="language-bash">terraform destroy -auto-approve</code></pre></div>
+    </section>
+
+    <section id="s-m4" class="module">
+      <div class="module-head"><div class="module-num">4</div><h2>Comparación de los tres enfoques</h2></div>
+      <p>Los tres métodos tienen usos distintos en el trabajo real de DevOps. Practicarlos contra Floci te permite compararlos sin gastar nada y trasladar lo aprendido directo a una cuenta AWS real, cambiando solo el endpoint y el AMI de Windows.</p>
+      <div class="compare-grid">
+        <div class="compare-card"><i class="ti ti-terminal-2"></i><h4>AWS CLI</h4><p>Ideal para explorar y depurar rápido, comando a comando.</p></div>
+        <div class="compare-card"><i class="ti ti-file-code"></i><h4>CloudFormation</h4><p>Nativo de AWS, útil si el resto del stack vive en su ecosistema (Service Catalog, StackSets).</p></div>
+        <div class="compare-card"><i class="ti ti-brackets"></i><h4>Terraform</h4><p>Multi-nube, el más usado en equipos que gestionan AWS junto a otros proveedores.</p></div>
+      </div>
+    </section>
+
+    <section id="s-m5" class="module">
+      <div class="module-head"><div class="module-num">5</div><h2>Troubleshooting común</h2></div>
+      <p>Si <code class="inline">aws ec2 create-vpc</code> falla con error de conexión, confirmá que <code class="inline">floci start</code> sigue corriendo y que <code class="inline">AWS_ENDPOINT_URL</code> apunta a <code class="inline">http://localhost:4566</code>. Si CloudFormation se queda en <code class="inline">CREATE_IN_PROGRESS</code>, revisá <code class="inline">floci logs</code>. Si Terraform reclama credenciales, revisá que el bloque <code class="inline">endpoints</code> cubra todos los servicios usados. Para inspeccionar visualmente lo creado, usá <code class="inline">floci-ui</code>, el dashboard oficial.</p>
+    </section>
+
+    <section id="s-next" class="module">
+      <div class="module-head"><div class="module-num"><i class="ti ti-rocket" style="font-size:16px;"></i></div><h2>Siguientes pasos sugeridos</h2></div>
+      <p>Buenas extensiones para seguir practicando: agregar un Auto Scaling Group en vez de instancias fijas, mover el estado de Terraform a S3 (también emulado) con locking vía DynamoDB, y agregar un módulo de CloudWatch/alarmas antes de replicar todo esto en una cuenta AWS real.</p>
+    </section>
+
+  </main>
+</div>
+
+<footer>Curso generado para práctica DevOps con Floci — floci.io es MIT, gratuito, sin cuenta ni telemetría.</footer>
+
+<script>
+hljs.highlightAll();
+
+const navItems = document.querySelectorAll('.nav-item');
+const sections = document.querySelectorAll('main section');
+navItems.forEach(item=>{
+  item.addEventListener('click', ()=>{
+    document.getElementById(item.dataset.target).scrollIntoView({behavior:'smooth', block:'start'});
+    document.getElementById('sidebar').classList.remove('open');
+  });
+});
+
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      navItems.forEach(n=>n.classList.remove('active'));
+      const match = document.querySelector(`.nav-item[data-target="${e.target.id}"]`);
+      if(match) match.classList.add('active');
+    }
+  });
+}, {rootMargin:"-20% 0px -70% 0px"});
+sections.forEach(s=>obs.observe(s));
+
+document.getElementById('menuBtn').addEventListener('click', ()=>{
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const group = btn.parentElement;
+    group.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    let panelWrap = group.nextElementSibling;
+    while(panelWrap && !panelWrap.classList.contains('tab-panel')){
+      panelWrap = panelWrap.nextElementSibling;
+    }
+    let sib = group;
+    document.querySelectorAll('.tab-panel').forEach(p=>{
+      if(p.id === btn.dataset.tab){ p.classList.add('active'); } else if(group.contains(document.getElementById(p.id))===false){}
+    });
+  });
+});
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const targetId = btn.dataset.tab;
+    const target = document.getElementById(targetId);
+    const siblingsWrap = target.parentElement;
+    siblingsWrap.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    target.classList.add('active');
+  });
+});
+
+document.querySelectorAll('.copy-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const code = btn.closest('.code-block').querySelector('pre code').innerText;
+    navigator.clipboard.writeText(code).then(()=>{
+      const original = btn.innerHTML;
+      btn.innerHTML = '<i class="ti ti-check"></i>Copiado';
+      setTimeout(()=>{ btn.innerHTML = original; }, 1500);
+    });
+  });
+});
+
+function updateProgress(){
+  const boxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+  const checked = document.querySelectorAll('.checklist input[type="checkbox"]:checked');
+  const pct = boxes.length ? Math.round((checked.length/boxes.length)*100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').innerText = pct + '%';
+}
+document.querySelectorAll('.checklist li').forEach(li=>{
+  const box = li.querySelector('input');
+  li.addEventListener('click', (e)=>{
+    if(e.target !== box) box.checked = !box.checked;
+    li.classList.toggle('done', box.checked);
+    updateProgress();
+  });
+});
+updateProgress();
+</script>
+
+</body>
+</html>
