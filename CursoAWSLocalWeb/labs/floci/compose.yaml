@@ -18,5 +18,21 @@ services:
       FLOCI_STORAGE_PERSISTENT_PATH: /app/data
       FLOCI_DEFAULT_REGION: us-east-1
 
+  # Consola web estilo AWS (floci-ui): frontend + API en un solo contenedor.
+  # Abre http://localhost:4500 para explorar EC2, RDS, S3, Lambda, EKS, etc.
+  # Lee los recursos reales del emulador floci via http://floci:4566 (red interna).
+  floci-ui:
+    image: floci/floci-ui:latest
+    container_name: floci-ui
+    ports:
+      - "4500:4500"            # Consola web
+    environment:
+      FLOCI_ENDPOINT: http://floci:4566
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: "000000000000"
+      AWS_SECRET_ACCESS_KEY: floci
+    depends_on:
+      - floci
+
 volumes:
   floci-data:
