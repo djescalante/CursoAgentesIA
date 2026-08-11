@@ -377,7 +377,7 @@ const MarkdownParser = {
       protected_.push(`<span class="token ${cls}">${m}</span>`);
       return `\x00P${idx}\x00`;
     };
-    const isComment = (m) => m.startsWith('#') || m.startsWith('//') || m.startsWith('/*');
+    const isComment = (m) => m.startsWith('#') || m.startsWith('//') || m.startsWith('/*') || m.startsWith('--');
     const STR = '"(?:[^"\\\\\\n]|\\\\.)*"|\'(?:[^\'\\\\\\n]|\\\\.)*\'';
 
     if (lang === 'python' || lang === 'py') {
@@ -406,14 +406,55 @@ const MarkdownParser = {
       escaped = escaped
         .replace(new RegExp('(#[^\\n]*|' + STR + ')', 'g'),
           (m) => protect(m, isComment(m) ? 'comment' : 'string'))
-        .replace(/\b(if|then|else|fi|for|do|done|while|case|esac|echo|cd|ls|git|npm|npx|pip|python|export|mkdir|rm|cp|mv|node)\b/g,
-          '<span class="token keyword">$1</span>');
+        .replace(/(\$[A-Za-z_][A-Za-z0-9_]*)/g, '<span class="token variable">$1</span>')
+        .replace(/(--[\w-]+)/g, '<span class="token attr-name">$1</span>')
+        .replace(/\b(if|then|else|elif|fi|for|do|done|while|until|case|esac|function|export|local|readonly|return|break|continue|sudo|source)\b/g,
+          '<span class="token keyword">$1</span>')
+        .replace(/\b(echo|cd|ls|cat|grep|sed|awk|find|mkdir|rm|cp|mv|touch|chmod|chown|curl|wget|git|npm|npx|pip|pip3|python|python3|node|docker|terraform|aws|dnf|yum|apt-get|systemctl|service)\b/g,
+          '<span class="token function">$1</span>')
+        .replace(/\b(\d+(?:\.\d+){1,3}(?:\/\d+)?|\d+\.?\d*)\b/g, '<span class="token number">$1</span>');
     } else if (lang === 'yaml' || lang === 'yml') {
       escaped = escaped
         .replace(new RegExp('(#[^\\n]*|' + STR + ')', 'g'),
           (m) => protect(m, isComment(m) ? 'comment' : 'string'))
         .replace(/^(\s*[\w-]+)\s*:/gm, '<span class="token attr-name">$1</span>:')
-        .replace(/\b(true|false|null)\b/g, '<span class="token boolean">$1</span>');
+        .replace(/(!![\w-]+|![A-Za-z][\w-]*)/g, '<span class="token class-name">$1</span>')
+        .replace(/\b(true|false|null|yes|no|on|off)\b/g, '<span class="token boolean">$1</span>')
+        .replace(/\b(\d+(?:\.\d+){1,3}(?:\/\d+)?|\d+\.?\d*)\b/g, '<span class="token number">$1</span>');
+    } else if (lang === 'powershell' || lang === 'ps1' || lang === 'ps') {
+      escaped = escaped
+        .replace(new RegExp('(#[^\\n]*|' + STR + ')', 'g'),
+          (m) => protect(m, isComment(m) ? 'comment' : 'string'))
+        .replace(/(\$[A-Za-z_][A-Za-z0-9_]*(?::[A-Za-z_][A-Za-z0-9_]*)?(\.[A-Za-z_][A-Za-z0-9_]*)*(\[[^\]]*\])*|\$\([^)]*\)|\$\{[^}]*\})/g,
+          '<span class="token variable">$1</span>')
+        .replace(/(--[\w-]+)/g, '<span class="token attr-name">$1</span>')
+        .replace(/\b(if|else|elseif|foreach|for|while|do|until|switch|function|param|return|try|catch|finally|throw|break|continue|begin|process|end|exit|filter|using)\b/g,
+          '<span class="token keyword">$1</span>')
+        .replace(/\b(Write-Host|Write-Warning|Write-Output|Write-Error|Get-Item|Get-Content|Set-Content|Get-Command|Set-Variable|Get-Variable|ForEach-Object|Where-Object|Start-Sleep|Invoke-WebRequest|Select-Object|Sort-Object|ConvertTo-Json|ConvertFrom-Json|New-Item|Start-Process|Remove-Item|Test-Path|Join-Path|Split-Path|aws|docker|curl|terraform|psql|mysql|npm|git|sleep)\b/g,
+          '<span class="token function">$1</span>')
+        .replace(/\b(\d+(?:\.\d+){1,3}(?:\/\d+)?|\d+\.?\d*)\b/g, '<span class="token number">$1</span>');
+    } else if (lang === 'hcl' || lang === 'tf') {
+      escaped = escaped
+        .replace(new RegExp('(#[^\\n]*|\\/\\/[^\\n]*|' + STR + ')', 'g'),
+          (m) => protect(m, isComment(m) ? 'comment' : 'string'))
+        .replace(/^(\s*)([A-Za-z_][A-Za-z0-9_-]*)(\s*[=:])/gm, '$1<span class="token attr-name">$2</span>$3')
+        .replace(/\b(resource|provider|variable|output|data|locals|module|terraform|required_providers|backend|provisioner|connection|for_each|count|depends_on|lifecycle|dynamic)\b/g,
+          '<span class="token keyword">$1</span>')
+        .replace(/\b(true|false)\b/g, '<span class="token boolean">$1</span>')
+        .replace(/\b(\d+(?:\.\d+){1,3}(?:\/\d+)?|\d+\.?\d*)\b/g, '<span class="token number">$1</span>');
+    } else if (lang === 'sql') {
+      escaped = escaped
+        .replace(new RegExp('(--[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/|' + STR + ')', 'g'),
+          (m) => protect(m, isComment(m) ? 'comment' : 'string'))
+        .replace(/\b(SELECT|FROM|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|FULL|CROSS|ON|GROUP|BY|ORDER|HAVING|INSERT|INTO|VALUES|UPDATE|SET|DELETE|CREATE|TABLE|DATABASE|INDEX|VIEW|ALTER|DROP|TRUNCATE|AND|OR|NOT|IN|IS|NULL|LIKE|BETWEEN|AS|DISTINCT|COUNT|SUM|AVG|MIN|MAX|LIMIT|OFFSET|UNION|ALL|CASE|WHEN|THEN|ELSE|END|PRIMARY|FOREIGN|KEY|REFERENCES|UNIQUE|DEFAULT|DESCRIBE|SHOW|USE|BEGIN|COMMIT|ROLLBACK)\b/gi,
+          '<span class="token keyword">$1</span>')
+        .replace(/\b(\d+\.?\d*)\b/g, '<span class="token number">$1</span>');
+    } else if (lang === 'ini') {
+      escaped = escaped
+        .replace(new RegExp('(;[^\\n]*|#[^\\n]*|' + STR + ')', 'g'),
+          (m) => protect(m, (m.startsWith(';') || m.startsWith('#')) ? 'comment' : 'string'))
+        .replace(/^(\s*)\[([^\]]+)\]/gm, '$1<span class="token class-name">[$2]</span>')
+        .replace(/^(\s*)([^#;=<]+?)\s*=/gm, '$1<span class="token attr-name">$2</span> =');
     }
 
     // Restaurar strings/comentarios protegidos

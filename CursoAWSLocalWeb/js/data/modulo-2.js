@@ -115,31 +115,42 @@ Write-Host "VPC creada: $vpcId"
 
 ## 🧩 Crear las 4 Subnets
 
-Cada subnet pertenece a una VPC, tiene su CIDR y su AZ:
+Cada subnet pertenece a una VPC, tiene su CIDR y su AZ. Capturamos cada ID en su propia variable porque los módulos siguientes los usan:
 
 \`\`\`powershell
-$subnets = @(
-  @{ Name='curso-pub-1';  Cidr='10.0.1.0/24';  Az='us-east-1a' },
-  @{ Name='curso-pub-2';  Cidr='10.0.2.0/24';  Az='us-east-1b' },
-  @{ Name='curso-priv-1'; Cidr='10.0.11.0/24'; Az='us-east-1a' },
-  @{ Name='curso-priv-2'; Cidr='10.0.12.0/24'; Az='us-east-1b' }
-)
+$pub1  = aws --endpoint-url=http://localhost:4566 ec2 create-subnet \`
+  --vpc-id $vpcId --cidr-block 10.0.1.0/24 --availability-zone us-east-1a \`
+  --output text --query "Subnet.SubnetId"
+$pub2  = aws --endpoint-url=http://localhost:4566 ec2 create-subnet \`
+  --vpc-id $vpcId --cidr-block 10.0.2.0/24 --availability-zone us-east-1b \`
+  --output text --query "Subnet.SubnetId"
+$priv1 = aws --endpoint-url=http://localhost:4566 ec2 create-subnet \`
+  --vpc-id $vpcId --cidr-block 10.0.11.0/24 --availability-zone us-east-1a \`
+  --output text --query "Subnet.SubnetId"
+$priv2 = aws --endpoint-url=http://localhost:4566 ec2 create-subnet \`
+  --vpc-id $vpcId --cidr-block 10.0.12.0/24 --availability-zone us-east-1b \`
+  --output text --query "Subnet.SubnetId"
 
-foreach ($s in $subnets) {
-  $id = aws --endpoint-url=http://localhost:4566 ec2 create-subnet \`
-    --vpc-id $vpcId --cidr-block $s.Cidr --availability-zone $s.Az \`
-    --output text --query "Subnet.SubnetId"
+# Etiquetarlas para reconocerlas
+foreach ($pair in @(
+  @{ Id=$pub1;  Name='curso-pub-1' },
+  @{ Id=$pub2;  Name='curso-pub-2' },
+  @{ Id=$priv1; Name='curso-priv-1' },
+  @{ Id=$priv2; Name='curso-priv-2' }
+)) {
   aws --endpoint-url=http://localhost:4566 ec2 create-tags \`
-    --resources $id --tags Key=Name,Value=$($s.Name)
-  Write-Host "$($s.Name) = $id"
+    --resources $pair.Id --tags Key=Name,Value=$($pair.Name)
+  Write-Host "$($pair.Name) = $($pair.Id)"
 }
 \`\`\`
+
+> 💡 A diferencia del ejemplo anterior (bucle que solo imprimía), aquí **guardamos cada ID en una variable** (\`$pub1\`, \`$pub2\`, \`$priv1\`, \`$priv2\`). Las vas a necesitar en los siguientes módulos para lanzar instancias, crear el ALB y el DB Subnet Group.
 
 ---
 
 ## 🌐 Activar IPs públicas automáticas
 
-Para que las instancias de las subnets **públicas** obtengan IP pública automáticamente:
+Para que las instancias de las subnets **públicas** obtengan IP pública automáticamente, activamos \`map-public-ip-on-launch\` en \`$pub1\` y \`$pub2\` (los IDs que capturamos al crearlas):
 
 \`\`\`powershell
 aws --endpoint-url=http://localhost:4566 ec2 modify-subnet-attribute \`
@@ -165,6 +176,7 @@ Verás las 4 subnets con sus CIDR y AZ.
 
 - \`create-vpc\` te devuelve el \`VpcId\`; guarda ese ID en una variable.
 - \`create-subnet\` requiere \`--vpc-id\`, \`--cidr-block\` y \`--availability-zone\`.
+- **Captura cada subnet en su propia variable** (\`$pub1\`, \`$pub2\`, \`$priv1\`, \`$priv2\`): los módulos siguientes las usan.
 - Las subnets públicas deben tener \`map-public-ip-on-launch\`.
 - Etiqueta todo con \`Name\` para reconocer tus recursos.`,
         exercise: {
@@ -325,8 +337,15 @@ aws --endpoint-url=http://localhost:4566 ec2 authorize-security-group-ingress \`
 Las bases de datos solo deberían recibir conexiones desde los servidores web. Lo ideal es una regla que referencie el SG de los servidores:
 
 \`\`\`powershell
+$sgRds = aws --endpoint-url=http://localhost:4566 ec2 create-security-group \`
+  --group-name curso-rds-sg --description "SG de las bases de datos" \`
+  --vpc-id $vpcId --output text --query "GroupId"
+
+# PostgreSQL: solo desde el SG de los servidores web
 aws --endpoint-url=http://localhost:4566 ec2 authorize-security-group-ingress \`
   --group-id $sgRds --protocol tcp --port 5432 --source-group $sgWeb
+
+# MySQL: solo desde el SG de los servidores web
 aws --endpoint-url=http://localhost:4566 ec2 authorize-security-group-ingress \`
   --group-id $sgRds --protocol tcp --port 3306 --source-group $sgWeb
 \`\`\`

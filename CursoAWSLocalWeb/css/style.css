@@ -1534,6 +1534,7 @@ pre:focus-within .copy-btn,
 .token.boolean { color: #f78c6c; }
 .token.null { color: #f78c6c; }
 .token.regex { color: #c3e88d; }
+.token.variable { color: #e5c07b; }
 
 /* Bloques Mermaid: se muestran como código etiquetado (sin renderer externo — curso 100% offline) */
 .lesson-content pre.language-mermaid::before {
@@ -1775,6 +1776,19 @@ a:focus-visible {
   .lesson-content pre code {
     color: #222;
   }
+
+  /* Colores de sintaxis adaptados a fondo claro en impresión */
+  .lesson-content pre .token.comment   { color: #55657a; }
+  .lesson-content pre .token.string    { color: #2f7d3a; }
+  .lesson-content pre .token.keyword   { color: #8a3fb8; }
+  .lesson-content pre .token.function  { color: #2a5db0; }
+  .lesson-content pre .token.number    { color: #b35d14; }
+  .lesson-content pre .token.variable  { color: #b8860b; }
+  .lesson-content pre .token.attr-name { color: #8a3fb8; }
+  .lesson-content pre .token.class-name{ color: #9a6a00; }
+  .lesson-content pre .token.boolean   { color: #b35d14; }
+  .lesson-content pre .token.operator,
+  .lesson-content pre .token.punctuation { color: #0b7d84; }
 }
 
 /* =============================================

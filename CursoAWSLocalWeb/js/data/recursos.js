@@ -133,6 +133,7 @@ $counts['A'] = [int]$counts['A'] + 1   # $counts['A']++ NO funciona en PS 5.1
 | \`80\` | DNS de los ALB (host port del contenedor) |
 | \`7001-7099\` | Puertos dinámicos de contenedores EC2/RDS |
 | \`9169\` | Puertos internos varios |
+| \`4500\` | Consola web **floci-ui** (http://localhost:4500) |
 
 ## Endpoint de las bases de datos
 
@@ -146,6 +147,10 @@ db-inventario-tf→ 172.18.0.2:7004  (MySQL)
 \`\`\`
 
 > ⚠️ El puerto REAL es el que devuelve \`describe-db-instances\` (7001-7099), no el de manual (5432/3306).
+
+## Consola web (floci-ui)
+
+Levantada con el compose, abre \`http://localhost:4500\` para ver tus recursos EC2, RDS, S3, Lambda y EKS en una interfaz estilo AWS Console. Es de solo inspección: para crear o borrar usa el AWS CLI.
 
 ## ALB
 

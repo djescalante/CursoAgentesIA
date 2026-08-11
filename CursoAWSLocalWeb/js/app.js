@@ -1,12 +1,12 @@
 ﻿/**
- * Main Application â€” AWS Local con Floci - Curso Interactivo
+ * Main Application — AWS Local con Floci - Curso Interactivo
  */
 (function () {
   'use strict';
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // STATE
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   const STATE = {
     currentPage: 'home',
     currentModuleId: null,
@@ -19,9 +19,9 @@
 
   const TOTAL_LESSONS = COURSE_DATA.modules.reduce((sum, m) => sum + m.lessons.length, 0);
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // PERSISTENCE
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function saveProgress() {
     localStorage.setItem('awslocal_progress', JSON.stringify(STATE.progress));
     localStorage.setItem('awslocal_exercises', JSON.stringify(STATE.exercises));
@@ -39,9 +39,9 @@
     } catch (_) {}
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // PROGRESS HELPERS
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function getCompletedCount() {
     return Object.values(STATE.progress).filter(Boolean).length;
   }
@@ -63,9 +63,9 @@
     return module.lessons.every(l => STATE.progress[l.id]);
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // DOM UTILITIES
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function $(selector) { return document.querySelector(selector); }
   function $$(selector) { return document.querySelectorAll(selector); }
   function el(tag, cls, html) {
@@ -98,9 +98,9 @@
     toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // SIDEBAR RENDERING
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function renderSidebar() {
     const list = $('#moduleList');
     list.innerHTML = '';
@@ -119,7 +119,7 @@
         <span class="module-icon">${module.icon}</span>
         <span class="module-name">M${module.number}: ${module.title}</span>
         <span class="module-progress-mini">${pct}%</span>
-        ${isComplete ? '<span class="module-check">âœ“</span>' : ''}
+        ${isComplete ? '<span class="module-check">✓</span>' : ''}
       `;
       btn.addEventListener('click', () => toggleModuleExpand(module.id, btn));
 
@@ -135,7 +135,7 @@
         const subBtn = el('button', `lesson-sub-btn${isActive ? ' active' : ''}${isDone ? ' completed' : ''}`);
         subBtn.id = `sidebar-lesson-${lesson.id}`;
         subBtn.innerHTML = `
-          <span class="lesson-check">${isDone ? 'âœ“' : 'â—‹'}</span>
+          <span class="lesson-check">${isDone ? '✓' : '○'}</span>
           <span>${lesson.title}</span>
         `;
         subBtn.addEventListener('click', () => navigateToLesson(module.id, lesson.id));
@@ -159,9 +159,9 @@
     if (subList) subList.classList.toggle('expanded');
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // PROGRESS BAR UPDATES
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function updateProgressUI() {
     const pct = getGlobalProgress();
     const count = getCompletedCount();
@@ -194,16 +194,16 @@
         if (miniEl) miniEl.textContent = `${mp}%`;
         const checkEl = navBtn.querySelector('.module-check');
         if (isModuleComplete(module.id) && !checkEl) {
-          const span = el('span', 'module-check', 'âœ“');
+          const span = el('span', 'module-check', '✓');
           navBtn.appendChild(span);
         }
       }
     });
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // HOME PAGE
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function renderHome() {
     const grid = $('#modulesGrid');
     if (!grid) return;
@@ -214,7 +214,7 @@
       const card = el('div', 'module-card');
       card.setAttribute('role', 'button');
       card.setAttribute('tabindex', '0');
-      card.setAttribute('aria-label', `MÃ³dulo ${module.number}: ${module.title}`);
+      card.setAttribute('aria-label', `Módulo ${module.number}: ${module.title}`);
 
       const lessonTags = module.lessons.slice(0, 4).map(l =>
         `<span class="mc-lesson-tag">${l.title.split(' ').slice(0, 4).join(' ')}...</span>`
@@ -228,7 +228,7 @@
             module.difficulty === 'intermediate' ? 'Intermedio' : 'Avanzado'
           }</span>
         </div>
-        <div class="mc-num">MÃ³dulo ${module.number}</div>
+        <div class="mc-num">Módulo ${module.number}</div>
         <div class="mc-title">${module.title}</div>
         <div class="mc-desc">${module.description}</div>
         <div class="mc-lessons">${lessonTags}</div>
@@ -251,9 +251,9 @@
     });
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // NAVIGATION
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function navigateToModule(moduleId) {
     const module = COURSE_DATA.modules.find(m => m.id === moduleId);
     if (!module) return;
@@ -290,7 +290,9 @@
     updateProgressUI();
 
     // Scroll to top
-    $('.content-area').scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
 
     // Update hash for shareable links
     window.location.hash = `#${lessonId}`;
@@ -299,7 +301,7 @@
   function renderLesson(module, lesson) {
     // Meta
     const meta = $('#lessonMeta');
-    if (meta) meta.textContent = `${module.icon} MÃ³dulo ${module.number} Â· ${module.title}`;
+    if (meta) meta.textContent = `${module.icon} Módulo ${module.number} · ${module.title}`;
 
     // Title
     const title = $('#lessonTitle');
@@ -308,8 +310,8 @@
     // Info bar
     const diff = $('#lessonDifficulty');
     const time = $('#lessonTime');
-    if (diff) diff.innerHTML = `â­ ${lesson.difficulty}`;
-    if (time) time.innerHTML = `â± ${lesson.time}`;
+    if (diff) diff.innerHTML = `⭐ ${lesson.difficulty}`;
+    if (time) time.innerHTML = `⏱ ${lesson.time}`;
 
     // Content
     const contentEl = $('#lessonContent');
@@ -331,7 +333,7 @@
       exerciseEl.innerHTML = `
         <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">${lesson.exercise.prompt.slice(0, 120)}...</p>
         <button class="btn-primary" style="width:100%;justify-content:center" id="openExerciseBtn">
-          ${isDone ? 'âœ“ Ejercicio Completado' : 'ðŸŽ¯ Comenzar Ejercicio'}
+          ${isDone ? '✓ Ejercicio Completado' : '🎯 Comenzar Ejercicio'}
         </button>
       `;
       if (isDone) {
@@ -352,7 +354,7 @@
     const markBtn = $('#markComplete');
     if (markBtn) {
       const isDone = STATE.progress[lesson.id];
-      markBtn.textContent = isDone ? 'âœ“ Completada' : 'âœ“ Marcar como Completada';
+      markBtn.textContent = isDone ? '✓ Completada' : '✓ Marcar como Completada';
       markBtn.style.background = isDone
         ? 'linear-gradient(135deg, var(--success), #3cb88f)'
         : '';
@@ -367,7 +369,7 @@
     toc.innerHTML = '';
 
     if (headers.length === 0) {
-      toc.innerHTML = '<span style="font-size:12px;color:var(--text-muted)">No hay secciones en esta lecciÃ³n</span>';
+      toc.innerHTML = '<span style="font-size:12px;color:var(--text-muted)">No hay secciones en esta lección</span>';
       return;
     }
 
@@ -412,9 +414,9 @@
     resourcesEl.innerHTML = '';
 
     const quickResources = [
-      { icon: 'ðŸ“‹', label: 'Template de Agente', action: () => navigateToSection('templates') },
-      { icon: 'âš¡', label: 'Cheatsheet', action: () => navigateToSection('recursos') },
-      { icon: 'ðŸ’¡', label: 'Ver Ejemplos', action: () => navigateToSection('ejemplos') }
+      { icon: '📋', label: 'Template de Agente', action: () => navigateToSection('templates') },
+      { icon: '⚡', label: 'Cheatsheet', action: () => navigateToSection('recursos') },
+      { icon: '💡', label: 'Ver Ejemplos', action: () => navigateToSection('ejemplos') }
     ];
 
     quickResources.forEach(r => {
@@ -445,7 +447,7 @@
     if (prevBtn) {
       if (currentIdx === 0) {
         prevBtn.disabled = true;
-        prevBtn.title = 'Primera lecciÃ³n del mÃ³dulo';
+        prevBtn.title = 'Primera lección del módulo';
       } else {
         prevBtn.disabled = false;
         prevBtn.onclick = () => navigateToLesson(module.id, lessons[currentIdx - 1].id);
@@ -464,11 +466,11 @@
         const nextModule = COURSE_DATA.modules[moduleIdx + 1];
         if (nextModule) {
           nextBtn.disabled = false;
-          nextBtn.textContent = `${nextModule.icon} Siguiente MÃ³dulo â†’`;
+          nextBtn.textContent = `${nextModule.icon} Siguiente Módulo →`;
           nextBtn.onclick = () => navigateToLesson(nextModule.id, nextModule.lessons[0].id);
         } else {
           nextBtn.disabled = true;
-          nextBtn.textContent = 'ðŸ† Curso Completado';
+          nextBtn.textContent = '🏆 Curso Completado';
         }
       }
     }
@@ -479,15 +481,15 @@
         if (STATE.progress[lesson.id]) {
           // Unmark
           delete STATE.progress[lesson.id];
-          markBtn.textContent = 'âœ“ Marcar como Completada';
+          markBtn.textContent = '✓ Marcar como Completada';
           markBtn.style.background = '';
-          showToast('LecciÃ³n desmarcada', 'info');
+          showToast('Lección desmarcada', 'info');
         } else {
           // Mark
           STATE.progress[lesson.id] = true;
-          markBtn.textContent = 'âœ“ Completada';
+          markBtn.textContent = '✓ Completada';
           markBtn.style.background = 'linear-gradient(135deg, var(--success), #3cb88f)';
-          showToast('Â¡LecciÃ³n completada! ðŸŽ‰', 'success');
+          showToast('¡Lección completada! 🎉', 'success');
           checkAchievements();
         }
         saveProgress();
@@ -500,7 +502,7 @@
           const isDone = STATE.progress[lesson.id];
           subBtn.classList.toggle('completed', isDone);
           const checkEl = subBtn.querySelector('.lesson-check');
-          if (checkEl) checkEl.textContent = isDone ? 'âœ“' : 'â—‹';
+          if (checkEl) checkEl.textContent = isDone ? '✓' : '○';
         }
       };
     }
@@ -513,7 +515,7 @@
         item.classList.toggle('checked');
         const box = item.querySelector('.ci-box');
         const isChecked = item.classList.contains('checked');
-        if (box) box.textContent = isChecked ? 'âœ“' : '';
+        if (box) box.textContent = isChecked ? '✓' : '';
         item.setAttribute('aria-checked', isChecked.toString());
       });
 
@@ -526,9 +528,9 @@
     });
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // EXERCISES
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function openExercise(lesson) {
     const modal = $('#exerciseModal');
     const title = $('#exerciseModalTitle');
@@ -541,7 +543,7 @@
         <textarea
           class="exercise-textarea"
           id="exerciseInput"
-          placeholder="Escribe tu respuesta aquÃ­..."
+          placeholder="Escribe tu respuesta aquí..."
           spellcheck="true"
         >${STATE.exercises[lesson.id + '_answer'] || ''}</textarea>
       `;
@@ -555,7 +557,7 @@
       submitBtn.onclick = () => {
         const answer = $('#exerciseInput').value.trim();
         if (answer.length < 10) {
-          showToast('Por favor escribe una respuesta mÃ¡s completa', 'error');
+          showToast('Por favor escribe una respuesta más completa', 'error');
           return;
         }
         STATE.exercises[lesson.id] = true;
@@ -565,12 +567,12 @@
         // Update button
         const openBtn = $('#openExerciseBtn');
         if (openBtn) {
-          openBtn.textContent = 'âœ“ Ejercicio Completado';
+          openBtn.textContent = '✓ Ejercicio Completado';
           openBtn.style.background = 'var(--success)';
         }
 
         closeExerciseModal();
-        showToast('Â¡Ejercicio completado! ðŸ†', 'success');
+        showToast('¡Ejercicio completado! 🏆', 'success');
         checkAchievements();
       };
     }
@@ -580,9 +582,9 @@
     $('#exerciseModal').classList.remove('active');
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // RESOURCES PAGE
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function renderRecursos() {
     const container = $('#recursosContent');
     if (!container) return;
@@ -605,9 +607,9 @@
     container.appendChild(grid);
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // TEMPLATES PAGE
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function renderTemplates() {
     const container = $('#templatesContent');
     if (!container) return;
@@ -630,9 +632,9 @@
     container.appendChild(grid);
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // EXAMPLES PAGE
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function renderEjemplos() {
     const container = $('#ejemplosContent');
     if (!container) return;
@@ -655,9 +657,9 @@
     container.appendChild(grid);
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // RESOURCE/TEMPLATE MODAL (reuse exercise modal)
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function openResourceModal(resource) {
     const modal = $('#exerciseModal');
     const title = $('#exerciseModalTitle');
@@ -676,9 +678,9 @@
     if (submitBtn) submitBtn.onclick = closeExerciseModal;
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // PROGRESS PAGE
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function renderProgreso() {
     const container = $('#progresoContent');
     if (!container) return;
@@ -695,7 +697,7 @@
       { value: `${globalPct}%`, label: 'Progreso Total' },
       { value: `${totalCompleted}/${TOTAL_LESSONS}`, label: 'Lecciones' },
       { value: exercisesCompleted, label: 'Ejercicios' },
-      { value: COURSE_DATA.modules.filter(m => isModuleComplete(m.id)).length, label: 'MÃ³dulos âœ“' }
+      { value: COURSE_DATA.modules.filter(m => isModuleComplete(m.id)).length, label: 'Módulos ✓' }
     ];
 
     overviewData.forEach(item => {
@@ -706,7 +708,7 @@
     container.appendChild(overview);
 
     // Modules progress
-    const moduleTitle = el('h2', 'section-title', 'ðŸ“Š Progreso por MÃ³dulo');
+    const moduleTitle = el('h2', 'section-title', '📊 Progreso por Módulo');
     moduleTitle.style.marginBottom = '16px';
     container.appendChild(moduleTitle);
 
@@ -718,7 +720,7 @@
       item.innerHTML = `
         <span class="pm-icon">${module.icon}</span>
         <div class="pm-info">
-          <div class="pm-name">MÃ³dulo ${module.number}: ${module.title}</div>
+          <div class="pm-name">Módulo ${module.number}: ${module.title}</div>
           <div class="pm-bar">
             <div class="pm-fill" style="width:${pct}%"></div>
           </div>
@@ -730,7 +732,7 @@
     container.appendChild(modulesList);
 
     // Achievements
-    const achTitle = el('h2', 'section-title', 'ðŸ† Logros');
+    const achTitle = el('h2', 'section-title', '🏆 Logros');
     achTitle.style.margin = '40px 0 16px';
     container.appendChild(achTitle);
 
@@ -752,13 +754,13 @@
     resetSection.style.cssText = 'margin-top:48px;text-align:center;';
     resetSection.innerHTML = `
       <button class="btn-ghost" id="resetProgressBtn" style="color:var(--error);border-color:var(--error)">
-        âš ï¸ Reiniciar Progreso
+        ⚠️ Reiniciar Progreso
       </button>
     `;
     container.appendChild(resetSection);
 
     $('#resetProgressBtn').addEventListener('click', () => {
-      if (confirm('Â¿EstÃ¡s seguro de que deseas reiniciar todo tu progreso? Esta acciÃ³n no se puede deshacer.')) {
+      if (confirm('¿Estás seguro de que deseas reiniciar todo tu progreso? Esta acción no se puede deshacer.')) {
         STATE.progress = {};
         STATE.exercises = {};
         saveProgress();
@@ -794,17 +796,22 @@
       if (!localStorage.getItem(earnedKey) && checkAchievementEarned(ach)) {
         localStorage.setItem(earnedKey, '1');
         setTimeout(() => {
-          showToast(`ðŸ† Logro desbloqueado: ${ach.name}!`, 'success');
+          showToast(`🏆 Logro desbloqueado: ${ach.name}!`, 'success');
         }, 500);
       }
     });
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // NAVIGATION SECTION
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function navigateToSection(sectionId) {
     showPage(sectionId);
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
 
     // Render section content
     switch (sectionId) {
@@ -826,13 +833,13 @@
     `;
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // THEME
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function applyTheme() {
     document.documentElement.setAttribute('data-theme', STATE.theme === 'light' ? 'light' : '');
     const btn = $('#themeToggle');
-    if (btn) btn.textContent = STATE.theme === 'light' ? 'ðŸŒ™' : 'â˜€ï¸';
+    if (btn) btn.textContent = STATE.theme === 'light' ? '🌙' : '☀️';
   }
 
   function toggleTheme() {
@@ -841,9 +848,9 @@
     saveProgress();
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // SIDEBAR MOBILE
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function openSidebar() {
     $('#sidebar').classList.add('open');
     let overlay = $('#sidebarOverlay');
@@ -862,14 +869,14 @@
     if (overlay) overlay.classList.remove('active');
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // HASH ROUTING
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function handleHash() {
     const hash = window.location.hash.slice(1);
     if (!hash) return;
 
-    // Secciones estÃ¡ticas (#recursos, #templates, #ejemplos, #progreso)
+    // Secciones estáticas (#recursos, #templates, #ejemplos, #progreso)
     const SECTIONS = ['recursos', 'templates', 'ejemplos', 'progreso'];
     if (SECTIONS.includes(hash)) {
       navigateToSection(hash);
@@ -886,9 +893,9 @@
     }
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // SEARCH (basic)
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function findFirstIncompleteLesson() {
     for (const module of COURSE_DATA.modules) {
       for (const lesson of module.lessons) {
@@ -900,9 +907,9 @@
     return null;
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // INIT
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   function init() {
     // Load persisted data
     loadProgress();
@@ -947,7 +954,7 @@
       progressBtn.addEventListener('click', () => navigateToSection('progreso'));
     }
 
-    // Progress badge â†’ progress page
+    // Progress badge → progress page
     const badge = $('#progressBadge');
     if (badge) {
       badge.style.cursor = 'pointer';
@@ -1007,15 +1014,18 @@
     checkAchievements();
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   // PUBLIC API
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════
   window.App = {
     goHome: () => {
       STATE.currentModuleId = null;
       STATE.currentLessonId = null;
       showPage('home');
       window.location.hash = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
       const breadcrumb = $('#breadcrumb');
       if (breadcrumb) breadcrumb.innerHTML = '<span>Inicio</span>';
       // Reset sidebar active states
