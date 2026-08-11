@@ -42,6 +42,7 @@ aws rds create-db-instance `
     --master-username admin `
     --master-user-password ChangeMe123! `
     --allocated-storage 20 `
+    --db-name db_inventario `
     --db-subnet-group-name curso-db-subnets | Out-Null
 Write-Host "RDS db-inventario (mysql) creada" -ForegroundColor Green
 

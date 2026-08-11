@@ -111,6 +111,7 @@ aws --endpoint-url=http://localhost:4566 rds create-db-instance \`
   --allocated-storage 20 \`
   --master-username admin \`
   --master-user-password "ChangeMe123!" \`
+  --db-name db_inventario \`
   --db-subnet-group-name curso-db-subnet \`
   --backup-retention-period 0
 \`\`\`
@@ -174,26 +175,38 @@ Cada pareja usa el mismo puerto base, así que **es habitual que al crear un nue
 
 ## 🔌 Conectarse a PostgreSQL
 
-Una vez \`available\`, puedes conectarte con el cliente de PostgreSQL. En Windows, el binario suele estar en:
+Una vez \`available\`, puedes conectarte con el cliente de PostgreSQL. Desde tu PC (Host) apunta a \`localhost\`:
 
 \`\`\`powershell
 $env:PGPASSWORD = 'ChangeMe123!'
-& "C:\\Program Files\\PostgreSQL\\16\bin\\psql.exe" \`
-  -h 172.18.0.2 -p 7003 -U admin -d postgres
+& "C:\\Program Files\\PostgreSQL\\16\\bin\\psql.exe" \`
+  -h localhost -p 7003 -U admin -d postgres
 \`\`\`
 
-O desde PowerShell:
+O alternativamente usando Docker (si no tienes el cliente instalado en tu PC):
 
 \`\`\`powershell
-docker exec -it $(docker ps -qf "name=floci") psql -h localhost -p 7003 -U admin -d postgres
+# Conectarse al contenedor dedicado de PostgreSQL en Docker
+$pg = (docker ps --filter "name=floci-rds" --format "{{.Names}} {{.Image}}" | Select-String "postgres" | ForEach-Object { $_.Line.Split(' ')[0] })
+docker exec -it $pg psql -U admin -d postgres
 \`\`\`
 
 ---
 
 ## 🔌 Conectarse a MySQL
 
+Desde tu PC (Host) apunta a \`localhost\`:
+
 \`\`\`powershell
-mysql -h 172.18.0.2 -P 7004 -u admin -pChangeMe123!
+mysql -h localhost -P 7004 -u admin -pChangeMe123!
+\`\`\`
+
+O alternativamente usando Docker (si no tienes el cliente instalado en tu PC):
+
+\`\`\`powershell
+# Conectarse al contenedor dedicado de MySQL en Docker
+$my = (docker ps --filter "name=floci-rds" --format "{{.Names}} {{.Image}}" | Select-String "mysql" | ForEach-Object { $_.Line.Split(' ')[0] })
+docker exec -it $my mysql -u admin -pChangeMe123!
 \`\`\`
 
 ---
@@ -211,6 +224,7 @@ SELECT * FROM pedidos;
 
 \`\`\`sql
 -- MySQL (db-inventario)
+USE db_inventario;
 CREATE TABLE inventario (id INT AUTO_INCREMENT PRIMARY KEY, item VARCHAR(50), stock INT);
 INSERT INTO inventario (item, stock) VALUES ('mouse', 25);
 SELECT * FROM inventario;
