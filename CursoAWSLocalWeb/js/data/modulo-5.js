@@ -113,6 +113,13 @@ aws --endpoint-url=http://localhost:4566 elbv2 register-targets \`
   --targets Id=$web1 Id=$web2
 \`\`\`
 
+> 💡 **Si obtienes error de ParamValidation ($tgArn vacía):** significa que tu sesión de PowerShell no tiene cargadas las variables. Puedes recuperarlas dinámicamente ejecutando:
+> \`\`\`powershell
+> $tgArn = aws --endpoint-url=http://localhost:4566 elbv2 describe-target-groups --names curso-web-tg --query "TargetGroups[0].TargetGroupArn" --output text
+> $web1  = aws --endpoint-url=http://localhost:4566 ec2 describe-instances --filters "Name=tag:Name,Values=curso-web-1" --query "Reservations[0].Instances[0].InstanceId" --output text
+> $web2  = aws --endpoint-url=http://localhost:4566 ec2 describe-instances --filters "Name=tag:Name,Values=curso-web-2" --query "Reservations[0].Instances[0].InstanceId" --output text
+> \`\`\`
+
 > ⚠️ **Gotcha de floci (CloudFormation):** el Target Group creado por CloudFormation **no registra los targets automáticamente**. Hay que hacer un paso manual de \`register-targets\` tras el deploy del stack. (En AWS real el registro lo haces tú igualmente.)
 
 ---
