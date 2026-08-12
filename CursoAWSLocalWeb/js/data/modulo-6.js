@@ -198,7 +198,7 @@ $lbArn = aws $EP elbv2 create-load-balancer \`
 
 aws $EP elbv2 create-listener --load-balancer-arn $lbArn \`
   --protocol HTTP --port 80 \`
-  --default-actions Type=forward,TargetGroupArn=$tgArn
+  --default-actions "Type=forward,TargetGroupArn=$tgArn"
 \`\`\`
 
 ---

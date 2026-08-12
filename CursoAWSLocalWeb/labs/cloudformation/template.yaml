@@ -171,7 +171,7 @@ Resources:
         systemctl start nginx >>/var/log/bootstrap.log 2>&1 || nginx >>/var/log/bootstrap.log 2>&1
       Tags:
         - Key: Name
-          Value: curso-web-1
+          Value: curso-cfn-web-1
 
   WebServer2:
     Type: AWS::EC2::Instance
@@ -189,7 +189,7 @@ Resources:
         systemctl start nginx >>/var/log/bootstrap.log 2>&1 || nginx >>/var/log/bootstrap.log 2>&1
       Tags:
         - Key: Name
-          Value: curso-web-2
+          Value: curso-cfn-web-2
 
   # ---------------------------------------------------------------- Bases de datos
   DBSubnetGroup:

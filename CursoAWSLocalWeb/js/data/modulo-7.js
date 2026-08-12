@@ -292,10 +292,15 @@ Como veremos en 7-4, el target group del stack **no auto-registra** los targets 
 
 \`\`\`powershell
 $tgArn = aws --endpoint-url=http://localhost:4566 cloudformation describe-stack-resources \`
-  --stack-name curso-cfn --logical-resource-id WebTg \`
+  --stack-name curso-cfn --logical-resource-id TargetGroup \`
   --query "StackResources[0].PhysicalResourceId" --output text
 
-$web1 = aws ... ec2 describe-instances --filters "Name=tag:Name,Values=curso-cfn-web-1" \`
+$web1 = aws --endpoint-url=http://localhost:4566 ec2 describe-instances \`
+  --filters "Name=tag:Name,Values=curso-cfn-web-1" \`
+  --query "Reservations[0].Instances[0].InstanceId" --output text
+
+$web2 = aws --endpoint-url=http://localhost:4566 ec2 describe-instances \`
+  --filters "Name=tag:Name,Values=curso-cfn-web-2" \`
   --query "Reservations[0].Instances[0].InstanceId" --output text
 
 aws --endpoint-url=http://localhost:4566 elbv2 register-targets \`
@@ -310,7 +315,7 @@ Igual que en el lab CLI: espera a los health checks y lanza 6 peticiones al DNS 
 
 \`\`\`powershell
 $dns = aws --endpoint-url=http://localhost:4566 cloudformation describe-stacks \`
-  --stack-name curso-cfn --query "Stacks[0].Outputs[?OutputKey=='AlbDns'].OutputValue" --output text
+  --stack-name curso-cfn --query "Stacks[0].Outputs[?OutputKey=='AlbDnsName'].OutputValue" --output text
 # ... 6 peticiones → A=3 B=3 ...
 \`\`\`
 

@@ -54,7 +54,7 @@ aws rds delete-db-instance --db-instance-identifier db-x --skip-final-snapshot
 aws elbv2 create-target-group --name <tg> --protocol HTTP --port 80 --vpc-id <vpc>
 aws elbv2 register-targets --target-group-arn <tg> --targets Id=<i1> Id=<i2>
 aws elbv2 create-load-balancer --name <alb> --subnets <s1> <s2> --type application
-aws elbv2 create-listener --load-balancer-arn <lb> --protocol HTTP --port 80 --default-actions Type=forward,TargetGroupArn=<tg>
+aws elbv2 create-listener --load-balancer-arn <lb> --protocol HTTP --port 80 --default-actions "Type=forward,TargetGroupArn=<tg>"
 aws elbv2 describe-target-health --target-group-arn <tg>
 aws elbv2 delete-load-balancer --load-balancer-arn <lb>
 \`\`\`

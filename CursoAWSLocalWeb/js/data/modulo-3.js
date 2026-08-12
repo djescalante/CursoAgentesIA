@@ -135,30 +135,52 @@ Y su gemelo \`userdata-web-b.sh\` con **SERVIDOR B - us-east-1b**.
 
 Puedes probar el script en una máquina Linux o en el contenedor de floci para verificar que no tiene errores de sintaxis.
 
-### 2. Lanzar la instancia con el user-data
+### 2. Lanzar las dos instancias con su user-data
+
+Lanzamos los dos servidores web en las dos subnets públicas, capturando sus IDs en `$web1` y `$web2`:
 
 \`\`\`powershell
-aws --endpoint-url=http://localhost:4566 ec2 run-instances \`
+# Servidor A (curso-web-1) en subnet pública 1
+$web1 = aws --endpoint-url=http://localhost:4566 ec2 run-instances \`
   --image-id ami-0c02fb55956c7d316 \`
   --instance-type t3.micro \`
   --subnet-id $pub1 \`
   --security-group-ids $sgWeb \`
   --user-data file://labs/userdata/userdata-web-a.sh \`
-  --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=curso-web-1}]"
+  --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=curso-web-1}]" \`
+  --output text --query "Instances[0].InstanceId"
+
+# Servidor B (curso-web-2) en subnet pública 2
+$web2 = aws --endpoint-url=http://localhost:4566 ec2 run-instances \`
+  --image-id ami-0c02fb55956c7d316 \`
+  --instance-type t3.micro \`
+  --subnet-id $pub2 \`
+  --security-group-ids $sgWeb \`
+  --user-data file://labs/userdata/userdata-web-b.sh \`
+  --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=curso-web-2}]" \`
+  --output text --query "Instances[0].InstanceId"
+
+Write-Host "Servidor A ($web1) y Servidor B ($web2) listos"
 \`\`\`
+
+> 💡 Guardamos las variables \`$web1\` y \`$web2\` porque las vas a necesitar en el Módulo 5 para agregarlas al Target Group de tu balanceador (ALB).
 
 ### 3. Verificar que nginx responde
 
-Como floci emula la red con contenedores Docker, la IP privada de la instancia (\`172.18.0.x\`) es la del contenedor:
+Como floci emula la red con contenedores Docker, podemos verificar la respuesta de cada servidor:
 
 \`\`\`powershell
-$ip = aws --endpoint-url=http://localhost:4566 ec2 describe-instances \`
+$ipA = aws --endpoint-url=http://localhost:4566 ec2 describe-instances \`
   --instance-ids $web1 --query "Reservations[0].Instances[0].PrivateIpAddress" --output text
 
-Invoke-WebRequest -Uri "http://$ip/" -UseBasicParsing | Select-Object StatusCode, Content
+$ipB = aws --endpoint-url=http://localhost:4566 ec2 describe-instances \`
+  --instance-ids $web2 --query "Reservations[0].Instances[0].PrivateIpAddress" --output text
+
+Invoke-WebRequest -Uri "http://$ipA/" -UseBasicParsing | Select-Object StatusCode, Content
+Invoke-WebRequest -Uri "http://$ipB/" -UseBasicParsing | Select-Object StatusCode, Content
 \`\`\`
 
-Deberías ver \`200\` y el HTML con "SERVIDOR A".
+Deberías ver \`200\` en ambos y los mensajes "SERVIDOR A" y "SERVIDOR B".
 
 ---
 

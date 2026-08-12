@@ -113,14 +113,39 @@ aws --endpoint-url=http://localhost:4566 elbv2 register-targets \`
   --targets Id=$web1 Id=$web2
 \`\`\`
 
-> 💡 **Si obtienes error de ParamValidation ($tgArn vacía):** significa que tu sesión de PowerShell no tiene cargadas las variables. Puedes recuperarlas dinámicamente ejecutando:
+> 💡 **Si obtienes error de ParamValidation (variable vacía):** significa que tu sesión de PowerShell no tiene cargadas las variables (p. ej. abriste una terminal nueva). Puedes recuperarlas dinámicamente ejecutando:
 > \`\`\`powershell
+> $vpcId = aws --endpoint-url=http://localhost:4566 ec2 describe-vpcs --filters "Name=tag:Name,Values=curso-vpc" --query "Vpcs[0].VpcId" --output text
 > $tgArn = aws --endpoint-url=http://localhost:4566 elbv2 describe-target-groups --names curso-web-tg --query "TargetGroups[0].TargetGroupArn" --output text
 > $web1  = aws --endpoint-url=http://localhost:4566 ec2 describe-instances --filters "Name=tag:Name,Values=curso-web-1" --query "Reservations[0].Instances[0].InstanceId" --output text
 > $web2  = aws --endpoint-url=http://localhost:4566 ec2 describe-instances --filters "Name=tag:Name,Values=curso-web-2" --query "Reservations[0].Instances[0].InstanceId" --output text
+> $pub1  = aws --endpoint-url=http://localhost:4566 ec2 describe-subnets --filters "Name=tag:Name,Values=curso-pub-1" --query "Subnets[0].SubnetId" --output text
+> $pub2  = aws --endpoint-url=http://localhost:4566 ec2 describe-subnets --filters "Name=tag:Name,Values=curso-pub-2" --query "Subnets[0].SubnetId" --output text
 > \`\`\`
 
 > ⚠️ **Gotcha de floci (CloudFormation):** el Target Group creado por CloudFormation **no registra los targets automáticamente**. Hay que hacer un paso manual de \`register-targets\` tras el deploy del stack. (En AWS real el registro lo haces tú igualmente.)
+
+---
+
+## ⚖️ Crear el Load Balancer
+
+Antes del listener necesitas **crear el balanceador** (es lo que publica el DNS y genera \`$lbArn\`). Usa las dos subnets públicas y el SG del balanceador del Módulo 2:
+
+\`\`\`powershell
+$lbArn = aws --endpoint-url=http://localhost:4566 elbv2 create-load-balancer \`
+  --name curso-alb \`
+  --subnets $pub1 $pub2 \`
+  --security-groups $sgAlb \`
+  --scheme internet-facing --type application \`
+  --output text --query "LoadBalancers[0].LoadBalancerArn"
+Write-Host "ALB: $lbArn"
+\`\`\`
+
+> 💡 **Si \`$lbArn\` está vacía en el \`create-listener\`**, es porque falta este paso o perdiste la variable. Puedes recuperarla (o verificar su valor) con:
+> \`\`\`powershell
+> $lbArn = aws --endpoint-url=http://localhost:4566 elbv2 describe-load-balancers --names curso-alb --query "LoadBalancers[0].LoadBalancerArn" --output text
+> \`\`\`
+> ⚠️ Si el balanceador aún no existe, el \`describe\` devuelve vacío: créalo primero con el comando de arriba.
 
 ---
 
@@ -132,8 +157,10 @@ El **listener** es el puerto que escucha el balanceador y qué hace con el tráf
 aws --endpoint-url=http://localhost:4566 elbv2 create-listener \`
   --load-balancer-arn $lbArn \`
   --protocol HTTP --port 80 \`
-  --default-actions Type=forward,TargetGroupArn=$tgArn
+  --default-actions "Type=forward,TargetGroupArn=$tgArn"
 \`\`\`
+
+> ⚠️ **Gotcha de PowerShell:** escribe \`--default-actions\` entre comillas dobles (\`"Type=forward,TargetGroupArn=$tgArn"\`). Sin comillas, PowerShell interpreta la coma como separador de array y el listener queda apuntando a un target group inválido (el ALB devuelve **502 "Target group not found"**).
 
 ---
 
