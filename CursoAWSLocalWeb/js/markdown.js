@@ -332,17 +332,20 @@ const MarkdownParser = {
       if (block.match(/^<(h[1-6]|ul|ol|li|table|blockquote|pre|hr|div|details)/)) {
         return block;
       }
-      // Don't wrap blocks that contain or ARE code/HTML block placeholders
-      if (block.includes('%%CODE_BLOCK_') || block.includes('%%INLINE_CODE_') || block.includes('%%HTML_BLOCK_')) {
+      // Don't wrap blocks that contain or ARE BLOCK-level placeholders (code
+      // fences / raw HTML) — those can't live inside a <p>. INLINE_CODE
+      // placeholders are excluded here on purpose: they must stay part of
+      // the surrounding paragraph text, not split it into separate blocks.
+      if (block.includes('%%CODE_BLOCK_') || block.includes('%%HTML_BLOCK_')) {
         // Pure placeholder — return as-is
-        if (block.match(/^%%(CODE_BLOCK|INLINE_CODE|HTML_BLOCK)_\d+%%$/)) {
+        if (block.match(/^%%(CODE_BLOCK|HTML_BLOCK)_\d+%%$/)) {
           return block;
         }
         // Mixed placeholder + text — split and wrap only text parts
         return block
-          .split(/(%%(?:CODE_BLOCK|INLINE_CODE|HTML_BLOCK)_\d+%%)/)
+          .split(/(%%(?:CODE_BLOCK|HTML_BLOCK)_\d+%%)/)
           .map(part => {
-            if (part.match(/^%%(CODE_BLOCK|INLINE_CODE|HTML_BLOCK)_\d+%%$/)) return part;
+            if (part.match(/^%%(CODE_BLOCK|HTML_BLOCK)_\d+%%$/)) return part;
             const trimmed = part.trim();
             if (!trimmed) return '';
             if (trimmed.match(/^<(h[1-6]|ul|ol|li|table|blockquote|pre|hr|div|details)/)) return trimmed;

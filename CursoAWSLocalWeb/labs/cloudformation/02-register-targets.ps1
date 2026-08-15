@@ -25,9 +25,9 @@ do {
     $states = aws --endpoint-url $EP elbv2 describe-target-health --target-group-arn $tg --query "TargetHealthDescriptions[].TargetHealth.State" --output text
     Write-Host "    $i => $states"
     $i++
-} while ($states -notmatch "healthy" -and $i -lt 15)
+} while (($states -split "\s+" | Where-Object { $_ -ne "healthy" }) -and $i -lt 15)
 
-if ($states -match "healthy") {
+if (-not ($states -split "\s+" | Where-Object { $_ -ne "healthy" })) {
     Write-Host "Targets sanos" -ForegroundColor Green
 } else {
     Write-Host "!! Los targets no pasaron los health checks" -ForegroundColor Red

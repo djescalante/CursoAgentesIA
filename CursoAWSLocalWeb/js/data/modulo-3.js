@@ -137,7 +137,7 @@ Puedes probar el script en una máquina Linux o en el contenedor de floci para v
 
 ### 2. Lanzar las dos instancias con su user-data
 
-Lanzamos los dos servidores web en las dos subnets públicas, capturando sus IDs en `$web1` y `$web2`:
+Lanzamos los dos servidores web en las dos subnets públicas, capturando sus IDs en \`$web1\` y \`$web2\`:
 
 \`\`\`powershell
 # Servidor A (curso-web-1) en subnet pública 1
