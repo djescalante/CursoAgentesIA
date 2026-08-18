@@ -305,6 +305,34 @@ floci lanza las instancias en \`subnet-default-c\` / \`sg-default\`, ignorando t
 
 ---
 
+## 🐛 Gotcha #4 — \`terraform destroy\` se puede colgar
+
+Validado hands-on contra floci v1.6.0: al borrar un Security Group, el provider de Terraform llama primero a \`DescribeNetworkInterfaces\` para comprobar que no queden ENIs enganchadas. En floci esa llamada puede devolver un \`NullPointerException\` sin manejar. El SDK de Terraform trata ese error como reintentable y **lo reintenta para siempre**, así que \`terraform destroy\` nunca termina por sí solo.
+
+**Cómo detectarlo:** si el destroy lleva varios minutos sin que \`terraform state list\` encoja, revisa los logs del contenedor:
+
+\`\`\`powershell
+docker logs floci --since 5m | Select-String "DescribeNetworkInterfaces"
+\`\`\`
+
+Si ves \`Unhandled error dispatching Query action DescribeNetworkInterfaces ... NullPointerException\` repetido, es este gotcha.
+
+**Solución:** mata el proceso y termina el borrado a mano con AWS CLI (Security Groups → Subnets → VPC, en ese orden):
+
+\`\`\`powershell
+# Windows: corta terraform.exe y su plugin
+Stop-Process -Name terraform -Force
+
+$EP = "http://localhost:4566"
+aws --endpoint-url $EP ec2 delete-security-group --group-id sg-xxxx
+aws --endpoint-url $EP ec2 delete-subnet --subnet-id subnet-xxxx
+aws --endpoint-url $EP ec2 delete-vpc --vpc-id vpc-xxxx
+\`\`\`
+
+> 📌 \`cloudformation delete-stack\` (Módulo 7) dispara el mismo bug de floci una vez por recurso, pero **tolera el error y sigue** — solo el reintento infinito de Terraform lo convierte en un cuelgue.
+
+---
+
 ## ✅ El apply idempotente
 
 Con los 3 gotchas resueltos, el segundo apply queda limpio:
@@ -332,20 +360,22 @@ terraform destroy           # borrar TODO
 
 \`\`\`text
 terraform init/validate     → OK (provider v4.67.0)
-terraform apply             → 22 added
+terraform apply             → 22 added, 0 changed, 0 destroyed
 terraform apply (2ª vez)    → No changes ✓
-targets ALB                 → healthy (~2,5 min)
-round-robin 6 peticiones    → A=3 B=3 ✓
+targets ALB                 → healthy
+terraform destroy           → colgado por Gotcha #4 (NullPointerException en floci)
+                               → destroy manual de SG/Subnets/VPC vía AWS CLI ✓
 \`\`\`
 
 ---
 
 ## ✅ Resumen
 
-- Ciclo: \`init\` → \`plan\` → \`apply\` → \`output\`.
+- Ciclo: \`init\` → \`plan\` → \`apply\` → \`output\` (→ \`destroy\`).
 - **RDS necesita provider v4** (\`~> 4.0\`) porque floci no resuelve \`dbi-resource-id\`.
 - Evita el drift con \`auto_minor_version_upgrade = false\`.
 - Evita el reemplazo con \`ignore_changes\` en las instancias.
+- El \`destroy\` puede colgarse por un bug de floci en \`DescribeNetworkInterfaces\`: si no avanza, termínalo a mano con AWS CLI.
 - Con esto, los **3 labs (CLI, CloudFormation y Terraform) despliegan la misma infraestructura** en floci.`,
         exercise: {
           title: `Cierra con Terraform`,
